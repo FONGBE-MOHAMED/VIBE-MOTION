@@ -164,6 +164,9 @@
     #f05-halo-g { opacity: 0; }
     /* le partage P10 est posé 51 px à droite dans le monde : la dérive (-21) et le cran (-30) le recentrent */
     #f05-split, #f05-fg { left: 51px; }
+    /* état de l'image 0 écrit en CSS (le whip en cours) : la bande des fenêtres est décalée de 1400 px, fenêtres floues */
+    #f05-strip { left: 1400px; }
+    #f05-msg, #f05-win { filter: blur(14px); }
     /* la fenêtre du tableur : couche de profondeur (flou de mise au point) qui devient la carte « Compta » */
     #f05-wwrap { position: absolute; left: 575px; top: 110px; width: 1180px; height: 720px; --dof: 0px; filter: blur(var(--dof)); }
     .f05-wdark { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(160deg, #1d2129, #161a22); opacity: 0; }
@@ -347,7 +350,7 @@
 
       /* ================= Scene 1 (0.00 à 1.90) : Ta compta, ton dimanche ================= */
       /* 0.00 à 0.16 : le whip se termine, le tableur se pose ; l'horloge reste nette à sa place */
-      tl.fromTo($("f05-strip"), { x: 1400 }, { x: 0, duration: 0.16, ease: "power3.out" }, 0);
+      tl.fromTo($("f05-strip"), { x: 0 }, { x: -1400, duration: 0.16, ease: "power3.out" }, 0);
       tl.fromTo([$("f05-msg"), $("f05-win")], { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.16, ease: "power3.out" }, 0);
 
       /* 0.22 « Ta compta » : les lignes se remplissent une à une (0,05 s) : date, libellé, montant */

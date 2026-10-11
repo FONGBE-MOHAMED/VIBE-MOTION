@@ -1,6 +1,6 @@
 # Apprendre l'IA : script (45 s, 8 temps)
 
-Statut : deux versions proposées, en attente du choix et des corrections mot à mot.
+Statut : **version B choisie** (« Pas pour moi »). Sans marque pour l'instant : l'appel à l'action se termine sur « Apprends l'IA dès aujourd'hui. »
 Le gag est muet : il se fait au montage, la voix ne le lit pas.
 Durées estimées à 175 mots par minute, plus le gag (2,5 s), le silence du pivot (1,5 s) et la carte de fin.
 
@@ -44,6 +44,36 @@ Objet-pont : le post-it « Pas pour moi », qui tombe au pivot et devient « Pou
 
 ---
 
-## Version à coller dans ElevenLabs
+## Version à coller dans ElevenLabs (version B)
 
-À écrire après le choix et les corrections (sans mise en scène, pauses en ponctuation, nombres en lettres).
+Sans mise en scène, pauses en ponctuation et retours à la ligne, nombres en lettres. Le gag (après « L'intelligence
+artificielle ? ») et le silence du pivot (après « Pas cette fois. ») se font au montage.
+
+```
+Deux mille.
+Un site internet ? Pas pour moi.
+Deux mille dix.
+Les réseaux sociaux ? Pas pour moi.
+Deux mille vingt-six.
+L'intelligence artificielle ?
+
+Le problème ? Le monde, lui, n'a pas attendu.
+Ta présentation te prend une soirée.
+Tes mails, ta matinée.
+Ta compta, ton dimanche.
+Pour d'autres, c'est réglé avant le café.
+
+Pas cette fois.
+
+Aujourd'hui, l'IA rédige, résume, calcule.
+Tu lui expliques avec tes mots... elle fait le travail.
+Pas besoin d'être technique : il faut juste apprendre à lui parler.
+Et tu récupères ta soirée, ta matinée, ton dimanche.
+
+L'intelligence artificielle ?
+Cette fois... c'est pour toi.
+Apprends l'IA dès aujourd'hui.
+```
+
+Réglages : Eleven v4, langue réglée sur Français, Stabilité 40 à 50 %, Similarité 80 à 90 %, 2 ou 3 prises.
+Fichier attendu : `apprendre-ia/assets/audio/voix.mp3`.

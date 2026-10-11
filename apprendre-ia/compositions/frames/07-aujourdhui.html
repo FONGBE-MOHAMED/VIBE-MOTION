@@ -337,14 +337,14 @@
       tl.fromTo($("bloom"), { opacity: 1 }, { opacity: 0, duration: 0.30, ease: "power2.out", immediateRender: false }, 1.20);
 
       /* ---------- sous-titre mot à mot (frame.md word-by-word, key-word-box) ---------- */
-      function word(id, cue) {
-        var at = cue - 0.033;
+      function word(id, cue, lead) {
+        var at = cue - (lead === undefined ? 0.033 : lead);   // 0 à 2 images avant le mot
         tl.fromTo($(id), { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power3.out", immediateRender: false }, at);
         tl.fromTo($(id), { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, at + 0.14);
       }
       word("w0", 0.16);
       tl.fromTo($("box"), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.80);
-      word("w1", 0.82);
+      word("w1", 0.82, 0.02);                          // le mot part avec son surligneur (0.80)
       word("w2", 1.46);
       word("w3", 1.93);
       word("w4", 2.68);

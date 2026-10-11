@@ -1,6 +1,6 @@
 # Yango, Côte d'Ivoire : script (60 s, 6 temps)
 
-Statut : deux versions proposées, en attente du choix et des corrections mot à mot.
+Statut : **version A choisie** (« On dit combien ? »). Promesses produit et texte du bouton encore à confirmer avec l'offre réelle de Yango en Côte d'Ivoire.
 Le gag est muet : il se fait au montage, la voix ne le lit pas.
 135 à 145 mots de voix (48 à 52 s à 165-175 mots par minute), plus le gag (2,5 s), le silence du pivot (1,5 s) et la carte
 de fin.
@@ -44,6 +44,48 @@ Rime : « Allô ? Tu es où ? » au début et à la fin.
 
 ---
 
-## Version à coller dans ElevenLabs
+## Version à coller dans ElevenLabs (version A)
 
-À écrire après le choix et les corrections (sans mise en scène, pauses en ponctuation, nombres en lettres).
+Sans mise en scène, pauses en ponctuation et retours à la ligne, nombres en lettres. Le gag (après « Trois mille. »)
+et le silence du pivot (après « Et si on arrêtait de discuter ? ») se font au montage.
+
+```
+Lundi, sept heures. Carrefour Riviera Deux.
+Tu lèves la main. Un taxi s'arrête.
+« Plateau ? »
+Le chauffeur te regarde... de la tête aux pieds.
+« Trois mille. »
+
+Chaque jour, c'est la même histoire.
+Le matin, tu discutes le prix. Encore.
+À midi, on te répond : « Yopougon ? Je ne vais pas là-bas. »
+Et le soir, tu attends au bord du goudron... sans savoir qui va s'arrêter.
+
+Et si on arrêtait de discuter ?
+
+Avec Yango, tu choisis où tu vas, depuis ton téléphone.
+Le prix s'affiche avant la course. Pas de surprise.
+Une voiture vient te chercher là où tu es.
+Tu vois ton chauffeur arriver sur la carte, avec son nom et sa plaque.
+Que tu ailles au marché, au travail ou au maquis... tu montes, et tu pars.
+
+Lundi, sept heures. Carrefour Riviera Deux.
+Ta voiture est déjà là.
+Yango.
+Télécharge l'application, et bouge tranquille.
+```
+
+Réglages : Eleven v4, langue réglée sur Français, Stabilité 40 à 50 %, Similarité 80 à 90 %, 2 ou 3 prises.
+Fichier attendu : `yango-ci/assets/audio/voix.mp3`.
+
+## Description de la voix (ElevenLabs, Voice Design)
+
+```
+A warm, friendly male voice in his early thirties, a native French speaker from Côte d'Ivoire with a natural, not exaggerated, Abidjan accent, clear and easy to understand for everyone. Lively, smiling storytelling tone, like a popular radio host talking to a friend: a touch of humour on the everyday scenes, then confident and reassuring. Moderate pace, crisp articulation, natural pauses between short sentences. Studio-quality recording, close microphone, clean and dry, no reverb, no background noise or music.
+```
+
+Texte d'essai :
+
+```
+Lundi, sept heures. Carrefour Riviera Deux. Tu lèves la main. Un taxi s'arrête. « Plateau ? » Le chauffeur te regarde... de la tête aux pieds. « Trois mille. »
+```

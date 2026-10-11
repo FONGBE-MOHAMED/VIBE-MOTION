@@ -157,7 +157,13 @@
 
     /* ===================== 02-ia : propre à la séquence ===================== */
     .f02-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
-    #f02-bg { background: #0d0f14; }
+    /* trame de points en coordonnées monde (même dessin que .g-dark .dots du kit) et sa jumelle filée pour le whip */
+    .f02-wdots { position: absolute; left: -108px; top: -504px; width: 5040px; height: 2124px; opacity: .1;
+      background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+    .f02-wdots-mb { position: absolute; left: -108px; top: -504px; width: 5040px; height: 2124px;
+      background-image: radial-gradient(16px 1.5px at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0)); background-size: 36px 36px; }
+    /* la station 2026 (1240 px de large) porte son propre flou de mouvement pendant l'atterrissage */
+    .f02-st26 { position: absolute; left: 2860px; top: 0; width: 1240px; height: 860px; filter: blur(16px); }
 
     /* piste caméra : #f02-view (cadre, flou de caméra) > #f02-drift > #f02-cam (échelle) > #f02-world (translation) */
     #f02-view { overflow: hidden; z-index: 1; }
@@ -206,31 +212,30 @@
 
   <div id="root" data-composition-id="02-ia" data-width="1920" data-height="1080" data-duration="5.03">
 
-    <div id="f02-bg" class="clip f02-layer" data-start="0" data-duration="5.03" data-track-index="0"></div>
+    <div id="f02-bg" class="clip g-dark" data-start="0" data-duration="5.03" data-track-index="0">
+      <div id="f02-halo" class="halo" style="left:210px;top:-70px;width:1500px;height:1000px"></div>
+    </div>
 
     <div id="f02-scene" class="clip f02-layer" data-start="0" data-duration="5.03" data-track-index="1">
 
-      <!-- le monde : la frise du bureau de nuit (x monde = x de P03 + 2520 ; 2010 en 2220, 2026 en 3480 ; ligne en y 770) -->
+      <!-- le monde : la frise du bureau de nuit (x monde = x de P03 + 2520 ; 2026 en 3480 ; ligne en y 770) -->
       <div id="f02-view" class="f02-layer">
         <div id="f02-drift" class="f02-layer">
           <div id="f02-cam" class="f02-layer">
             <div id="f02-world" class="f02-layer" data-layout-allow-overflow>
-              <div class="g-dark" style="inset:auto;left:1300px;top:-400px;width:3600px;height:1900px" data-layout-allow-overflow><div class="dots"></div><div class="halo" style="left:220px;top:370px;width:1400px;height:1000px"></div><div class="halo" style="left:1430px;top:330px;width:1500px;height:1000px"></div></div>
-              <div class="frise" style="top:770px;left:1300px;right:auto;width:3600px"></div>
-              <div class="tick" style="left:2219px;top:772px"></div>
-              <div class="year" style="left:2220px;top:804px">2010</div>
-              <div class="tick" style="left:3479px;top:772px"></div>
-              <div class="year ghost" style="left:3480px;top:804px">2026</div>
-              <div id="f02-y26" class="year" style="left:3480px;top:804px">2026</div>
+              <!-- trame de points du bureau de nuit, en coordonnées monde (rangées en y ≡ 18 mod 36, comme la séquence 1) + sa jumelle filée pour le whip -->
+              <div id="f02-dots" class="f02-wdots"></div>
+              <div id="f02-dotsmb" class="f02-wdots-mb"></div>
+              <div class="frise" style="top:770px;left:-100px;right:auto;width:5000px"></div>
 
-              <!-- station 2010 (elle sort par la gauche à l'atterrissage du whip) -->
-              <div class="contact" style="left:2050px;top:759px;width:340px"></div>
-              <div class="phone10" style="left:2070px;top:210px;transform:scale(1.0);transform-origin:50% 100%;"><div class="phone10-ear"></div><div class="phone10-screen"><div class="app-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="notif10">Rejoins tes amis sur le réseau<br><span class="btn">S’inscrire</span></div></div><div class="phone10-home"></div></div>
-              <div class="postit" style="left:2060px;top:300px;transform:rotate(6deg) scale(1.02);filter:blur(0.5px);opacity:1;"><div class="band"></div><div class="hw">Pas pour<br>moi</div><div class="curl"></div></div>
-
-              <!-- station 2026 : le portable posé sur la ligne -->
-              <div class="contact" style="left:3100px;top:759px;width:760px"></div>
-              <div class="laptop" style="left:2880px;top:30px;transform:scale(0.98);transform-origin:50% 100%"><div class="laptop-lid"><div class="laptop-screen"><div class="ai"><div id="f02-head" class="ai-head"><span id="f02-dot" class="ai-dot"></span>Assistant IA</div><div id="f02-hello" class="ai-hello">Bonjour. Que veux-tu faire aujourd’hui ?</div><div id="f02-wfield" class="ai-field" style=""><span id="f02-wph">Écris ta demande…</span><span id="f02-wtyped" class="f02-typed"></span><span id="f02-wcaret" class="caret" style="height:36px;margin-left:4px"></span><span id="f02-wmoi" class="f02-sugg">moi.</span><div class="send" style="right:16px;top:15px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div><div id="f02-scroff" class="f02-scroff"></div></div></div><div class="laptop-base"></div><div class="laptop-notch"></div></div>
+              <!-- station 2026 : le portable posé sur la ligne, son ombre de contact, la graduation et « 2026 » (repère local : x monde - 2860) -->
+              <div id="f02-st26" class="f02-st26">
+                <div class="tick" style="left:619px;top:772px"></div>
+                <div class="year ghost" style="left:620px;top:804px">2026</div>
+                <div id="f02-y26" class="year" style="left:620px;top:804px">2026</div>
+                <div class="contact" style="left:240px;top:759px;width:760px"></div>
+                <div class="laptop" style="left:20px;top:30px;transform:scale(0.98);transform-origin:50% 100%"><div class="laptop-lid"><div class="laptop-screen"><div class="ai"><div id="f02-head" class="ai-head"><span id="f02-dot" class="ai-dot"></span>Assistant IA</div><div id="f02-hello" class="ai-hello">Bonjour. Que veux-tu faire aujourd’hui ?</div><div id="f02-wfield" class="ai-field" style=""><span id="f02-wph">Écris ta demande…</span><span id="f02-wtyped" class="f02-typed"></span><span id="f02-wcaret" class="caret" style="height:36px;margin-left:4px"></span><span id="f02-wmoi" class="f02-sugg">moi.</span><div class="send" style="right:16px;top:15px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div><div id="f02-scroff" class="f02-scroff"></div></div></div><div class="laptop-base"></div><div class="laptop-notch"></div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -288,7 +293,8 @@
         };
       }
 
-      var X_WHIP = 960 - 2850;              // en plein whip, entre 2010 (2220) et 2026 (3480)
+      var X_WHIP = -324;                    // t = 0 : en plein whip ; seules la ligne, la trame filée, le halo et le grain sont à l'écran
+      var X_ENTER = -900;                   // 0.064 : le portable est encore juste hors cadre à droite
       var X_2026 = 960 - 3480;              // posé sur le portable de 2026
       var Y_PUSH = 11.7;                    // poussée ×1,08 : le centre de l'écran (y 381,7) reste en place
       var Y_FIELD = 540 - WF.cy;            // le champ au centre du cadre
@@ -298,9 +304,17 @@
       var P2 = pose(S_CUT2, Y_FIELD, 20);
 
       /* ---------- piste caméra : le monde ---------- */
-      // 0.00 à 0.18 : le whip se pose sur le portable de 2026 (expo.out), flou 16 → 0
-      tl.fromTo("#f02-world", { x: X_WHIP, y: 0 }, { x: X_2026, y: 0, duration: 0.18, ease: "expo.out" }, 0);
-      tl.fromTo("#f02-view", { filter: "blur(16px)" }, { filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 0);
+      // 0.00 à 0.064 : le whip continue à +9000 px/s (aucun appareil à l'écran) ; 0.064 à 0.18 : il se pose sur le portable
+      // de 2026 (expo.out), qui entre par le bord droit ; la ligne reste nette, la trame filée redevient des points
+      tl.fromTo("#f02-world", { x: X_WHIP, y: 0 }, { x: X_ENTER, y: 0, duration: 0.064, ease: "none" }, 0);
+      tl.fromTo("#f02-world", { x: X_ENTER, y: 0 }, { x: X_2026, y: 0, duration: 0.116, ease: "expo.out", immediateRender: false }, 0.064);
+      tl.fromTo("#f02-st26", { filter: "blur(16px)" }, { filter: "blur(0px)", duration: 0.085, ease: "power2.out", immediateRender: false }, 0.095);
+      tl.fromTo("#f02-dotsmb", { opacity: 1 }, { opacity: 0, duration: 0.07, ease: "power1.out", immediateRender: false }, 0.11);
+      tl.fromTo("#f02-dots", { opacity: 0.1 }, { opacity: 1, duration: 0.07, ease: "power1.out", immediateRender: false }, 0.11);
+      // le halo : celui de la séquence 1 au raccord, puis derrière le portable (P03), puis celui de la séquence 3 au recul
+      tl.fromTo("#f02-halo", { x: 0, y: 40, scaleX: 0.9333, scaleY: 1 }, { x: 0, y: 40, scaleX: 0.9333, scaleY: 1, duration: 0.064, ease: "none" }, 0);
+      tl.fromTo("#f02-halo", { x: 0, y: 40, scaleX: 0.9333, scaleY: 1 }, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.116, ease: "expo.out", immediateRender: false }, 0.064);
+      tl.fromTo("#f02-halo", { x: 0, y: 0, scaleX: 1, scaleY: 1 }, { x: 0, y: 40, scaleX: 1.2667, scaleY: 0.9, duration: 0.16, ease: "power1.inOut", immediateRender: false }, 4.83);
       // 0.18 à 2.81 : poussée linéaire ×1 → ×1,08 vers l'écran
       tl.fromTo("#f02-cam", { scale: 1 }, { scale: 1.08, duration: 2.63, ease: "none", immediateRender: false }, 0.18);
       tl.fromTo("#f02-world", { x: X_2026, y: 0 }, { x: X_2026, y: Y_PUSH, duration: 2.63, ease: "none", immediateRender: false }, 0.18);
@@ -338,9 +352,9 @@
 
       /* ---------- scène 1 : 2026 ---------- */
       // la tasse traverse l'avant-plan gauche (parallaxe), puis glisse avec la poussée, puis file à gauche au cran
-      tl.fromTo("#f02-mug", { opacity: 1, x: 2020, scale: 1 }, { opacity: 1, x: 0, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, 0.035);
-      tl.fromTo("#f02-mugsvg", { filter: "blur(30px)" }, { filter: "blur(12px)", duration: 0.22, ease: "power2.out", immediateRender: false }, 0.035);
-      tl.fromTo("#f02-mug", { x: 0, scale: 1 }, { x: -36, scale: 1.05, duration: 2.555, ease: "none", immediateRender: false }, 0.255);
+      tl.fromTo("#f02-mug", { opacity: 1, x: 2200, scale: 1 }, { opacity: 1, x: 0, scale: 1, duration: 0.2, ease: "expo.out", immediateRender: false }, 0.068);
+      tl.fromTo("#f02-mugsvg", { filter: "blur(30px)" }, { filter: "blur(12px)", duration: 0.2, ease: "power2.out", immediateRender: false }, 0.068);
+      tl.fromTo("#f02-mug", { x: 0, scale: 1 }, { x: -36, scale: 1.05, duration: 2.542, ease: "none", immediateRender: false }, 0.268);
       tl.fromTo("#f02-mug", { x: -36, scale: 1.05 }, { x: -640, scale: 1.7, duration: 0.11, ease: "power2.in", immediateRender: false }, 2.81);
       // 0.25 : « 2026 » s'allume
       tl.fromTo("#f02-y26", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out", immediateRender: false }, 0.22);

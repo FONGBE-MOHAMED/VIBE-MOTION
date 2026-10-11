@@ -109,3 +109,10 @@ graph.append("".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=
 subprocess.run(args + ["-filter_complex", ";".join(graph), "-map", "[out]", "-t", f"{total:.3f}", env["MIX_OUT"]], check=True)
 print(f"mix: {env['MIX_OUT']} ({total:.2f} s, music {'on' if music else 'off'}, {len(events)} sound effect(s))")
 EOF
+
+# 3. Loudness of the delivery mix: -16 LUFS, true peak -1.5 dBTP (two-pass loudnorm, linear).
+J=$(ffmpeg -hide_banner -i "$MIX_OUT" -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null - 2>&1 | sed -n '/^{/,/^}/p')
+set -- $(echo "$J" | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['input_i'],d['input_tp'],d['input_lra'],d['input_thresh'],d['target_offset'])")
+ffmpeg -v error -y -i "$MIX_OUT" -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=$1:measured_TP=$2:measured_LRA=$3:measured_thresh=$4:offset=$5:linear=true,aresample=44100" \
+  -ar 44100 "${MIX_OUT%.wav}-norm.wav" && mv "${MIX_OUT%.wav}-norm.wav" "$MIX_OUT"
+echo "mix normalized: $MIX_OUT (-16 LUFS, -1.5 dBTP)"

@@ -1,0 +1,410 @@
+<template>
+  <!-- 07-aujourdhui (3.42 s, global 24.80 à 28.22) : « Aujourd’hui, l’IA rédige, résume, calcule. »
+       Monde clair (papier). Caméra en piste à part : #f07-drift > #f07-cam > #f07-world (STORYBOARD-CRAFT loi 1).
+       Scene 1 (0.00 à 1.40, P12 à 0.70) : sous le flash d'assemble.sh, le portable clair se pose (×1,15, flou 8 → net en
+         0,16 s), atterrissage caméra 0.00 à 0.30 puis poussée 2 %/s ; 0.50 « Assistant IA » s'allume ; 0.60 la bulle de
+         réponse, ses lignes poussent (0.64, 0.90, 1.04) ; boîte jaune sous « l’IA » à 0.80 ; 1.20 à 1.50 recul expo.out.
+       Scene 2 (1.40 à 3.42, P13 à 3.00) : 1.40 la bulle se partage en trois cartes qui se posent côte à côte ; crans de
+         0,1 s vers la carte active (1.44, 1.91, 2.66), dérive x +12 px/s ; 1.46 la carte 1 s'écrit ; 1.93 la pile
+         « 12 messages » se replie, « Résumé · 3 points » en sort ; 2.62 la ligne « Total », 2.68 le montant roule jusqu'à
+         1 066,08 € (0,5 s) ; 3.10 les trois cartes nettes ; 3.20 elles partent vers le haut, cran vers le bas ×1 → ×1,8
+         vers le champ de saisie clair qui monte du bas (handoff_out).
+       Dessin : styleframes/_kit.css recopié mot pour mot (sans html, body, #stage ; « ../assets/ » devient « assets/ »),
+       objets repris de styleframes/P12.html et P13.html ; champ de saisie repris de P14.html (à l'échelle 1/1,8 dans le
+       monde, pour arriver à sa taille P14 sous la caméra ×1,8). Le flou de caméra est porté par les objets (aucun objet
+       flou de plus de 1800 px). -->
+  <style>
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+
+/* ===================== 07-aujourdhui : règles propres à la séquence (préfixe f07-) ===================== */
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; }
+#f07-bg, #f07-stage, #f07-over { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f07-stage { overflow: hidden; }
+#f07-drift, #f07-cam, #f07-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+/* scène 1 : la mise en page P12 (coordonnées d'écran) ramenée dans le monde par l'inverse de la caméra à 0.70 (×1,16928) */
+#f07-s1 { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform: scale(0.855228); transform-origin: 960px 540px; }
+#f07-lapx { position: absolute; left: 360px; top: 80px; width: 1200px; height: 760px; transform-origin: 50% 96%; }
+#f07-dot { opacity: .35; }
+#f07-aiht { opacity: .5; }
+.f07-ring { position: absolute; left: 28px; top: 25px; width: 14px; height: 14px; border-radius: 50%; opacity: 0;
+  box-shadow: 0 0 0 2px rgba(247,208,56,.85), 0 0 18px 4px rgba(247,208,56,.45); }
+#f07-bubble { opacity: 0; }
+.f07-grow { opacity: 0; transform-origin: 0 50%; }
+.f07-pop { opacity: 0; }
+/* cartes : enveloppe (entrée, sortie) + .card du kit (mise au point) */
+.f07-cw { position: absolute; opacity: 0; transform-origin: 50% 50%; }
+.f07-k { position: absolute; left: 0; top: 0; width: 500px; height: 600px; opacity: 0; }
+#f07-k1 { opacity: 0; }
+.f07-row { position: absolute; height: 70px; border-radius: 12px; background: #fff; border: 1px solid #e1dccf; }
+#f07-sum { opacity: 0; transform-origin: 50% 0%; }
+#f07-total { opacity: 0; }
+.f07-amt { display: inline-block; width: 10ch; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; transform-origin: 100% 50%; }
+/* sous-titre : le surligneur (géométrie de .hl::before du kit, en élément réel pour se tracer depuis la gauche) */
+.f07-w { opacity: 0; }
+.f07-hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.f07-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1;
+  opacity: 0; transform-origin: 0 50%; }
+/* le champ de saisie clair de la séquence 8 (P14), dessiné à 1/1,8 dans le monde, sous les cartes */
+#f07-fieldA { position: absolute; left: 165px; top: 801px; width: 1600px; height: 250px; transform: scale(0.555556); transform-origin: 50% 50%; }
+#f07-field { position: absolute; left: 0; top: 0; width: 1600px; height: 250px; border-radius: 40px; background: #fff; border: 2px solid rgba(23,24,28,.12);
+  box-shadow: 0 40px 100px rgba(60,45,20,.16); display: flex; align-items: center; padding: 0 200px 0 70px;
+  font: 600 46px/1.2 "Instrument Sans"; color: #17181c; letter-spacing: -.015em; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="07-aujourdhui" data-width="1920" data-height="1080" data-duration="3.42">
+
+    <!-- piste 0 : le papier plein cadre -->
+    <div id="f07-bg" class="clip" data-start="0" data-duration="3.42" data-track-index="0">
+      <div class="g-light"></div>
+    </div>
+
+    <!-- piste 1 : le monde sous la caméra -->
+    <div id="f07-stage" class="clip" data-start="0" data-duration="3.42" data-track-index="1">
+      <div id="f07-drift"><div id="f07-cam"><div id="f07-world">
+
+        <!-- sol : papier, trame de points, halo jaune doux (géométrie P13 : caméra neutre en scène 2) -->
+        <div class="g-light"><div class="dots" id="f07-dots"></div><div class="halo" style="left:10.0px;top:20.0px;width:1900px;height:900px"></div></div>
+
+        <!-- scène 1 : P12 -->
+        <div id="f07-s1">
+          <div class="abs" id="f07-bloom" style="left:360px;top:60px;width:1200px;height:800px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,251,230,.55) 45%,rgba(255,251,230,0))"></div>
+          <div id="f07-lapx">
+            <div class="contact light" style="left:200px;top:719px;width:800px"></div>
+            <div class="laptop light" id="f07-lap" style="left:0;top:0"><div class="laptop-lid"><div class="laptop-screen"><div class="ai light"><div class="ai-head"><span class="ai-dot" id="f07-dot"></span><span id="f07-aiht">Assistant IA</span><span class="f07-ring" id="f07-ring"></span></div><div class="ai-hello">Bonjour. Que veux-tu faire aujourd’hui ?</div><div class="abs" id="f07-bubble" style="left:150px;top:300px;width:720px;padding:26px 30px;border-radius:20px;background:#f3efe6"><div class="line f07-grow" id="f07-bl0" style="width:92%;margin-bottom:16px"></div><div class="line f07-grow" id="f07-bl1" style="width:78%;margin-bottom:16px"></div><div class="line f07-grow" id="f07-bl2" style="width:40%"></div></div><div class="ai-field" style="">Écris ta demande…<span class="caret" id="f07-caretA" style="height:36px;margin-left:4px"></span><div class="send" style="right:16px;top:15px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div></div></div><div class="laptop-base"></div><div class="laptop-notch"></div></div>
+          </div>
+        </div>
+
+        <!-- scène 2 : P13, trois cartes (coordonnées du monde = coordonnées d'écran à 3.00) -->
+        <div class="f07-cw" id="f07-c1" style="left:140px;top:180px;width:500px;height:600px">
+          <div class="card" id="f07-c1in" style="left:0;top:0;width:500px;height:600px;padding:40px 40px"><div id="f07-k1"><div class="micro" style="color:#55565c;margin-bottom:22px">Présentation de lundi</div><div style="font:600 34px/1.15 Instrument Sans;color:#17181c;margin-bottom:24px;white-space:nowrap"><span id="f07-t1"></span><span class="caret" id="f07-caret1" style="height:34px;margin-left:3px;opacity:0"></span></div><div class="line f07-grow" id="f07-l0" style="width:96%;margin-bottom:16px"></div><div class="line f07-grow" id="f07-l1" style="width:88%;margin-bottom:16px"></div><div class="line f07-grow" id="f07-l2" style="width:92%;margin-bottom:16px"></div><div class="line f07-grow" id="f07-l3" style="width:70%;margin-bottom:16px"></div><div style="font:600 34px/1.15 Instrument Sans;color:#17181c;margin:26px 0 24px;white-space:nowrap"><span id="f07-t2"></span><span class="caret" id="f07-caret2" style="height:34px;margin-left:3px;opacity:0"></span></div></div></div>
+        </div>
+        <div class="f07-cw" id="f07-c2" style="left:710px;top:180px;width:500px;height:600px">
+          <div class="card" id="f07-c2in" style="left:0;top:0;width:500px;height:600px"><div class="f07-k" id="f07-k2"><div class="abs micro" style="left:40px;top:40px;color:#55565c">12 messages</div><div class="f07-row" id="f07-r0" style="left:40px;top:90px;width:420px"></div><div class="f07-row" id="f07-r1" style="left:48px;top:112px;width:404px"></div><div class="f07-row" id="f07-r2" style="left:56px;top:134px;width:388px"></div><div class="f07-row" id="f07-r3" style="left:64px;top:156px;width:372px"></div><div class="f07-row" id="f07-r4" style="left:72px;top:178px;width:356px"><div class="abs line" id="f07-r4a" style="left:20px;top:16px;width:30%"></div><div class="abs line" id="f07-r4b" style="left:20px;top:40px;width:74%"></div></div><div class="abs" id="f07-sum" style="left:40px;top:250px;width:420px;padding:26px;border-radius:16px;background:#fff7d6;border:2px solid #17181c"><div class="micro" style="color:#17181c;margin-bottom:18px">Résumé · 3 points</div><div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><span class="f07-pop" id="f07-sd0" style="width:10px;height:10px;border-radius:50%;background:#17181c"></span><div class="line f07-grow" id="f07-sl0" style="width:86%;background:#e8dfc0"></div></div><div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><span class="f07-pop" id="f07-sd1" style="width:10px;height:10px;border-radius:50%;background:#17181c"></span><div class="line f07-grow" id="f07-sl1" style="width:72%;background:#e8dfc0"></div></div><div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><span class="f07-pop" id="f07-sd2" style="width:10px;height:10px;border-radius:50%;background:#17181c"></span><div class="line f07-grow" id="f07-sl2" style="width:64%;background:#e8dfc0"></div></div></div></div></div>
+        </div>
+        <div class="f07-cw" id="f07-c3" style="left:1280px;top:180px;width:500px;height:600px">
+          <div class="card" id="f07-c3in" style="left:0;top:0;width:500px;height:600px;overflow:hidden"><div class="f07-k" id="f07-k3"><div class="abs micro" style="left:40px;top:40px;color:#55565c">Compta 2026</div><div class="abs" style="left:-6px;top:70px;transform:scale(.72);transform-origin:0 0"><div class="abs" style="left:26px;top:26px;width:700px"><div style="display:flex;height:46px;align-items:center;background:#f3efe6"><div style="width:140px;padding:0 16px" class="micro">Date</div><div style="width:360px;padding:0 16px" class="micro">Libellé</div><div style="width:200px;padding:0 16px" class="micro">Montant</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">02/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Fournitures</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">84,20</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">05/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Abonnement</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">29,00</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">09/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Déplacement</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">146,50</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">12/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Logiciel</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">59,99</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">16/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Repas client</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">72,40</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">21/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Téléphone</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">34,99</div></div><div style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px">24/03</div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px">Formation</div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px">390,00</div></div><div id="f07-total" style="display:flex;height:66px;align-items:center;background:#fff7d6;border-top:2px solid #17181c"><div style="width:500px;padding:0 16px;font:700 24px/1 Instrument Sans">Total</div><div style="font:700 28px/1 Space Mono"><span class="f07-amt" id="f07-amt">0,00 €</span></div></div><div class="abs" style="left:140px;top:0;bottom:0;width:1px;background:#ece7dc"></div><div class="abs" style="left:500px;top:0;bottom:0;width:1px;background:#ece7dc"></div></div></div></div></div>
+        </div>
+
+        <!-- le champ de saisie clair (séquence 8) qui monte du bas pendant le cran final -->
+        <div id="f07-fieldA">
+          <div id="f07-field"><span><span class="caret" style="height:60px;width:6px;margin-left:8px"></span></span><div class="send" style="right:40px;top:65px;width:120px;height:120px;border-radius:28px"><svg width="56" height="56" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        </div>
+
+      </div></div></div>
+    </div>
+
+    <!-- piste 2 : le sous-titre (bande y 890 à 980), le grain et la vignette, hors caméra -->
+    <div id="f07-over" class="clip" data-start="0" data-duration="3.42" data-track-index="2">
+      <div class="sub light" id="f07-sub"><span class="w f07-w" id="f07-w0">Aujourd’hui,</span> <span class="f07-hl" id="f07-hlw"><i class="f07-hlbg" id="f07-box"></i><span class="w f07-w" id="f07-w1">l’IA</span></span> <span class="w f07-w" id="f07-w2">rédige,</span> <span class="w f07-w" id="f07-w3">résume,</span> <span class="w f07-w" id="f07-w4">calcule.</span></div>
+      <div class="grain"></div>
+      <div class="vignette light"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "07-aujourdhui";
+      var DUR = 3.42;
+      window.__timelines = window.__timelines || {};
+      function $(id) { return document.getElementById("f07-" + id); }
+      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+      /* ---------- constantes de mise en scène ---------- */
+      var SA = 1.16;                 // échelle de caméra de la scène 1 (posée)
+      var S07 = SA * 1.008;          // échelle à 0.70 (poussée 2 %/s depuis 0.30) : #f07-s1 = scale(1 / S07)
+      var TY_END = -286;             // cran final vers le bas : translation du monde à 3.42
+      var CARD_UP = -160;            // les cartes partent vers le haut (monde)
+      var FIELD_RISE = 260 / 0.555556; // le champ monte de 260 px du monde (repère local à l'échelle 1/1,8)
+      // la bulle de réponse (P12, écran : centre 958 / 468.2, 705.6 × 123.5) ramenée dans le monde
+      var BX = 960 + (958 - 960) / S07, BY = 540 + (468.2 - 540) / S07, BW = 705.6 / S07, BH = 123.5 / S07;
+      var PIECE = (BW - 16) / 3;     // la bulle se partage en trois morceaux, 8 px d'écart
+      var CARDS = [{ id: "c1", cx: 390 }, { id: "c2", cx: 960 }, { id: "c3", cx: 1530 }];
+      var CARD_CY = 480;
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- horloge unique : textes discrets, carets, montant (discrete-text-sequence, counting-dynamic-scale) ---------- */
+      var SEQ1 = [[0, ""], [1.50, "1."], [1.55, "1. Où"], [1.61, "1. Où en"], [1.66, "1. Où en est"], [1.72, "1. Où en est le"], [1.78, "1. Où en est le projet"]];
+      var SEQ2 = [[0, ""], [2.24, "2."], [2.34, "2. Ce"], [2.48, "2. Ce qui"], [2.64, "2. Ce qui c"], [2.76, "2. Ce qui ch"], [2.90, "2. Ce qui chan"]];
+      function textAt(seq, t) { for (var i = seq.length - 1; i >= 0; i--) { if (t >= seq[i][0]) return seq[i]; } return seq[0]; }
+      var EXPO = gsap.parseEase("expo.out");
+      function fmt(v) {
+        var c = Math.round(v * 100), e = Math.floor(c / 100), d = c % 100;
+        return String(e).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + "," + (d < 10 ? "0" : "") + d + " €";
+      }
+      var t1 = $("t1"), t2 = $("t2"), k1 = $("caret1"), k2 = $("caret2"), kA = $("caretA"), amt = $("amt");
+      var last = {};
+      function put(el, key, val) { if (last[key] !== val) { last[key] = val; el.textContent = val; } }
+      function op(el, key, val) { if (last[key] !== val) { last[key] = val; el.style.opacity = val; } }
+      function blink(t, since, period) { return (t - since) < 0.0001 ? true : (((t - since) % period) < period / 2); }
+      function render(t) {
+        // caret du champ du portable (scène 1) : clignote 0,8 s
+        op(kA, "kA", blink(t, 0, 0.8) ? "1" : "0");
+        // carte 1 : le titre 1 se tape, puis le titre 2 ; le caret suit la ligne active, plein pendant la frappe
+        var s1 = textAt(SEQ1, t), s2 = textAt(SEQ2, t);
+        put(t1, "t1", s1[1]);
+        put(t2, "t2", s2[1]);
+        var c1 = 0, c2 = 0;
+        if (t >= 1.46 && t < 2.20) { c1 = (t < 1.84) ? 1 : (blink(t, 1.84, 0.6) ? 1 : 0); }
+        if (t >= 2.20) { c2 = (t < 2.96) ? 1 : (blink(t, 2.96, 0.6) ? 1 : 0); }
+        op(k1, "k1", String(c1));
+        op(k2, "k2", String(c2));
+        // carte 3 : le montant roule de 0 à 1 066,08 € (0,5 s expo.out à partir de 2.68)
+        var p = clamp((t - 2.68) / 0.5, 0, 1);
+        put(amt, "amt", fmt(1066.08 * EXPO(p)));
+      }
+      var clock = { t: 0 };
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: function () { render(clock.t); } }, 0);
+
+      /* ---------- PISTE CAMÉRA (timeline à part, ajoutée au maître à 0) ---------- */
+      var cam = gsap.timeline();
+      // atterrissage 0.00 à 0.30, puis poussée 2 %/s (dérive d'échelle) jusqu'au recul
+      cam.fromTo($("cam"), { scale: SA * 1.05 }, { scale: SA, duration: 0.30, ease: "expo.out" }, 0);
+      cam.fromTo($("drift"), { scale: 1 }, { scale: 1.018, duration: 0.90, ease: "none", immediateRender: false }, 0.30);
+      // 1.20 à 1.50 recul expo.out vers les trois cartes (la dérive d'échelle est remise à zéro sous le recul)
+      cam.fromTo($("cam"), { scale: SA }, { scale: 1, duration: 0.30, ease: "expo.out", immediateRender: false }, 1.20);
+      cam.fromTo($("drift"), { scale: 1.018 }, { scale: 1, duration: 0.30, ease: "expo.out", immediateRender: false }, 1.20);
+      // dérive x +12 px/s
+      cam.fromTo($("drift"), { x: 0 }, { x: 12 * (DUR - 1.50), duration: DUR - 1.50, ease: "none", immediateRender: false }, 1.50);
+      // crans de 0,1 s vers la carte active
+      cam.fromTo($("world"), { x: 0 }, { x: 16, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 1.44);
+      cam.fromTo($("world"), { x: 16 }, { x: 0, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 1.91);
+      cam.fromTo($("world"), { x: 0 }, { x: -18, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 2.66);
+      // 3.20 à 3.42 cran vers le bas ×1 → ×1,8 (expo.inOut) ; la translation est encore lancée à la couture
+      cam.fromTo($("cam"), { scale: 1 }, { scale: 1.8, duration: 0.22, ease: "expo.inOut", immediateRender: false }, 3.20);
+      cam.fromTo($("world"), { y: 0 }, { y: TY_END, duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
+      tl.add(cam, 0);
+
+      /* ---------- Scene 1 (0.00 à 1.40) : P12, « Aujourd’hui, l’IA » ---------- */
+      // le portable clair se pose (×1,15, flou 8 → net en 0,16 s) sous le flash
+      tl.fromTo($("lap"), { scale: 0.98 * 1.15, filter: "blur(8px)" }, { scale: 0.98, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 0);
+      // 0.50 « Assistant IA » s'allume
+      tl.fromTo($("dot"), { opacity: 0.35, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.14, ease: "expo.out", immediateRender: false }, 0.50);
+      tl.fromTo($("aiht"), { opacity: 0.5 }, { opacity: 1, duration: 0.16, ease: "power2.out", immediateRender: false }, 0.50);
+      tl.fromTo($("ring"), { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 3.6, duration: 0.45, ease: "power2.out", immediateRender: false }, 0.50);
+      // 0.60 la bulle de réponse ; ses lignes poussent (0.64, 0.90, 1.04)
+      tl.fromTo($("bubble"), { opacity: 0, scale: 0.94, y: 8 }, { opacity: 1, scale: 1, y: 0, duration: 0.14, ease: "expo.out", immediateRender: false }, 0.60);
+      function grow(id, at, d) { tl.fromTo($(id), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: d, ease: "power2.out", immediateRender: false }, at); }
+      grow("bl0", 0.64, 0.32);
+      grow("bl1", 0.90, 0.26);
+      grow("bl2", 1.04, 0.20);
+      // la lumière qui inonde le papier retombe pendant le recul
+      tl.fromTo($("bloom"), { opacity: 1 }, { opacity: 0, duration: 0.30, ease: "power2.out", immediateRender: false }, 1.20);
+
+      /* ---------- sous-titre mot à mot (frame.md word-by-word, key-word-box) ---------- */
+      function word(id, cue) {
+        var at = cue - 0.033;
+        tl.fromTo($(id), { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo($(id), { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, at + 0.14);
+      }
+      word("w0", 0.16);
+      tl.fromTo($("box"), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.80);
+      word("w1", 0.82);
+      word("w2", 1.46);
+      word("w3", 1.93);
+      word("w4", 2.68);
+      // avant la couture, le sous-titre sort (opacité 1 → 0, flou 0 → 6 px, 0,14 s), mot par mot pour ne flouter aucun grand calque
+      tl.fromTo([$("w0"), $("hlw"), $("w2"), $("w3"), $("w4")], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 3.18);
+
+      /* ---------- Scene 2 (1.40 à 3.42) : P13, « rédige, résume, calcule » ---------- */
+      // 1.40 la bulle se partage en trois cartes qui se posent côte à côte ; le portable s'efface derrière elles
+      tl.fromTo($("bubble"), { opacity: 1 }, { opacity: 0, duration: 0.03, ease: "none", immediateRender: false }, 1.40);
+      tl.fromTo($("lapx"), { opacity: 1, scale: 1, filter: "blur(0px)" }, { opacity: 0, scale: 0.96, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.40);
+      CARDS.forEach(function (c, i) {
+        var at = 1.40 + i * 0.015;
+        var px = BX + (i - 1) * (PIECE + 8);
+        tl.fromTo($(c.id), { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, at);
+        tl.fromTo($(c.id), { x: px - c.cx, y: BY - CARD_CY, scaleX: PIECE / 500, scaleY: BH / 600, filter: "blur(3px)" },
+          { x: 0, y: 0, scaleX: 1, scaleY: 1, filter: "blur(0px)", duration: 0.20, ease: "expo.out", immediateRender: false }, at);
+      });
+      tl.fromTo($("k1"), { opacity: 0 }, { opacity: 1, duration: 0.10, ease: "power2.out", immediateRender: false }, 1.46);
+      tl.fromTo($("k2"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.50);
+      tl.fromTo($("k3"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.52);
+
+      // mise au point : la carte du verbe dit est nette, les deux autres à 85 %, flou 1 px
+      function dim(id, at) { tl.fromTo($(id), { opacity: 1, filter: "blur(0px)" }, { opacity: 0.85, filter: "blur(1px)", duration: 0.12, ease: "power2.out", immediateRender: false }, at); }
+      function sharp(id, at) { tl.fromTo($(id), { opacity: 0.85, filter: "blur(1px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out", immediateRender: false }, at); }
+      dim("c2in", 1.46); dim("c3in", 1.46);          // « rédige » : carte 1
+      dim("c1in", 1.93); sharp("c2in", 1.93);        // « résume » : carte 2
+      dim("c2in", 2.68); sharp("c3in", 2.68);        // « calcule » : carte 3
+      sharp("c1in", 3.10); sharp("c2in", 3.10);      // 3.10 les trois cartes nettes
+
+      // carte 1 (« rédige ») : les lignes s'écrivent entre les deux titres (les titres se tapent dans render)
+      grow("l0", 1.82, 0.18);
+      grow("l1", 1.90, 0.18);
+      grow("l2", 1.98, 0.18);
+      grow("l3", 2.06, 0.16);
+
+      // carte 2 (« résume ») : 1.93 la pile « 12 messages » se replie (0,2 s power3.in), le résumé en sort à 2.00
+      [0, 1, 2, 3, 4].forEach(function (i) {
+        tl.fromTo($("r" + i), { y: 0, opacity: 1 }, { y: -10 * i, opacity: 0.35 + 0.08 * i, duration: 0.20, ease: "power3.in", immediateRender: false }, 1.93);
+      });
+      tl.fromTo([$("r4a"), $("r4b")], { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power2.in", immediateRender: false }, 1.93);
+      tl.fromTo($("sum"), { opacity: 0, y: -110, scale: 0.86 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, 2.00);
+      [0, 1, 2].forEach(function (i) {
+        var at = 2.10 + i * 0.08;
+        tl.fromTo($("sd" + i), { opacity: 1, scale: 0 }, { opacity: 1, scale: 1, duration: 0.12, ease: "expo.out", immediateRender: false }, at);
+        grow("sl" + i, at + 0.02, 0.20);
+      });
+
+      // carte 3 (« calcule ») : 2.62 la ligne « Total » arrive, 2.68 le montant roule (valeur dans render, échelle ici)
+      tl.fromTo($("total"), { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.14, ease: "expo.out", immediateRender: false }, 2.62);
+      tl.fromTo($("amt"), { scale: 0.6 }, { scale: 0.6, duration: 0.06, ease: "none", immediateRender: false }, 2.62);
+      tl.fromTo($("amt"), { scale: 0.6 }, { scale: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 2.68);
+
+      /* ---------- 3.20 sortie vers le haut + le champ de saisie qui monte du bas (handoff_out) ---------- */
+      CARDS.forEach(function (c) {
+        tl.fromTo($(c.id), { y: 0, scaleY: 1, filter: "blur(0px)" }, { y: CARD_UP, scaleY: 1.12, filter: "blur(8px)", duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
+      });
+      tl.fromTo($("field"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 3.19);
+      tl.fromTo($("field"), { y: FIELD_RISE, filter: "blur(16px)" }, { y: 0, filter: "blur(10px)", duration: 0.22, ease: "power2.out", immediateRender: false }, 3.20);
+      tl.fromTo($("dots"), { opacity: 1 }, { opacity: 0.45, duration: 0.22, ease: "power1.in", immediateRender: false }, 3.20);
+
+      render(0);
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

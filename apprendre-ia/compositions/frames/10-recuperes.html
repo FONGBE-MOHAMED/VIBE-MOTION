@@ -1,0 +1,417 @@
+<template>
+  <style>
+/* ===== kit de dessin du film (styleframes/_kit.css), recopié mot pour mot, sans html/body/#stage ===== */
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+/* ===== fin du kit ===== */
+
+/* ===== séquence 10 « Tu récupères ton temps » (préfixe f10-) ===== */
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+#f10-ground, #f10-stage, #f10-subs, #f10-fx { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f10-stage { overflow: hidden; }
+/* caméra : #f10-drift (poussée lente) > #f10-cam (échelle des crans et du recul) > #f10-world (translation) */
+#f10-drift, #f10-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+#f10-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+/* la trame de points du papier (mêmes valeurs que .g-light .dots), portée par la dérive pour la rendre visible */
+#f10-dots { position: absolute; left: -60px; top: -60px; width: 2040px; height: 1200px;
+  background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+/* la fenêtre de conversation de la séquence 9 (P17), qui se résorbe au centre du cadre */
+#f10-conv { position: absolute; left: 360px; top: 90px; width: 1200px; height: 740px; transform-origin: 600px 450px; }
+/* les trois tuiles de P18 */
+#f10-tiles { position: absolute; left: 160px; top: 140px; width: 1600px; height: 640px; }
+.f10-tile { position: absolute; top: 0; width: 480px; height: 640px; opacity: 0; }
+#f10-t1 { left: 0; transform-origin: 800px 400px; }
+#f10-t2 { left: 560px; transform-origin: 240px 400px; }
+#f10-t3 { left: 1120px; transform-origin: -320px 400px; }
+.f10-float { position: absolute; left: 0; top: 0; width: 480px; height: 640px; }
+.f10-tin { position: absolute; left: 0; top: 0; width: 480px; height: 640px; transform-origin: 240px 320px; }
+.f10-digit { transform-origin: 240px 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.f10-label { opacity: 0; transform-origin: 240px 23px; white-space: nowrap; }
+.f10-pillrow { opacity: 0; transform-origin: 240px 19px; }
+/* sous-titre : la ligne (pour la sortie floue), la boîte du mot clé tracée depuis la gauche */
+.f10-line { display: inline-block; }
+.f10-hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.f10-hlbox { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px;
+  z-index: -1; transform-origin: 0 50%; opacity: 0; }
+#f10-subs .w { opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="10-recuperes" data-width="1920" data-height="1080" data-duration="3.42">
+    <!-- sol : le papier (g-light) et son halo, fixes -->
+    <div id="f10-ground" class="clip" data-start="0" data-duration="3.42" data-track-index="0" data-layout-ignore>
+      <div class="g-light"><div class="halo" style="left:10.0px;top:0.0px;width:1900px;height:900px"></div></div>
+    </div>
+
+    <!-- le monde, sous la piste caméra -->
+    <div id="f10-stage" class="clip" data-start="0" data-duration="3.42" data-track-index="1">
+      <div id="f10-drift">
+        <div id="f10-dots" data-layout-ignore></div>
+        <div id="f10-cam">
+          <div id="f10-world">
+            <!-- handoff_in : la fenêtre de conversation de P17, à ×0,6 et floue, qui se résorbe -->
+            <div id="f10-conv" data-layout-allow-overflow>
+              <div class="card" style="left:0px;top:0px;width:1200px;height:740px"></div>
+              <div class="abs" style="left:0px;top:0px;width:1200px;height:70px;display:flex;align-items:center;gap:12px;padding:0 32px;border-bottom:1px solid #ece7dc;font:600 24px/1 Instrument Sans;color:#17181c"><span class="ai-dot"></span>Assistant IA</div>
+              <div class="abs" style="right:50px;top:110px;padding:24px 30px;border-radius:26px 26px 6px 26px;background:#efebe2;font:500 32px/1.2 Instrument Sans;color:#17181c">Prépare ma présentation de lundi.</div>
+              <div class="abs" style="left:50px;top:240px;padding:24px 30px;border-radius:26px 26px 26px 6px;background:#fff;border:1px solid #e1dccf;font:500 32px/1.2 Instrument Sans;color:#17181c;display:flex;gap:14px;align-items:center"><span class="ai-dot"></span>Voici 10 diapos. Je les raccourcis ?</div>
+              <div class="abs" style="right:50px;top:370px;padding:24px 30px;border-radius:26px 26px 6px 26px;background:#efebe2;font:500 32px/1.2 Instrument Sans;color:#17181c">Oui, et ajoute un graphique.</div>
+              <div class="abs" style="left:50px;top:520px;width:1100px;height:110px;border-radius:24px;background:#fff;border:2px solid rgba(23,24,28,.14);display:flex;align-items:center;padding:0 30px;font:500 30px/1 Instrument Sans;color:#8d8a84">Écris ta demande…<span class="caret" style="height:36px;margin-left:6px"></span><div class="send" style="right:24px;top:24px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+            </div>
+
+            <!-- P18 : trois tuiles côte à côte (marges égales de 160 px), l'horloge de chaque douleur -->
+            <div id="f10-tiles">
+            <div id="f10-t1" class="f10-tile"><div id="f10-t1-f" class="f10-float"><div id="f10-t1-in" class="f10-tin"><div class="card" style="left:0px;top:0px;width:480px;height:640px"></div><div class="abs" style="left:100.0px;top:80.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:100px;top:80px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path id="f10-w1" d="M140 140Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f10-h1" x1="140.0" y1="140.0" x2="140.0" y2="70.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f10-m1" x1="140.0" y1="140.0" x2="140.0" y2="36.4" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f10-s1" x1="140.0" y1="161.0" x2="140.0" y2="28.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div id="f10-d1" class="abs f10-digit" style="left:0px;width:480px;top:460px;text-align:center;font:700 30px/1 Space Mono;color:#55565c;letter-spacing:.06em">22:47</div><div id="f10-l1" class="abs f10-label" style="left:0px;width:480px;top:420px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Soirée</div><div id="f10-p1" class="abs f10-pillrow" style="left:0px;width:480px;top:500px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div></div></div></div>
+            <div id="f10-t2" class="f10-tile"><div id="f10-t2-f" class="f10-float"><div id="f10-t2-in" class="f10-tin"><div class="card" style="left:0px;top:0px;width:480px;height:640px"></div><div class="abs" style="left:100.0px;top:80.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:100px;top:80px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path id="f10-w2" d="M140 140Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f10-h2" x1="140.0" y1="140.0" x2="140.0" y2="70.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f10-m2" x1="140.0" y1="140.0" x2="140.0" y2="36.4" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f10-s2" x1="140.0" y1="161.0" x2="140.0" y2="28.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div id="f10-d2" class="abs f10-digit" style="left:0px;width:480px;top:460px;text-align:center;font:700 30px/1 Space Mono;color:#55565c;letter-spacing:.06em">12:00</div><div id="f10-l2" class="abs f10-label" style="left:0px;width:480px;top:420px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Matinée</div><div id="f10-p2" class="abs f10-pillrow" style="left:0px;width:480px;top:500px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div></div></div></div>
+            <div id="f10-t3" class="f10-tile"><div id="f10-t3-f" class="f10-float"><div id="f10-t3-in" class="f10-tin"><div class="card" style="left:0px;top:0px;width:480px;height:640px"></div><div class="abs" style="left:100.0px;top:80.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:100px;top:80px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path id="f10-w3" d="M140 140Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><text x="140.0" y="198.8" text-anchor="middle" font-family="Space Mono" font-weight="700" font-size="21" letter-spacing="3" fill="#55565c">DIM.</text><line id="f10-h3" x1="140.0" y1="140.0" x2="140.0" y2="70.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f10-m3" x1="140.0" y1="140.0" x2="140.0" y2="36.4" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f10-s3" x1="140.0" y1="161.0" x2="140.0" y2="28.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div id="f10-d3" class="abs f10-digit" style="left:0px;width:480px;top:460px;text-align:center;font:700 30px/1 Space Mono;color:#55565c;letter-spacing:.06em">DIM.</div><div id="f10-l3" class="abs f10-label" style="left:0px;width:480px;top:420px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Dimanche</div><div id="f10-p3" class="abs f10-pillrow" style="left:0px;width:480px;top:500px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- la phrase de la voix, en bas au centre, mot par mot ; deux morceaux -->
+    <div id="f10-subs" class="clip" data-start="0" data-duration="3.42" data-track-index="2">
+      <div id="f10-sub1" class="sub light"><span id="f10-line1" class="f10-line"><span class="w" data-cue="0.23">Et</span> <span class="f10-hl"><i id="f10-box" class="f10-hlbox"></i><span class="w" data-cue="0.41">tu</span> <span class="w" data-cue="0.59">récupères</span></span> <span class="w" data-cue="1.04">ta</span> <span class="w" data-cue="1.22">soirée,</span></span></div>
+      <div id="f10-sub2" class="sub light"><span id="f10-line2" class="f10-line"><span class="w" data-cue="1.68">ta</span> <span class="w" data-cue="1.87">matinée,</span> <span class="w" data-cue="2.54">ton</span> <span class="w" data-cue="2.77">dimanche.</span></span></div>
+    </div>
+
+    <!-- grain et vignette du papier, fixes -->
+    <div id="f10-fx" class="clip" data-start="0" data-duration="3.42" data-track-index="3" data-layout-ignore>
+      <div class="grain"></div>
+      <div class="vignette light"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "10-recuperes";
+      var D = 3.42;
+      function $(id) { return document.getElementById(id); }
+
+      var drift = $("f10-drift"), cam = $("f10-cam"), world = $("f10-world");
+      var conv = $("f10-conv"), tilesBox = $("f10-tiles");
+
+      /* ---- la piste caméra : UN proxy, écrit par UN seul onUpdate ----
+         écran = 960 + sd * s * (X + wx - 960) (et de même en y autour de 540) */
+      var S0 = 0.92;                                   // cadrage de départ un peu large : la poussée amène P18 (×1) à 2.84
+      var CAM = { sd: 1, s: S0, wx: 0, wy: 0 };
+      var SD_END = 1 + 0.02 * D;                       // poussée 2 %/s sur toute la séquence
+
+      /* ---- les trois horloges de la douleur, remontées à rebours ----
+         angles en degrés, sens horaire depuis midi. Un seul proxy p (0 → 1, power2.inOut) par horloge pilote
+         l'aiguille des heures, celle des minutes, la trotteuse et l'heure numérique.
+         Le secteur jaune du temps rendu est la dernière course de L degrés de l'aiguille des minutes :
+         ancré en Ef + L, son bord libre suit l'aiguille jusqu'à Ef (tuile 1 : 0 → 167°, tuile 2 : 180 → 360°,
+         tuile 3 : tout le cadran), soit exactement le dessin de P18 à la fin. */
+      var CL = [
+        { k: 1, H0: 323.5, H1: 180, M0: 282, M1: -360, Ef: 0,   L: 167,   Send: 0,   R: 720, T0: 1367, T1: 1080, t0: 1.14, dur: 0.60 }, // 22:47 → 18:00
+        { k: 2, H0: 360,   H1: 255, M0: 360, M1: -180, Ef: 180, L: 180,   Send: 180, R: 720, T0: 720,  T1: 510,  t0: 1.79, dur: 0.60 }, // 12:00 → 08:30
+        { k: 3, H0: 195,   H1: -60, M0: 180, M1: -360, Ef: 0,   L: 359.5, Send: 0,   R: 540, T0: null, T1: null, t0: 2.48, dur: 0.38 }  // DIM. 18:30 → 10:00
+      ];
+      CL.forEach(function (c) {
+        c.p = 0;
+        c.tEnd = c.t0 + c.dur;
+        c.h = $("f10-h" + c.k); c.m = $("f10-m" + c.k); c.s = $("f10-s" + c.k); c.w = $("f10-w" + c.k); c.d = $("f10-d" + c.k);
+        c.lastV = null; c.lastD = "";
+      });
+
+      var P = { t: 0 };                                  // horloge de la séquence (trotteuses vivantes, flottement)
+
+      /* vie de la tenue : chaque tuile flotte de ±4 px (sinus, périodes et phases différentes), dès qu'elle est posée */
+      var FL = [
+        { el: $("f10-t1-f"), T: 1.8, ph: 0.0 },
+        { el: $("f10-t2-f"), T: 2.0, ph: 0.55 },
+        { el: $("f10-t3-f"), T: 2.2, ph: 1.1 }
+      ];
+
+      function rot(el, a) { el.setAttribute("transform", "rotate(" + a.toFixed(2) + " 140 140)"); }
+      function pt(a) {
+        var r = a * Math.PI / 180;
+        return (140 + 114 * Math.sin(r)).toFixed(2) + " " + (140 - 114 * Math.cos(r)).toFixed(2);
+      }
+      function sector(a, b) {                           // arc SVG de a à b (sens horaire), comme dans P18
+        var span = b - a;
+        if (span < 0.25) return "M140 140Z";
+        return "M140 140 L" + pt(a) + " A114 114 0 " + (span > 180 ? 1 : 0) + " 1 " + pt(b) + " Z";
+      }
+      function hhmm(v) {
+        var h = Math.floor(v / 60) % 24, m = v % 60;
+        return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+      }
+
+      function render() {
+        drift.style.transform = "scale(" + CAM.sd.toFixed(5) + ")";
+        cam.style.transform = "scale(" + CAM.s.toFixed(5) + ")";
+        world.style.transform = "translate(" + CAM.wx.toFixed(2) + "px," + CAM.wy.toFixed(2) + "px)";
+
+        var env = Math.min(1, Math.max(0, (P.t - 0.26) / 0.4));
+        env = env * env * (3 - 2 * env);
+        for (var j = 0; j < FL.length; j++) {
+          var fy = -4 * env * Math.sin(2 * Math.PI * (P.t - 0.26 + FL[j].ph) / FL[j].T);
+          FL[j].el.style.transform = "translateY(" + fy.toFixed(2) + "px)";
+        }
+
+        for (var i = 0; i < CL.length; i++) {
+          var c = CL[i], e = c.p;
+          var mAng = c.M0 + (c.M1 - c.M0) * e;
+          rot(c.h, c.H0 + (c.H1 - c.H0) * e);
+          rot(c.m, mAng);
+          rot(c.s, c.Send + 6 * (P.t - c.tEnd) + c.R * (1 - e));   // trotteuse : avance de 6°/s, recule pendant la remontée
+          var r = mAng - c.M1, d = (r < c.L) ? sector(c.Ef + r, c.Ef + c.L) : "M140 140Z";
+          if (d !== c.lastD) { c.w.setAttribute("d", d); c.lastD = d; }
+          if (c.T0 !== null) {
+            var v = Math.round(c.T0 + (c.T1 - c.T0) * e);
+            if (v !== c.lastV) { c.d.textContent = hhmm(v); c.lastV = v; }
+          }
+        }
+      }
+
+      var tl = gsap.timeline({ paused: true, onUpdate: render });
+
+      /* ===== horloge et dérive (toute la séquence) ===== */
+      tl.fromTo(P, { t: 0 }, { t: D, duration: D, ease: "none" }, 0);
+      tl.fromTo(CAM, { sd: 1 }, { sd: SD_END, duration: D, ease: "none" }, 0);
+
+      /* ===== 0.00 à 0.24 : la conversation se résorbe, les trois tuiles se posent (recul repris de la séquence 9) ===== */
+      // l'élan du recul continue (rapide au départ), l'opacité tient les deux premières images puis s'éteint
+      tl.fromTo(conv, { scale: 0.6 / S0, filter: "blur(12px)" }, { scale: 0.3 / S0, filter: "blur(16px)", duration: 0.2, ease: "power2.out" }, 0);
+      tl.fromTo(conv, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power2.in" }, 0);
+      // les tuiles arrivent un peu trop grandes et floues, autour du centre du cadre, et se posent (cascade de 0,025 s)
+      [1, 2, 3].forEach(function (k, i) {
+        tl.fromTo($("f10-t" + k), { opacity: 0, scale: 1.15, filter: "blur(12px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out", immediateRender: false }, 0.05 + 0.025 * i);
+      });
+
+      /* ===== crans de 0,1 s vers la tuile active (1.14, 1.79, 2.69) : +1,2 % autour du centre de la tuile ===== */
+      var TILE_C = [[400, 460], [960, 460], [1520, 460]];
+      var st = { s: S0, cx: 960, cy: 540 };
+      [1.14, 1.79, 2.69].forEach(function (tc, i) {
+        var X = TILE_C[i][0], Y = TILE_C[i][1], s1 = st.s * 1.012;
+        var cx1 = X - (X - st.cx) * st.s / s1, cy1 = Y - (Y - st.cy) * st.s / s1;
+        tl.fromTo(CAM, { s: st.s, wx: 960 - st.cx, wy: 540 - st.cy },
+          { s: s1, wx: 960 - cx1, wy: 540 - cy1, duration: 0.1, ease: "expo.inOut", immediateRender: false }, tc);
+        st = { s: s1, cx: cx1, cy: cy1 };
+      });
+      /* ===== 3.24 à 3.42 : recul (power2.in), les tuiles rétrécissent au centre (×0,6 à l'écran), flou 0 → 12 px ===== */
+      tl.fromTo(CAM, { s: st.s, wx: 960 - st.cx, wy: 540 - st.cy },
+        { s: 0.6 / SD_END, wx: 0, wy: 0, duration: 0.18, ease: "power2.in", immediateRender: false }, 3.24);
+      tl.fromTo(tilesBox, { filter: "blur(0px)" }, { filter: "blur(12px)", duration: 0.18, ease: "power2.in", immediateRender: false }, 3.24);
+
+      /* ===== la tuile active se soulève (sujet), les deux autres restent posées (milieu) ===== */
+      function lift(k, t) {
+        tl.fromTo($("f10-t" + k + "-in"), { scale: 1, y: 0 }, { scale: 1.02, y: -6, duration: 0.14, ease: "expo.out", immediateRender: false }, t);
+      }
+      function settle(k, t) {
+        tl.fromTo($("f10-t" + k + "-in"), { scale: 1.02, y: -6 }, { scale: 1, y: 0, duration: 0.22, ease: "power2.out", immediateRender: false }, t);
+      }
+      function land(el, t) {                              // loi 4 : un peu grand, flou, puis posé
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(8px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false }, t);
+      }
+      function rewind(c) {                                 // aiguilles à rebours + secteur jaune + heure numérique
+        tl.fromTo(c, { p: 0 }, { p: 1, duration: c.dur, ease: "power2.inOut", immediateRender: false }, c.t0);
+        if (c.T0 !== null) {                               // l'heure grossit pendant qu'elle compte (26 → 30 px), même courbe
+          tl.fromTo(c.d, { scale: 26 / 30 }, { scale: 1, duration: c.dur, ease: "power2.inOut", immediateRender: false }, c.t0);
+        }
+      }
+      function digitMakesRoom(k, t) {                      // l'heure descend dans la case de la pastille quand le mot arrive
+        tl.fromTo($("f10-d" + k), { y: 0 }, { y: 46, duration: 0.14, ease: "power3.out", immediateRender: false }, t);
+      }
+      function digitOut(k, t) {
+        tl.fromTo($("f10-d" + k), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.06, ease: "power2.in", immediateRender: false }, t);
+      }
+      gsap.set([$("f10-d1"), $("f10-d2"), $("f10-d3")], { scale: 26 / 30 });
+
+      // 1.14 / 1.22 « soirée » : tuile 1, 22:47 → 18:00
+      lift(1, 1.14);
+      rewind(CL[0]);
+      land($("f10-l1"), 1.19);
+      digitMakesRoom(1, 1.19);
+      digitOut(1, 1.75);
+      land($("f10-p1"), 1.76);
+
+      // 1.79 / 1.87 « matinée » : tuile 2, 12:00 → 08:30
+      settle(1, 1.79);
+      lift(2, 1.79);
+      rewind(CL[1]);
+      land($("f10-l2"), 1.84);
+      digitMakesRoom(2, 1.84);
+      digitOut(2, 2.40);
+      land($("f10-p2"), 2.41);
+
+      // 2.48 / 2.77 « dimanche » : tuile 3, DIM., tout le cadran se remplit de jaune
+      settle(2, 2.48);
+      lift(3, 2.48);
+      rewind(CL[2]);
+      land($("f10-l3"), 2.74);
+      digitOut(3, 2.68);
+      land($("f10-p3"), 2.76);
+
+      // 3.04 : les trois tuiles respirent (une inspiration, une expiration, décalées de 0,03 s)
+      [1, 2, 3].forEach(function (k, i) {
+        var el = $("f10-t" + k + "-in"), t = 3.04 + 0.03 * i, s0 = k === 3 ? 1.02 : 1, y0 = k === 3 ? -6 : 0;
+        tl.fromTo(el, { scale: s0, y: y0 }, { scale: 1.015, y: -3, duration: 0.16, ease: "sine.inOut", immediateRender: false }, t);
+        tl.fromTo(el, { scale: 1.015, y: -3 }, { scale: 1, y: 0, duration: 0.16, ease: "sine.inOut", immediateRender: false }, t + 0.16);
+      });
+
+      /* ===== le sous-titre : mot par mot, gris (encre à 35 %) puis encre pleine ===== */
+      Array.prototype.forEach.call(document.querySelectorAll("#f10-subs .w"), function (w) {
+        var t = parseFloat(w.getAttribute("data-cue")) - 0.03;
+        tl.fromTo(w, { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power3.out", immediateRender: false }, t);
+        tl.fromTo(w, { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power1.out", immediateRender: false }, t + 0.14);
+      });
+      // [boîte : tu récupères] tracée depuis la gauche à 0.39
+      tl.fromTo($("f10-box"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.39);
+      // 1.54 : le second morceau remplace le premier ; 3.18 : le sous-titre sort
+      tl.fromTo($("f10-line1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.54);
+      tl.fromTo($("f10-line2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 3.18);
+
+      render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

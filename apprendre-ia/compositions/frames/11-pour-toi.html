@@ -1,0 +1,443 @@
+<template>
+  <style>
+    /* ===================== kit de dessin du film (styleframes/_kit.css, copie mot pour mot ; ../assets/ devient assets/) ===================== */
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+
+    /* ===================== fin du kit (styleframes/_kit.css, copie mot pour mot) ===================== */
+
+    /* ===================== séquence 11 « Cette fois, c'est pour toi » (préfixe f11-) =====================
+       Monde (repère du styleframe P19, caméra ×1) : le portable clair posé sur la frise du papier, « 2026 » dessous ;
+       le post-it posé sur l'écran (centre au repos 975,5 / 384,5). Caméra : #f11-drift > #f11-cam > #f11-world.
+       Deux plans : #f11-bg (sol, frise, portable, tuiles), qui pousse moins que la caméra (parallaxe), et #f11-fg
+       (le post-it et le feutre), le sujet net. */
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    #f11-ground { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #f5f2ea; }
+    #f11-stage, #f11-subs, #f11-fx { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    #f11-subs, #f11-fx { pointer-events: none; }
+    #f11-drift, #f11-cam, #f11-world, #f11-bg, #f11-fg, #f11-set, #f11-tiles { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f11-drift, #f11-cam { transform-origin: 960px 540px; }
+    #f11-world, #f11-bg { transform-origin: 0 0; }
+
+    /* rien de ce qui naît après la couture n'est visible par défaut */
+    #f11-set { opacity: 0; }
+    #f11-dots { opacity: 0; }
+    #f11-ai { opacity: 0; }
+    #f11-veil { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #c9ccd2; opacity: 0; }
+    #f11-postit { opacity: 0; }
+    #f11-strike { opacity: 0; }
+    #f11-strike path { stroke-dasharray: 400; stroke-dashoffset: 400; }
+    /* le feutre noir de P20 : la pointe (30, 0) est le point fixe de la rotation et de l'échelle */
+    #f11-pen { position: absolute; left: -30px; top: 0; width: 60px; height: 420px; transform-origin: 30px 0; opacity: 0; }
+
+    /* sous-titre mot par mot : gris (encre à 35 %) puis encre pleine */
+    .f11-w { opacity: 0; color: rgba(23, 24, 28, 0.35); }
+    /* le surligneur du kit (.hl::before) se trace depuis la gauche : variable --f11-k de 0 à 1 */
+    #f11-hl::before { transform: scaleX(var(--f11-k, 0)); transform-origin: 0 50%; }
+    /* le trait de pic (.pk svg) se dessine de gauche à droite */
+    #f11-pk svg { opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="11-pour-toi" data-width="1920" data-height="1080" data-duration="3.54">
+    <!-- sol : papier plein, sur toute la durée -->
+    <div id="f11-ground" class="clip" data-start="0" data-duration="3.54" data-track-index="0" data-layout-ignore></div>
+
+    <!-- scène : caméra (dérive > caméra > monde) -->
+    <div id="f11-stage" class="clip" data-start="0" data-duration="3.54" data-track-index="1">
+      <div id="f11-drift">
+        <div id="f11-cam">
+          <div id="f11-world" data-layout-allow-overflow>
+
+            <!-- plan du fond : sol (trame de points, halo), frise, « 2026 », portable ; les tuiles de la séquence 10 -->
+            <div id="f11-bg">
+              <div class="g-light"><div id="f11-dots" class="dots"></div><div id="f11-halo" class="halo" style="left:210.0px;top:-70.0px;width:1500px;height:1000px"></div></div>
+
+              <div id="f11-set">
+                <div class="frise light" style="top:770px"></div>
+                <div class="tick light" style="left:959px;top:772px"></div>
+                <div class="year light" style="left:960px;top:804px">2026</div>
+                <div class="contact light" style="left:580.0px;top:759px;width:760px"></div>
+                <div class="laptop light" style="left:360px;top:30px;transform:scale(0.98);transform-origin:50% 100%">
+                  <div class="laptop-lid"><div class="laptop-screen">
+                    <div id="f11-ai" class="ai light"><div class="ai-head"><span class="ai-dot"></span>Assistant IA</div><div class="ai-hello">Bonjour. Que veux-tu faire aujourd’hui ?</div><div class="ai-field" style="">Écris ta demande…<span id="f11-caret" class="caret" style="height:36px;margin-left:4px"></span><div class="send" style="right:16px;top:15px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+                    <!-- l'écran flou : il s'éteint en gris quand le post-it devient le sujet -->
+                    <div id="f11-veil"></div>
+                  </div></div>
+                  <div class="laptop-base"></div><div class="laptop-notch"></div>
+                </div>
+              </div>
+
+              <!-- les trois tuiles de la séquence 10 (styleframe P18), qui rentrent dans l'écran -->
+              <div id="f11-tiles">
+                <div class="card" style="left:160px;top:140px;width:480px;height:640px"></div><div class="abs" style="left:260.0px;top:220.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:260.0px;top:220.0px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path d="M140.0 140.0 L140.0 26.0 A114.0 114.0 0 0 1 165.6 251.1 Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="140.0" x2="140.0" y2="210.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line x1="140.0" y1="140.0" x2="140.0" y2="36.4" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="140.0" y1="161.0" x2="140.0" y2="28.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div class="abs" style="left:160px;width:480px;top:560px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Soirée</div><div class="abs" style="left:160px;width:480px;top:640px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div>
+                <div class="card" style="left:720px;top:140px;width:480px;height:640px"></div><div class="abs" style="left:820.0px;top:220.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:820.0px;top:220.0px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path d="M140.0 140.0 L140.0 254.0 A114.0 114.0 0 0 1 140.0 26.0 Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="140.0" x2="72.4" y2="158.1" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line x1="140.0" y1="140.0" x2="140.0" y2="243.6" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="140.0" y1="119.0" x2="140.0" y2="252.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div class="abs" style="left:720px;width:480px;top:560px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Matinée</div><div class="abs" style="left:720px;width:480px;top:640px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div>
+                <div class="card" style="left:1280px;top:140px;width:480px;height:640px"></div><div class="abs" style="left:1380.0px;top:220.0px;width:280px;height:280px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.16)"></div><div class="clock" style="left:1380.0px;top:220.0px;"><svg width="280" height="280" viewBox="0 0 280 280" style="overflow:visible"><circle cx="140.0" cy="140.0" r="136.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><path d="M140.0 140.0 L140.0 26.0 A114.0 114.0 0 1 1 138.0 26.0 Z" fill="#f7d038" opacity=".55"/><line x1="140.0" y1="18.0" x2="140.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="201.0" y1="34.3" x2="195.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="245.7" y1="79.0" x2="235.3" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="262.0" y1="140.0" x2="240.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="245.7" y1="201.0" x2="235.3" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="201.0" y1="245.7" x2="195.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="140.0" y1="262.0" x2="140.0" y2="240.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="79.0" y1="245.7" x2="85.0" y2="235.3" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="34.3" y1="201.0" x2="44.7" y2="195.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="140.0" x2="40.0" y2="140.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="34.3" y1="79.0" x2="44.7" y2="85.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="79.0" y1="34.3" x2="85.0" y2="44.7" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><text x="140.0" y="198.8" text-anchor="middle" font-family="Space Mono" font-weight="700" font-size="21" letter-spacing="3" fill="#55565c">DIM.</text><line x1="140.0" y1="140.0" x2="79.4" y2="105.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line x1="140.0" y1="140.0" x2="140.0" y2="36.4" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="140.0" y1="161.0" x2="140.0" y2="28.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="140.0" cy="140.0" r="8" fill="#17181c"/></svg></div><div class="abs" style="left:1280px;width:480px;top:560px;text-align:center;font:600 46px/1 Instrument Sans;color:#17181c">Dimanche</div><div class="abs" style="left:1280px;width:480px;top:640px;text-align:center"><span class="pill" style="background:#f7d038;color:#17181c;font-size:22px">Libre</span></div>
+              </div>
+            </div>
+
+            <!-- plan du sujet : le post-it (son trait sur « Pas ») et le feutre noir -->
+            <div id="f11-fg">
+              <div id="f11-postit" class="postit" style="left:815px;top:235px"><div class="band"></div><div class="hw">Pas pour<br>moi</div><svg id="f11-strike" class="strike" style="left:24px;top:84px;width:150px;height:60px" viewBox="0 0 150 60"><path id="f11-strike-path" d="M4 34 C 30 30, 60 27, 90 26 C 112 25, 132 22, 146 18" stroke="#17181c" stroke-width="7" fill="none" stroke-linecap="round"/></svg><div id="f11-curl" class="curl"></div><div id="f11-pen"><svg class="abs" style="left:0;top:0" width="60" height="420" viewBox="0 0 60 420"><rect x="12" y="40" width="36" height="360" rx="8" fill="#17181c"/><path d="M12 40 L30 0 L48 40 Z" fill="#e9e4d8"/><path d="M24 14 L30 0 L36 14 Z" fill="#17181c"/></svg></div></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- sous-titre (la voix), en bas au centre, hors caméra -->
+    <div id="f11-subs" class="clip" data-start="0" data-duration="3.54" data-track-index="2">
+      <div id="f11-sub1" class="sub light"><span id="f11-hl" class="hl"><span class="w f11-w" data-cue="0.24">L’intelligence</span> <span class="w f11-w" data-cue="0.82">artificielle</span></span> <span class="w f11-w" data-cue="0.92">?</span></div>
+      <div id="f11-sub2" class="sub light"><span class="w f11-w" data-cue="1.82">Cette</span> <span class="w f11-w" data-cue="2.10">fois…</span> <span class="w f11-w" data-cue="2.71">c’est</span> <span id="f11-pk" class="pk"><span class="w f11-w" data-cue="2.94">pour</span> <span class="w f11-w" data-cue="3.11">toi</span><svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M6 22 C 70 16, 150 13, 230 11 C 300 9, 360 6, 396 3 C 398 6, 396 9, 392 10 C 330 15, 250 19, 170 22 C 110 24, 50 27, 10 28 C 2 28, 1 23, 6 22 Z" fill="#f7d038"/></svg></span><span class="w f11-w" data-cue="3.11">.</span></div>
+    </div>
+
+    <!-- grain et vignette, fixes -->
+    <div id="f11-fx" class="clip" data-start="0" data-duration="3.54" data-track-index="3" data-layout-ignore>
+      <div class="grain"></div><div class="vignette light"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "11-pour-toi";
+      var D = 3.54;
+      var FR = 1 / 30;
+      function byId(id) { return document.getElementById(id); }
+      function toArr(list) { return Array.prototype.slice.call(list); }
+
+      var drift = byId("f11-drift"), cam = byId("f11-cam"), world = byId("f11-world"), bg = byId("f11-bg");
+      var set = byId("f11-set"), tiles = byId("f11-tiles"), dots = byId("f11-dots"), halo = byId("f11-halo");
+      var ai = byId("f11-ai"), veil = byId("f11-veil"), caret = byId("f11-caret");
+      var postit = byId("f11-postit"), curl = byId("f11-curl"), pen = byId("f11-pen");
+      var strikeSvg = byId("f11-strike"), strikePath = byId("f11-strike-path");
+      var sub1 = byId("f11-sub1"), sub2 = byId("f11-sub2"), hl = byId("f11-hl");
+      var pkSvg = byId("f11-pk").getElementsByTagName("svg")[0];
+      var words = toArr(document.querySelectorAll("#f11-subs .f11-w"));
+
+      /* ---- repères du monde (cadrage du styleframe P19 : caméra ×1 centrée sur 960, 540) ---- */
+      var O = { x: 965, y: 265 };                 // origine du post-it (50 % 10 %) : left 815 + 150, top 235 + 30
+      var RAD = (-5 * Math.PI) / 180;             // le post-it posé : -5°
+      function onNote(lx, ly) {                   // repère du post-it -> monde
+        var dx = lx - 150, dy = ly - 30;
+        return { x: O.x + dx * Math.cos(RAD) - dy * Math.sin(RAD), y: O.y + dx * Math.sin(RAD) + dy * Math.cos(RAD) };
+      }
+      var PC = onNote(150, 150);                  // centre du post-it posé (975,5 ; 384,5)
+      var Z = onNote(130, 262);                   // zone jaune vierge sous « moi » : cible de la poussée finale
+      var PAR = 0.304;                            // le fond pousse moins que le sujet : s_fond = 1 + (s - 1) × PAR
+      var S_END = 38;                             // poussée finale (power2.in) : le jaune remplit le cadre bien avant la fin
+      var PEN_K = 1 / 2.15;                       // le feutre de P20 (60 × 420 px à l'écran pour un post-it à ×2,15)
+      var PEN_ROT = 33;                           // 28° à l'écran dans P20 = 33° dans le repère du post-it (-5°)
+      var REST = { x: 321, y: 68 };               // pointe du feutre posé (image clé P20), repère du post-it
+
+      /* ---- le trait sur « Pas » : échantillonné par longueur d'arc (géométrie seule, aucune mesure de mise en page) ---- */
+      var SEG = [[4, 34, 30, 30, 60, 27, 90, 26], [90, 26, 112, 25, 132, 22, 146, 18]];
+      var pts = [], cum = [0];
+      SEG.forEach(function (c, si) {
+        for (var i = si === 0 ? 0 : 1; i <= 60; i++) {
+          var t = i / 60, u = 1 - t;
+          pts.push([u * u * u * c[0] + 3 * u * u * t * c[2] + 3 * u * t * t * c[4] + t * t * t * c[6],
+                    u * u * u * c[1] + 3 * u * u * t * c[3] + 3 * u * t * t * c[5] + t * t * t * c[7]]);
+        }
+      });
+      for (var j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.sqrt(Math.pow(pts[j][0] - pts[j - 1][0], 2) + Math.pow(pts[j][1] - pts[j - 1][1], 2)));
+      var ARC = cum[cum.length - 1];
+      function head(p) {                          // pointe du trait à la fraction p, repère du post-it (svg en 24, 84)
+        var d = Math.max(0, Math.min(1, p)) * ARC, i = 1;
+        while (i < cum.length - 1 && cum[i] < d) i++;
+        var a = cum[i - 1], b = cum[i], k = b > a ? (d - a) / (b - a) : 0;
+        return { x: 24 + pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * k, y: 84 + pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * k };
+      }
+      var S0 = head(0), S1 = head(1);
+      // svg-path-draw : dasharray = longueur mesurée
+      var LEN = ARC;
+      try { var gl = strikePath.getTotalLength(); if (gl > 1) LEN = gl; } catch (e) {}
+      strikePath.style.strokeDasharray = LEN.toFixed(2);
+      strikePath.style.strokeDashoffset = LEN.toFixed(2);
+
+      /* ---- le proxy : caméra, flous, feutre, trait ; UN seul écrivain (render) ----
+         s : échelle caméra du sujet ; (tx, ty) : point du monde visé ; (ax, ay) : où il tombe à l'écran ;
+         f : poussée finale ; land / dof / tile / pib / fgb / pb : flous en px écran ;
+         px, py : pointe du feutre (repère du post-it, hors trait) ; draw : trait sur « Pas » ; pl, pr : lever, rotation */
+      var P = { s: 1.1, tx: 960, ty: 540, ax: 960, ay: 540, f: 0,
+                land: 12, dof: 0, tile: 12, pib: 16, fgb: 0,
+                px: S0.x + 800, py: S0.y - 150, draw: 0, pl: 1.08, pr: 14, pb: 8 };
+
+      function blur(el, px) { el.style.filter = px > 0.05 ? "blur(" + px.toFixed(2) + "px)" : "none"; }
+
+      function render() {
+        var s = P.s, tx = P.tx, ty = P.ty, ax = P.ax, ay = P.ay;
+        if (P.f > 0) {
+          // poussée dans le jaune : échelle interpolée en log ; la zone vierge glisse au centre du cadre
+          var sf = Math.exp(Math.log(s) + P.f * (Math.log(S_END) - Math.log(s)));
+          var zx0 = ax + s * (Z.x - tx), zy0 = ay + s * (Z.y - ty);
+          var zx = 960 + (zx0 - 960) * (1 - P.f), zy = 540 + (zy0 - 540) * (1 - P.f);
+          tx = Z.x - (zx - ax) / sf;
+          ty = Z.y - (zy - ay) / sf;
+          s = sf;
+        }
+        var sb = 1 + (s - 1) * PAR, k = sb / s;
+        world.style.transform = "translate(" + (960 - tx + (ax - 960) / s).toFixed(3) + "px," + (540 - ty + (ay - 540) / s).toFixed(3) + "px)";
+        cam.style.transform = "scale(" + s.toFixed(5) + ")";
+        bg.style.transform = "translate(" + ((1 - k) * tx).toFixed(3) + "px," + ((1 - k) * ty).toFixed(3) + "px) scale(" + k.toFixed(5) + ")";
+
+        blur(set, (P.land + P.dof) / sb);
+        blur(tiles, P.tile / (sb * (gsap.getProperty(tiles, "scale") || 1)));
+        var ps = gsap.getProperty(postit, "scale") || 1;
+        blur(postit, (P.pib + P.fgb) / (s * ps));
+        postit.style.boxShadow = s > 9 ? "none" : "";
+
+        // le feutre : sa pointe suit la tête du trait pendant qu'il barre « Pas »
+        var h = head(P.draw);
+        var penX = P.px + h.x - S0.x, penY = P.py + h.y - S0.y;
+        pen.style.transform = "translate(" + penX.toFixed(2) + "px," + penY.toFixed(2) + "px) rotate(" + (PEN_ROT + P.pr).toFixed(2) + "deg) scale(" + (PEN_K * P.pl).toFixed(4) + ")";
+        blur(pen, P.pb / (s * ps * PEN_K * P.pl));
+
+        strikePath.style.strokeDashoffset = (LEN * (1 - P.draw)).toFixed(2);
+        strikeSvg.style.opacity = P.draw > 0.002 ? 1 : 0;
+      }
+
+      gsap.set(tiles, { transformOrigin: "960px 460px" });
+      gsap.set(curl, { transformOrigin: "100% 100%" });
+      gsap.set(pkSvg, { transformOrigin: "0% 50%" });
+
+      var tl = gsap.timeline({ paused: true, defaults: { lazy: false }, onUpdate: render });
+
+      /* ===================== piste caméra ===================== */
+      // dérive : la caméra longe la frise vers la droite (-10 px/s), puis Scene 2 pousse de 1,5 %/s
+      tl.fromTo(drift, { x: 0 }, { x: -16, duration: 1.62, ease: "none" }, 0);
+      tl.fromTo(drift, { scale: 1 }, { scale: 1 + 0.015 * (D - 1.62), duration: D - 1.62, ease: "none", immediateRender: false }, 1.62);
+      // 0.00 → 0.22 atterrissage : le recul de la séquence 10 se pose (×1,1 → ×1, flou 12 → 0)
+      tl.fromTo(P, { s: 1.1 }, { s: 1, duration: 0.22, ease: "expo.out" }, 0);
+      tl.fromTo(P, { land: 12 }, { land: 0, duration: 0.24, ease: "power2.out" }, 0);
+      // 1.32 → 1.62 poussée ×1 → ×2,1 sur le post-it (expo.inOut) ; le fond, plus loin, pousse moins (×1,33)
+      tl.fromTo(P, { s: 1, tx: 960, ty: 540, ax: 960, ay: 540 },
+        { s: 2.1, tx: PC.x, ty: PC.y, ax: 1003, ay: 531, duration: 0.3, ease: "expo.inOut", immediateRender: false }, 1.32);
+      // filé léger du sujet au milieu de la poussée, net à l'arrivée
+      tl.fromTo(P, { fgb: 0 }, { fgb: 3, duration: 0.15, ease: "power1.in", immediateRender: false }, 1.32);
+      tl.fromTo(P, { fgb: 3 }, { fgb: 0, duration: 0.15, ease: "power2.out", immediateRender: false }, 1.47);
+      // 3.27 → 3.54 poussée dans le post-it (power2.in) jusqu'à ce que le jaune remplisse le cadre, flou 0 → 6 px
+      tl.fromTo(P, { f: 0 }, { f: 1, duration: D - 3.27, ease: "power2.in", immediateRender: false }, 3.27);
+      tl.fromTo(P, { fgb: 0 }, { fgb: 6, duration: D - 3.27, ease: "power2.in", immediateRender: false }, 3.27);
+
+      /* ===================== Scene 1 (0.00 à 1.62) : « L’intelligence artificielle ? » ===================== */
+      // 0.00 → 0.22 les tuiles rentrent dans l'écran (elles continuent de rétrécir, floues, et s'y fondent)
+      tl.fromTo(tiles, { scale: 0.854, y: 11.7 }, { scale: 0.55, y: -79, duration: 0.22, ease: "power2.out" }, 0);
+      tl.fromTo(tiles, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power1.in", immediateRender: false }, 0.06);
+      tl.fromTo(P, { tile: 12 }, { tile: 8, duration: 0.22, ease: "none" }, 0);
+      // le portable clair posé sur la frise, « 2026 » dessous (la rime de P3), sort du flou
+      tl.fromTo(set, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out", immediateRender: false }, 0.04);
+      tl.fromTo(ai, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power1.out", immediateRender: false }, 0.1);
+      tl.fromTo(dots, { opacity: 0.25 }, { opacity: 1, duration: 0.24, ease: "power2.out" }, 0);
+      tl.fromTo(halo, { scaleX: 1.267, scaleY: 0.9, y: 20 }, { scaleX: 1, scaleY: 1, y: 0, duration: 0.24, ease: "power2.out" }, 0);
+
+      // 0.22 le surligneur se trace (0,16 s power3.out), juste avant « L’intelligence »
+      tl.fromTo(hl, { "--f11-k": 0 }, { "--f11-k": 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.22);
+
+      // 0.42 le post-it arrive de la caméra (×2,6, flou 16, depuis le bas à droite), passe par l'image clé P19
+      // (×1,25, -14°, flou 5, 0.52) et se colle : -14° → -5°, posé en 0,12 s expo.out, tassement 0,97 → 1 en 0,08 s
+      tl.fromTo(postit, { x: 300, y: 230, scale: 2.6, rotation: -18, opacity: 0 },
+        { x: 55, y: -5, scale: 1.25, rotation: -14, opacity: 0.9, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
+      tl.fromTo(P, { pib: 16 }, { pib: 5, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
+      tl.fromTo(postit, { x: 55, y: -5, scale: 1.25, rotation: -14, opacity: 0.9 },
+        { x: 0, y: 0, scale: 0.97, rotation: -5, opacity: 1, duration: 0.12, ease: "expo.out", immediateRender: false }, 0.52);
+      tl.fromTo(P, { pib: 5 }, { pib: 0, duration: 0.12, ease: "expo.out", immediateRender: false }, 0.52);
+      tl.fromTo(postit, { scale: 0.97 }, { scale: 1, duration: 0.08, ease: "power2.out", immediateRender: false }, 0.64);
+
+      // vie : le caret cligne une fois, le coin du post-it se soulève puis retombe
+      tl.fromTo(caret, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none", immediateRender: false }, 0.62);
+      tl.fromTo(caret, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, 1.02);
+      tl.fromTo(curl, { scale: 1 }, { scale: 1.14, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 0.98);
+      tl.fromTo(curl, { scale: 1.14 }, { scale: 1, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 1.28);
+
+      // 1.32 → 1.62 mise au point sur le post-it : l'écran s'éteint en gris, recule, flou 0 → 6 px, atténué à 55 %
+      tl.fromTo(P, { dof: 0 }, { dof: 6, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
+      tl.fromTo(set, { opacity: 1 }, { opacity: 0.55, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
+      tl.fromTo(veil, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
+
+      /* ===================== Scene 2 (1.62 à 3.54) : « Cette fois… c’est pour toi. » ===================== */
+      // 1.82 « Cette fois » : le feutre noir entre par la droite et vient au-dessus de « Pas »
+      tl.fromTo(pen, { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, 1.82);
+      tl.fromTo(P, { px: S0.x + 800, py: S0.y - 150, pr: 14, pb: 8 },
+        { px: S0.x, py: S0.y - 10, pr: 0, pb: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, 1.82);
+      // 2.30 → 2.42 il se pose sur le papier
+      tl.fromTo(P, { py: S0.y - 10, pl: 1.08 }, { py: S0.y, pl: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, 2.3);
+      // 2.42 il barre « Pas » : le trait se dessine en 0,25 s power2.out, la pointe le suit ; il reste « pour moi »
+      tl.fromTo(P, { draw: 0 }, { draw: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, 2.42);
+      tl.fromTo(P, { pr: 0 }, { pr: -3, duration: 0.25, ease: "power1.inOut", immediateRender: false }, 2.42);
+      // 2.67 → 2.95 il se lève et se range sur le bord droit (pose de l'image clé P20)
+      tl.fromTo(P, { px: S0.x, py: S0.y, pr: -3 },
+        { px: REST.x - (S1.x - S0.x), py: REST.y - (S1.y - S0.y), pr: 0, duration: 0.28, ease: "power3.out", immediateRender: false }, 2.67);
+      tl.fromTo(P, { pl: 1 }, { pl: 1.05, duration: 0.1, ease: "power2.out", immediateRender: false }, 2.67);
+      tl.fromTo(P, { pl: 1.05 }, { pl: 1, duration: 0.12, ease: "power2.inOut", immediateRender: false }, 2.85);
+      // 3.12 le feutre sort par la droite (plus vite qu'il n'est entré)
+      tl.fromTo(P, { px: REST.x - (S1.x - S0.x), py: REST.y - (S1.y - S0.y), pr: 0, pb: 0 },
+        { px: REST.x - (S1.x - S0.x) + 760, py: REST.y - (S1.y - S0.y) - 60, pr: 8, pb: 8, duration: 0.14, ease: "power2.in", immediateRender: false }, 3.12);
+      tl.fromTo(pen, { opacity: 1 }, { opacity: 0, duration: 0.02, ease: "none", immediateRender: false }, 3.27);
+
+      /* ===================== sous-titre ===================== */
+      // chaque mot sur son horodatage (1 image avant) : gris, y 8, flou 6 → net en 0,14 s, puis encre pleine en 0,2 s
+      function word(el, t) {
+        tl.fromTo(el, { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(el, { color: "rgba(23, 24, 28, 0.35)" },
+          { color: "#17181c", duration: 0.2, ease: "power1.inOut", immediateRender: false }, t + 0.1);
+      }
+      words.forEach(function (w) { word(w, Math.max(0, parseFloat(w.getAttribute("data-cue")) - FR)); });
+      // la phrase 1 sort pendant la poussée
+      tl.fromTo(sub1, { opacity: 1, filter: "blur(0px)" },
+        { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.44);
+      // 2.92 → 3.32 le trait jaune sous « pour toi »
+      tl.fromTo(pkSvg, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 2.92);
+      // la phrase 2 sort avant la couture : aucun sous-titre dans les deux dernières images
+      tl.fromTo(sub2, { opacity: 1, filter: "blur(0px)" },
+        { opacity: 0, filter: "blur(6px)", duration: 0.13, ease: "power2.in", immediateRender: false }, 3.33);
+
+      render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,446 @@
+<template>
+  <style>
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+
+    /* ===================== 01-annees : frame-specific rules (prefix f01-) ===================== */
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #f3f1ec; -webkit-font-smoothing: antialiased; }
+    .f01-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .f01-clipped { overflow: hidden; }
+    .f01-grp { position: absolute; }
+    .f01-fill { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+    .f01-hide { opacity: 0; }
+    /* the dot screen of the night desk, in world space (the camera drift reads on it) + its streaked twin for the whips */
+    .f01-wdots { position: absolute; left: -1008px; top: -504px; width: 7200px; height: 2124px;
+      background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+    .f01-wdots-mb { position: absolute; left: -1008px; top: -504px; width: 7200px; height: 2124px; opacity: 0;
+      background-image: radial-gradient(16px 1.5px at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0)); background-size: 36px 36px; }
+    /* CRT power-on */
+    .f01-off { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 45% 40%, #0f1816 0%, #080d0c 60%, #050807 100%); }
+    .f01-glow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0;
+      background: radial-gradient(ellipse at 50% 48%, rgba(220,255,236,.7) 0%, rgba(150,215,185,.32) 42%, rgba(60,110,95,0) 78%); }
+    .f01-scan { position: absolute; left: 0; top: 0; width: 100%; height: 90px; opacity: 0;
+      background: linear-gradient(180deg, rgba(190,255,225,0) 0%, rgba(190,255,225,.10) 60%, rgba(225,255,240,.24) 70%, rgba(190,255,225,0) 100%); }
+    .f01-ptr { position: absolute; left: 0; top: 0; opacity: 0; overflow: visible; }
+    .f01-btn { position: relative; }
+    .f01-btnhl { position: absolute; left: -2px; top: -2px; right: -2px; bottom: -2px; display: flex; align-items: center; justify-content: center;
+      background: #0a246a; color: #fff; font: 500 18px/1 "Instrument Sans"; font-style: normal; opacity: 0; }
+    /* phone wake */
+    #f01-grid i { opacity: 0; }
+    #f01-notif { opacity: 0; }
+    .f01-poff { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #050608; }
+    .f01-pglow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0;
+      background: radial-gradient(ellipse at 50% 45%, rgba(200,220,255,.55) 0%, rgba(120,150,210,.2) 50%, rgba(40,60,100,0) 85%); }
+    /* the voice line : word by word, grey then ink ; the key-word highlighter traced from the left */
+    .f01-line { display: inline-block; }
+    .f01-hl { position: relative; display: inline-block; isolation: isolate; text-shadow: none; }
+    .f01-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1;
+      transform-origin: 0 50%; opacity: 0; }
+    .f01-w { opacity: 0; color: rgba(243,241,236,.35); }
+    .f01-in { color: #f3f1ec; }
+  </style>
+
+  <div id="root" data-composition-id="01-annees" data-width="1920" data-height="1080" data-duration="6.37">
+    <!-- directional blur of the whips (stdDeviation "X 0", written by render) -->
+    <svg id="f01-defs" width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="f01-mb" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="f01-mbg" in="SourceGraphic" stdDeviation="0 0"/>
+      </filter>
+    </svg>
+
+    <!-- night desk ground : #0d0f14 + blue-grey halo behind the subject -->
+    <div id="f01-ground" class="clip g-dark" data-start="0" data-duration="6.37" data-track-index="0">
+      <div class="halo" style="left:260px;top:-30px;width:1400px;height:1000px"></div>
+    </div>
+
+    <!-- camera : #drift > #cam > #world (+ the foreground keyboard, faster) -->
+    <div id="f01-camlayer" class="clip f01-layer f01-clipped" data-start="0" data-duration="6.37" data-track-index="1" data-layout-allow-overflow>
+      <div id="f01-drift" class="f01-layer">
+        <div id="f01-cam" class="f01-layer">
+          <div id="f01-world" class="f01-layer">
+            <div id="f01-dots" class="f01-wdots"></div>
+            <div id="f01-dotsmb" class="f01-wdots-mb"></div>
+            <!-- the frise : line at y 770, a graduation and the year under each station (2000 at x 960, 2010 at x 2220) -->
+            <div class="frise" style="top:770px;left:-1000px;right:-5200px"></div>
+            <div id="f01-mk1" class="f01-grp" style="left:860px;top:760px;width:200px;height:90px">
+              <div class="tick" style="left:99px;top:12px"></div><div class="year" style="left:100px;top:44px">2000</div>
+            </div>
+            <div id="f01-mk2" class="f01-grp f01-hide" style="left:2120px;top:760px;width:200px;height:90px">
+              <div class="tick" style="left:99px;top:12px"></div><div id="f01-y2010" class="year ghost" style="left:100px;top:44px">2010</div>
+            </div>
+
+            <!-- station 2000 : the CRT and the post-it -->
+            <div id="f01-crtg" class="f01-grp" style="left:560px;top:200px;width:800px;height:620px">
+              <div id="f01-crtdof" class="f01-fill">
+                <div id="f01-crtsh" class="contact f01-hide" style="left:90px;top:559px;width:620px"></div>
+                <div id="f01-crt" class="crt" style="left:100px;top:48px;transform-origin:50% 100%;">
+                  <div class="crt-body">
+                    <div class="crt-screen">
+                      <div id="f01-win" class="w98 f01-hide" style="left:64px;top:84px">
+                        <div class="w98-title">Assistant</div>
+                        <div class="w98-body">Créer votre site internet ?<div class="w98-btns"><span id="f01-oui" class="w98-btn f01-btn">Oui<i id="f01-ouihl" class="f01-btnhl">Oui</i></span><span class="w98-btn">Plus tard</span></div></div>
+                      </div>
+                      <svg id="f01-ptr" class="f01-ptr" width="24" height="32" viewBox="0 0 48 64"><path d="M4 3 L4 50 L16 39 L24 58 L32 54 L24 36 L40 36 Z" fill="#fff" stroke="#17181c" stroke-width="3" stroke-linejoin="round" style="filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))"/></svg>
+                      <div id="f01-glow" class="f01-glow"></div>
+                      <div id="f01-scan" class="f01-scan"></div>
+                      <div id="f01-off" class="f01-off"></div>
+                    </div>
+                    <div id="f01-led" class="crt-led" style="opacity:.25"></div>
+                  </div>
+                  <div class="crt-neck"></div>
+                  <div class="crt-foot"></div>
+                </div>
+                <div id="f01-pi1" class="postit f01-hide" style="left:345px;top:100px"><div class="band"></div><div class="hw">Pas pour<br>moi</div><div id="f01-pi1c" class="curl"></div></div>
+              </div>
+            </div>
+
+            <!-- station 2010 : the smartphone, already on the line, and the same post-it -->
+            <div id="f01-phg" class="f01-grp f01-hide" style="left:1990px;top:170px;width:460px;height:640px">
+              <div class="contact" style="left:60px;top:589px;width:340px"></div>
+              <div id="f01-phone" class="phone10" style="left:80px;top:40px">
+                <div class="phone10-ear"></div>
+                <div class="phone10-screen">
+                  <div id="f01-grid" class="app-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  <div id="f01-notif" class="notif10">Rejoins tes amis sur le réseau<br><span id="f01-btn" class="btn">S’inscrire</span></div>
+                  <div id="f01-pglow" class="f01-pglow"></div>
+                  <div id="f01-poff" class="f01-poff"></div>
+                </div>
+                <div class="phone10-home"></div>
+              </div>
+              <div id="f01-pi2" class="postit f01-hide" style="left:70px;top:130px"><div class="band"></div><div class="hw">Pas pour<br>moi</div><div class="curl"></div></div>
+            </div>
+          </div>
+
+          <!-- foreground : the beige keyboard, blurred, cut by the left edge -->
+          <div id="f01-fg" class="f01-layer">
+            <div id="f01-kb" class="f01-grp" style="left:-120px;top:500px;width:560px;height:380px">
+              <div class="abs fg-blur" style="left:60px;top:60px;width:420px;height:240px;border-radius:18px;background:linear-gradient(180deg,#d9d2c3,#a9a190);transform:rotate(-8deg)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- the voice line, bottom centre, word by word (frame-local cues) -->
+    <div id="f01-subs" class="clip f01-layer" data-start="0" data-duration="6.37" data-track-index="2">
+      <div class="sub dark"><span id="f01-s1" class="f01-line"><span class="w f01-w" data-cue="0.05">Deux</span> <span class="w f01-w" data-cue="0.32">mille.</span> <span class="w f01-w" data-cue="1.02">Un</span> <span class="f01-hl"><i id="f01-hl1" class="f01-hlbg"></i><span id="f01-wsite" class="w f01-w f01-in" data-cue="1.20">site</span> <span id="f01-wnet" class="w f01-w f01-in" data-cue="1.38">internet</span></span> <span class="w f01-w" data-cue="1.50">?</span> <span class="w f01-w" data-cue="2.21">Pas</span> <span class="w f01-w" data-cue="2.39">pour</span> <span class="w f01-w" data-cue="2.56">moi.</span></span></div>
+      <div class="sub dark"><span id="f01-s2" class="f01-line"><span class="w f01-w" data-cue="3.22">Deux</span> <span class="w f01-w" data-cue="3.46">mille</span> <span class="w f01-w" data-cue="3.70">dix.</span></span></div>
+      <div class="sub dark"><span id="f01-s3" class="f01-line"><span class="w f01-w" data-cue="4.39">Les</span> <span class="f01-hl"><i id="f01-hl2" class="f01-hlbg"></i><span id="f01-wres" class="w f01-w f01-in" data-cue="4.56">réseaux</span> <span id="f01-wsoc" class="w f01-w f01-in" data-cue="4.85">sociaux</span></span> <span class="w f01-w" data-cue="5.00">?</span> <span class="w f01-w" data-cue="5.61">Pas</span> <span class="w f01-w" data-cue="5.78">pour</span> <span class="w f01-w" data-cue="5.95">moi.</span></span></div>
+    </div>
+
+    <div id="f01-grain" class="clip grain" data-start="0" data-duration="6.37" data-track-index="3"></div>
+    <div id="f01-vig" class="clip vignette" data-start="0" data-duration="6.37" data-track-index="4"></div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "01-annees";
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(n) { return root.querySelector("#f01-" + n); }
+      var DUR = 6.37, EARLY = 1 / 30;
+
+      /* ---- world and camera constants ---- */
+      var ST2010 = 2220;                       // station 2010, world x (2000 sits at 960 ; the line at y 770)
+      var DRIFT = 18;                          // camera drift, px/s toward the right, the whole frame
+      var PUSH = 0.02;                         // scene 1 push, scale per second, around (960, 500)
+      var W1 = 2.78, W1P = 2.98, W1E = 3.14;   // whip 2000 -> 2010 : power2.in to the blur peak, expo.out landing
+      var W2 = 6.05;                           // whip toward 2026 ; the seam (6.37) is its blur peak
+      var V_SEAM = 9000;                       // px/s at 6.37 (handoff_out)
+      var KEY2 = 5.80, VX = 40;                // the blurred 2000 screen slides out by the left, 40 px/s faster than the drift
+      var KF = 1.5;                            // the foreground keyboard moves 2.5x the world
+      var aIn = 2 / (W1P - W1), bOut = 10 * Math.LN2 / (W1E - W1P);
+      var SPLIT = bOut / (aIn + bOut);         // share of the whip run done in the power2.in leg (speeds match at 2.98)
+      var X1 = 960 - ST2010 + DRIFT * W1E;     // world x at landing : the phone centred while the drift keeps running
+      var D2 = (V_SEAM - DRIFT) * (DUR - W2) / 2;  // power2.in run of the last whip (end speed + drift = 9000 px/s)
+      var S1 = 1 + PUSH * W1;
+
+      /* ---- render : the camera blur (directional, per object, never on a layer wider than 1800 px) ---- */
+      var V = { mb: 0 };
+      var mbNode = $("mbg");
+      var STREAK = [$("mk1"), $("crtg"), $("kb"), $("mk2"), $("phg")];
+      var dots = $("dots"), dotsMb = $("dotsmb");
+      function render() {
+        var b = Math.max(0, V.mb);
+        mbNode.setAttribute("stdDeviation", b.toFixed(2) + " 0");
+        var f = b > 0.25 ? "url(#f01-mb)" : "none";
+        for (var i = 0; i < STREAK.length; i++) STREAK[i].style.filter = f;
+        var k = Math.min(1, b / 12);
+        dots.style.opacity = (1 - 0.9 * k).toFixed(3);
+        dotsMb.style.opacity = k.toFixed(3);
+      }
+
+      /* ===================== the one paused timeline ===================== */
+      var tl = gsap.timeline({ paused: true, onUpdate: render });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      /* ---- camera track (apart from the objects) ---- */
+      var CAM = gsap.timeline();
+      function ct(target, from, to, pos) { if (pos > 0) to.immediateRender = false; CAM.fromTo(target, from, to, pos); }
+      var drift = $("drift"), world = $("world"), fg = $("fg"), crtg = $("crtg");
+      gsap.set(drift, { transformOrigin: "960px 500px" });
+      gsap.set($("cam"), { transformOrigin: "960px 540px" });
+      // drift x +18 px/s, never stops
+      ct(drift, { x: 0 }, { x: -DRIFT * DUR, duration: DUR, ease: "none" }, 0);
+      // push 2 %/s around (960, 500), handed back under the whip with the same speed profile as the whip
+      ct(drift, { scale: 1 }, { scale: S1, duration: W1, ease: "none" }, 0);
+      ct(drift, { scale: S1 }, { scale: S1 - (S1 - 1) * SPLIT, duration: W1P - W1, ease: "power2.in" }, W1);
+      ct(drift, { scale: S1 - (S1 - 1) * SPLIT }, { scale: 1, duration: W1E - W1P, ease: "expo.out" }, W1P);
+      // 2.78 -> 2.98 whip toward the right (power2.in), 2.98 -> 3.14 landing on the 2010 phone (expo.out)
+      ct(world, { x: 0 }, { x: X1 * SPLIT, duration: W1P - W1, ease: "power2.in" }, W1);
+      ct(world, { x: X1 * SPLIT }, { x: X1, duration: W1E - W1P, ease: "expo.out" }, W1P);
+      // 6.05 -> 6.37 whip toward the right, the seam at full speed
+      ct(world, { x: X1 }, { x: X1 - D2, duration: DUR - W2, ease: "power2.in" }, W2);
+      // blur envelopes : 0 -> 14 -> 0 (whip 1), 0 -> 16 (whip 2, seam)
+      ct(V, { mb: 0 }, { mb: 14, duration: W1P - W1, ease: "power2.in" }, W1);
+      ct(V, { mb: 14 }, { mb: 0, duration: W1E - W1P, ease: "expo.out" }, W1P);
+      ct(V, { mb: 0 }, { mb: 16, duration: DUR - W2, ease: "power2.in" }, W2);
+      // foreground keyboard : parallax 2.5x (drift, then the whip throws it out by the left)
+      var fg0 = -KF * DRIFT * W1;
+      ct(fg, { x: 0 }, { x: fg0, duration: W1, ease: "none" }, 0);
+      ct(fg, { x: fg0 }, { x: fg0 + (1 + KF) * X1 * SPLIT, duration: W1P - W1, ease: "power2.in" }, W1);
+      ct(fg, { x: fg0 + (1 + KF) * X1 * SPLIT }, { x: fg0 + (1 + KF) * X1, duration: W1E - W1P, ease: "expo.out" }, W1P);
+      // the 2000 screen, out of focus : the whip carries it less far (it trails at the left edge), then it slides out
+      // by the left, VX px/s faster than the drift ; keyed on the 5.80 key image (its left edge at x -420 on screen)
+      var c58 = -420 - 660 - X1 + DRIFT * KEY2;
+      var c1 = c58 + VX * (KEY2 - W1E), c3 = c1 - VX * (DUR - W1E);
+      ct(crtg, { x: 0 }, { x: c1 * SPLIT, duration: W1P - W1, ease: "power2.in" }, W1);
+      ct(crtg, { x: c1 * SPLIT }, { x: c1, duration: W1E - W1P, ease: "expo.out" }, W1P);
+      ct(crtg, { x: c1 }, { x: c3, duration: DUR - W1E, ease: "none" }, W1E);
+      tl.add(CAM, 0);
+
+      /* ---- scene 1 (0.00 -> 2.98) : 2000 ---- */
+      // 0.00 the CRT lands on the line above « 2000 » (x1.15, blur 8 -> sharp, 0.12 s expo.out), contact shadow
+      ft($("crt"), { scale: 1.15, filter: "blur(8px)" }, { scale: 1, filter: "blur(0px)", duration: 0.12, ease: "expo.out" }, 0);
+      ft($("crtsh"), { opacity: 0, scaleX: 1.15 }, { opacity: 1, scaleX: 1, duration: 0.12, ease: "expo.out" }, 0);
+      // 0.30 the screen powers on : glow 0.1 s, one scan sweep, the LED lights
+      ft($("off"), { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power1.out" }, 0.30);
+      ft($("glow"), { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "power2.out" }, 0.30);
+      ft($("glow"), { opacity: 1 }, { opacity: 0, duration: 0.07, ease: "power1.in" }, 0.33);
+      ft($("scan"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, 0.30);
+      ft($("scan"), { y: -90 }, { y: 372, duration: 0.42, ease: "power1.in" }, 0.30);
+      ft($("scan"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "none" }, 0.64);
+      ft($("led"), { opacity: 0.25 }, { opacity: 1, duration: 0.06, ease: "none" }, 0.30);
+      // 0.70 the era pointer crosses the screen (one curved move : x and y on two curves)
+      var ptr = $("ptr"), TX = 2, TY = 1.5;          // arrow tip inside the 24 x 32 svg
+      var P0 = [536, 352], P1 = [112, 292], OUI = [262, 203];
+      ft(ptr, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 0.70);
+      ft(ptr, { x: P0[0] - TX }, { x: P1[0] - TX, duration: 0.45, ease: "power3.out" }, 0.70);
+      ft(ptr, { y: P0[1] - TY }, { y: P1[1] - TY, duration: 0.45, ease: "power2.out" }, 0.70);
+      // 0.95 the « Assistant » window opens (x0.9 -> 1 in 0.1 s), 0.07 s before « Un »
+      ft($("win"), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.1, ease: "expo.out" }, 0.95);
+      // 1.40 « Oui » blinks once
+      ft($("ouihl"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, 1.40);
+      ft($("ouihl"), { opacity: 1 }, { opacity: 0, duration: 0.12, ease: "power1.in" }, 1.50);
+      // 1.42 -> 1.80 the pointer comes to rest on « Oui » (one curved move)
+      ft(ptr, { x: P1[0] - TX }, { x: OUI[0] - TX, duration: 0.38, ease: "power3.out" }, 1.42);
+      ft(ptr, { y: P1[1] - TY }, { y: OUI[1] - TY, duration: 0.38, ease: "power2.out" }, 1.42);
+      // 2.12 THE POST-IT comes from the camera (x1.6, blur 10, -14 deg -> -7 deg) and slaps over the window, 0.09 s before « Pas »
+      var pi1 = $("pi1");
+      ft(pi1, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, 2.12);
+      ft(pi1, { scale: 1.6, rotation: -14, x: 110, y: 80, filter: "blur(10px)" },
+        { scale: 1, rotation: -7, x: 0, y: 0, filter: "blur(0.6px)", duration: 0.12, ease: "expo.out" }, 2.12);
+      ft(pi1, { scale: 1 }, { scale: 1.03, duration: 0.08, ease: "power2.out" }, 2.24);   // the slap : 0.97 -> 1
+      // 2.56 « moi » : its bottom-right corner lifts by 3 deg (life)
+      gsap.set($("pi1c"), { transformOrigin: "100% 100%" });
+      ft($("pi1c"), { scale: 1, rotation: 0 }, { scale: 1.3, rotation: -3, duration: 0.3, ease: "power2.out" }, 2.56);
+      // during the whip : the 2000 screen falls out of focus (rack focus) ; the post-it leaves it under the smear
+      ft($("crtdof"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0.5, filter: "blur(18px)", duration: 0.34, ease: "power2.inOut" }, 2.80);
+      ft(pi1, { opacity: 1 }, { opacity: 0, duration: 0.07, ease: "power1.in" }, 2.92);
+      // the 2010 station exists from here (still out of frame on the right)
+      ft([$("phg"), $("mk2")], { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 2.80);
+
+      /* ---- scene 2 (2.98 -> 6.37) : 2010 ---- */
+      // 3.22 « Deux mille dix » : « 2010 » lights up (grey -> white, 0.1 s)
+      ft($("y2010"), { color: "rgba(201,198,191,0.35)" }, { color: "#f3f1ec", duration: 0.1, ease: "power1.out" }, 3.22);
+      // 3.60 the phone screen wakes (glow, icon grid)
+      ft($("poff"), { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.out" }, 3.60);
+      ft($("pglow"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "power2.out" }, 3.60);
+      ft($("pglow"), { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.in" }, 3.66);
+      Array.prototype.forEach.call($("grid").querySelectorAll("i"), function (ic, i) {
+        ft(ic, { opacity: 0, scale: 0.6 }, { opacity: 0.75, scale: 1, duration: 0.14, ease: "power3.out" }, 3.64 + i * 0.025);
+      });
+      // 4.30 the notification and its button drop from the top of the screen (y -40 -> 0, 0.12 s), 0.09 s before « Les »
+      ft($("notif"), { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.12, ease: "expo.out" }, 4.30);
+      // 4.85 « sociaux » : the button pulses once
+      ft($("btn"), { scale: 1 }, { scale: 1.1, duration: 0.1, ease: "power2.out" }, 4.85);
+      ft($("btn"), { scale: 1.1 }, { scale: 1, duration: 0.16, ease: "power2.inOut" }, 4.95);
+      // 5.50 the post-it comes from the camera and slaps on the phone, wider than it (14 deg -> 6 deg), 0.11 s before « Pas »
+      var pi2 = $("pi2");
+      ft(pi2, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, 5.50);
+      ft(pi2, { scale: 1.6, rotation: 14, x: -110, y: 80, filter: "blur(10px)" },
+        { scale: 1, rotation: 6, x: 0, y: 0, filter: "blur(0.5px)", duration: 0.12, ease: "expo.out" }, 5.50);
+      ft(pi2, { scale: 1 }, { scale: 1.02, duration: 0.08, ease: "power2.out" }, 5.62);
+
+      /* ---- the voice line : word by word, grey then ink ; one highlighter per sentence ---- */
+      var GREY = "rgba(243,241,236,0.35)", INK = "#f3f1ec", DARK = "#17181c";
+      Array.prototype.forEach.call(root.querySelectorAll(".f01-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue"));
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, Math.max(0.001, cue - EARLY));
+        if (!w.classList.contains("f01-in")) ft(w, { color: GREY }, { color: INK, duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      // [boîte : site internet] traced at 1.18 ; the words turn to ink #17181c as the yellow passes
+      ft($("hl1"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.18);
+      ft($("wsite"), { color: INK }, { color: DARK, duration: 0.1, ease: "none" }, 1.19);
+      ft($("wnet"), { color: INK }, { color: DARK, duration: 0.1, ease: "none" }, 1.25);
+      // [boîte : réseaux sociaux] traced at 4.54
+      ft($("hl2"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }, 4.54);
+      ft($("wres"), { color: INK }, { color: DARK, duration: 0.1, ease: "none" }, 4.55);
+      ft($("wsoc"), { color: INK }, { color: DARK, duration: 0.1, ease: "none" }, 4.62);
+      // each sentence leaves (opacity 1 -> 0, blur 0 -> 6 px, 0.14 s) : with the whip, in the silence, before the seam
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.80);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.18);
+      ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 5.98);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      // first image = handoff_in, before any seek
+      render();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

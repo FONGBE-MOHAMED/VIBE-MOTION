@@ -1,0 +1,434 @@
+<template>
+  <style>
+/* ===== kit « Pas pour moi » (styleframes/_kit.css, copie mot pour mot ; sans html/body/#stage ; ../assets → assets) ===== */
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+/* ===== fin du kit ===== */
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- couches plein cadre (une couche class="clip" chacune) ---- */
+    #f09-ground, #f09-stage, #f09-subs, #f09-finish { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    #f09-finish { pointer-events: none; }
+
+    /* ---- caméra : #drift > #cam > #world (STORYBOARD-CRAFT loi 1) ; le monde = le cadrage de P17 à l'échelle 1 ---- */
+    #f09-drift, #f09-cam, #f09-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f09-cam { transform-origin: 960px 540px; }
+    #f09-world { transform-origin: 0 0; }
+
+    /* la grille des dix diapos (séquence 8) qui sort par la droite au début du plan ; même taille écran que P15 */
+    #f09-grid { position: absolute; left: 2017px; top: 562px; width: 1620px; height: 400px; transform: scale(0.8929); transform-origin: 0 0; }
+
+    /* la fenêtre « Assistant IA » (P17), posée à 360,90 dans le monde ; le champ en fait partie */
+    #f09-win { position: absolute; left: 360px; top: 90px; width: 1200px; height: 740px; }
+    #f09-wincard, #f09-winhead { opacity: 0; }
+    .f09-bubble { opacity: 0; white-space: nowrap; }
+    .f09-dotwrap { position: relative; display: inline-block; width: 14px; height: 14px; }
+    .f09-dotwrap .ai-dot { position: absolute; left: 0; top: 0; }
+    .f09-ring { position: absolute; left: 0; top: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #f7d038; opacity: 0; }
+    .f09-fline { position: absolute; left: 30px; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; }
+    #f09-ftxt { font-weight: 600; color: #17181c; }
+    #f09-fph { opacity: 0; }
+
+    /* ---- avant-plan : la carte de code (espace écran, hors caméra) ---- */
+    #f09-fg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f09-card, .f09-ghost { left: 70px; top: 300px; width: 760px; height: 380px; opacity: 0; transform-origin: 50% 50%; }
+    #f09-card { padding: 38px 40px; filter: url(#f09-streak); }
+    .f09-ghost { filter: blur(10px); }
+    #f09-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+    /* ---- sous-titre : mot par mot (gris = encre à 35 %, puis encre pleine) ---- */
+    .f09-w { display: inline-block; opacity: 0; }
+    /* surligneur animé : même dessin que .hl / .hl::before du kit, en élément réel pour être tracé depuis la gauche */
+    .f09-hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+    .f09-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px;
+      z-index: -1; transform-origin: 0 50%; opacity: 0; }
+    .f09-pksvg { opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="09-technique" data-width="1920" data-height="1080" data-duration="3.33">
+
+    <!-- piste 0 : papier, trame de points, halo -->
+    <div id="f09-ground" class="clip" data-start="0" data-duration="3.33" data-track-index="0" data-layout-ignore>
+      <div class="g-light"><div class="dots" id="f09-dots"></div><div class="halo" style="left:10.0px;top:0.0px;width:1900px;height:900px"></div></div>
+    </div>
+
+    <!-- piste 1 : le monde sous la caméra, puis l'avant-plan -->
+    <div id="f09-stage" class="clip" data-start="0" data-duration="3.33" data-track-index="1">
+      <div id="f09-drift">
+        <div id="f09-cam">
+          <div id="f09-world" data-layout-allow-overflow>
+
+            <div id="f09-grid">
+              <div class="card" style="left:0px;top:0px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:120px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs" style="left:36px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:88px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:140px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:192px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#f7d038"></div></div>
+              <div class="card" style="left:330px;top:0px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:149px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:187px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:147px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:107px;height:10px"></div></div>
+              <div class="card" style="left:660px;top:0px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:178px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:174px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:134px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:94px;height:10px"></div></div>
+              <div class="card" style="left:990px;top:0px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:207px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs" style="left:36px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:88px;bottom:24px;width:34px;height:81px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:140px;bottom:24px;width:34px;height:62px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:192px;bottom:24px;width:34px;height:43px;border-radius:4px;background:#f7d038"></div></div>
+              <div class="card" style="left:1320px;top:0px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:126px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:188px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:148px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:108px;height:10px"></div></div>
+              <div class="card" style="left:0px;top:230px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:155px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:175px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:135px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:95px;height:10px"></div></div>
+              <div class="card" style="left:330px;top:230px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:184px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs" style="left:36px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:88px;bottom:24px;width:34px;height:62px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:140px;bottom:24px;width:34px;height:94px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:192px;bottom:24px;width:34px;height:56px;border-radius:4px;background:#f7d038"></div></div>
+              <div class="card" style="left:660px;top:230px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:213px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:189px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:149px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:109px;height:10px"></div></div>
+              <div class="card" style="left:990px;top:230px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:132px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs line" style="left:22px;top:60px;width:176px;height:10px"></div><div class="abs line" style="left:22px;top:84px;width:136px;height:10px"></div><div class="abs line" style="left:22px;top:108px;width:96px;height:10px"></div></div>
+              <div class="card" style="left:1320px;top:230px;width:300px;height:169px;border-radius:10px"><div class="abs" style="left:22px;top:22px;width:161px;height:18px;border-radius:5px;background:#17181c"></div><div class="abs" style="left:36px;bottom:24px;width:34px;height:30px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:88px;bottom:24px;width:34px;height:43px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:140px;bottom:24px;width:34px;height:56px;border-radius:4px;background:#d8d2c4"></div><div class="abs" style="left:192px;bottom:24px;width:34px;height:69px;border-radius:4px;background:#f7d038"></div></div>
+            </div>
+
+            <div id="f09-win">
+              <div class="card" id="f09-wincard" style="left:0;top:0;width:1200px;height:740px"></div>
+              <div class="abs" id="f09-winhead" style="left:0;top:0;width:1200px;height:70px;display:flex;align-items:center;gap:12px;padding:0 32px;border-bottom:1px solid #ece7dc;font:600 24px/1 Instrument Sans;color:#17181c"><span class="f09-dotwrap"><i class="f09-ring" id="f09-ring"></i><span class="ai-dot" id="f09-hdot"></span></span>Assistant IA</div>
+              <div class="abs f09-bubble" id="f09-b1" style="right:50px;top:110px;padding:24px 30px;border-radius:26px 26px 6px 26px;background:#efebe2;font:500 32px/1.2 Instrument Sans;color:#17181c">Prépare ma présentation de lundi.</div>
+              <div class="abs f09-bubble" id="f09-b2" style="left:50px;top:240px;padding:24px 30px;border-radius:26px 26px 26px 6px;background:#fff;border:1px solid #e1dccf;font:500 32px/1.2 Instrument Sans;color:#17181c;display:flex;gap:14px;align-items:center"><span class="ai-dot"></span>Voici 10 diapos. Je les raccourcis ?</div>
+              <div class="abs f09-bubble" id="f09-b3" style="right:50px;top:370px;padding:24px 30px;border-radius:26px 26px 6px 26px;background:#efebe2;font:500 32px/1.2 Instrument Sans;color:#17181c">Oui, et ajoute un graphique.</div>
+              <div class="abs" id="f09-fshadow" style="left:50px;top:520px;width:1100px;height:110px;border-radius:24px;box-shadow:0 30px 80px rgba(60,45,20,.14)"></div>
+              <div class="abs" id="f09-field" style="left:50px;top:520px;width:1100px;height:110px;border-radius:24px;background:#fff;border:2px solid rgba(23,24,28,.14);display:flex;align-items:center;padding:0 30px;font:500 30px/1 Instrument Sans;color:#8d8a84">
+                <span class="f09-fline" id="f09-ftxt">Prépare ma présentation de lundi à partir de mes notes.</span>
+                <span class="f09-fline" id="f09-fph">Écris ta demande…<span class="caret" id="f09-caret" style="height:36px;margin-left:6px"></span></span>
+                <div class="send" style="right:24px;top:24px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div id="f09-fg">
+        <svg id="f09-defs" width="0" height="0" aria-hidden="true">
+          <filter id="f09-streak" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+            <feGaussianBlur id="f09-streakblur" in="SourceGraphic" stdDeviation="0 0" />
+          </filter>
+        </svg>
+        <div class="card dark f09-ghost" id="f09-gh2"></div>
+        <div class="card dark f09-ghost" id="f09-gh1"></div>
+        <div class="card dark" id="f09-card"><div class="code"><b>import</b> pandas <b>as</b> pd
+<b>def</b> build_deck(notes, n=10):
+    df = pd.read_csv(notes)
+    slides = [s <b>for</b> s <b>in</b> df.groupby(<b>"theme"</b>)]
+    <b>return</b> render(slides[:n])
+<b>if</b> __name__ == <b>"__main__"</b>:
+    build_deck(<b>"notes.csv"</b>)</div></div>
+      </div>
+    </div>
+
+    <!-- piste 2 : le sous-titre (la phrase de la voix), en bas au centre -->
+    <div id="f09-subs" class="clip" data-start="0" data-duration="3.33" data-track-index="2">
+      <div class="sub light" id="f09-sub1"><span class="w f09-w" id="f09-s1a">Pas</span> <span class="w f09-w" id="f09-s1b">besoin</span> <span class="w f09-w" id="f09-s1c">d’être</span>  <span class="w f09-hl" id="f09-s1hl"><i class="f09-hlbg" id="f09-hlbg"></i><span class="f09-w" id="f09-s1d">technique</span></span> <span class="w f09-w" id="f09-s1e">:</span></div>
+      <div class="sub light" id="f09-sub2"><span class="w f09-w" id="f09-s2a">il</span> <span class="w f09-w" id="f09-s2b">faut</span> <span class="w f09-w" id="f09-s2c">juste</span>  <span class="w pk" id="f09-s2pk"><span class="f09-w" id="f09-s2d">apprendre</span> <span class="f09-w" id="f09-s2e">à</span> <span class="f09-w" id="f09-s2f">lui</span> <span class="f09-w" id="f09-s2g">parler</span><svg class="f09-pksvg" id="f09-pksvg" viewBox="0 0 400 30" preserveAspectRatio="none"><defs><mask id="f09-pkmask" maskUnits="userSpaceOnUse" x="-40" y="-30" width="480" height="90"><path id="f09-pkdraw" d="M -14 26 C 120 21, 270 13, 414 3" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round"/></mask></defs><path d="M6 22 C 70 16, 150 13, 230 11 C 300 9, 360 6, 396 3 C 398 6, 396 9, 392 10 C 330 15, 250 19, 170 22 C 110 24, 50 27, 10 28 C 2 28, 1 23, 6 22 Z" fill="#f7d038" mask="url(#f09-pkmask)"/></svg></span><span class="w f09-w" id="f09-s2h">.</span></div>
+    </div>
+
+    <!-- piste 3 : grain et vignette -->
+    <div id="f09-finish" class="clip" data-start="0" data-duration="3.33" data-track-index="3" data-layout-ignore>
+      <div class="grain"></div><div class="vignette light"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "09-technique";
+      var T = 3.33;
+      var byId = function (id) { return document.getElementById(id); };
+      var NO = false; /* immediateRender des tweens qui commencent après 0 */
+
+      var drift = byId("f09-drift"), cam = byId("f09-cam"), world = byId("f09-world");
+      var grid = byId("f09-grid"), win = byId("f09-win"), dots = byId("f09-dots");
+      var wincard = byId("f09-wincard"), winhead = byId("f09-winhead");
+      var hdot = byId("f09-hdot"), ring = byId("f09-ring");
+      var b1 = byId("f09-b1"), b2 = byId("f09-b2"), b3 = byId("f09-b3");
+      var fshadow = byId("f09-fshadow"), ftxt = byId("f09-ftxt"), fph = byId("f09-fph"), caret = byId("f09-caret");
+      var card = byId("f09-card"), gh1 = byId("f09-gh1"), gh2 = byId("f09-gh2"), streak = byId("f09-streakblur");
+      var hlbg = byId("f09-hlbg"), pksvg = byId("f09-pksvg"), pkdraw = byId("f09-pkdraw");
+
+      var tl = gsap.timeline({ paused: true, defaults: { lazy: false } });
+
+      /* =====================================================================================
+         PISTE CAMÉRA (timeline à part, ajoutée au master à 0). Écran = 960 + (monde + world.x − 960) × cam.scale.
+         Le monde est le cadrage de P17 à l'échelle 1 (fenêtre 360..1560 × 90..830, champ 410..1510 × 610..720).
+         ===================================================================================== */
+      var CAM = gsap.timeline();
+      /* 0.00 → 0.17 : fin du whip vers la gauche (power3.out) : le champ, entré par la gauche, se pose à droite
+         (écran 608..1840 × 313..437, ×1,12) ; la grille file vers la droite et sort */
+      CAM.fromTo(world, { x: -842.9, y: -272.3 }, { x: 235.7, y: -272.3, duration: 0.17, ease: "power3.out" }, 0);
+      CAM.fromTo(cam, { scale: 1.12 }, { scale: 1.12, duration: 0.17, ease: "none" }, 0);
+      /* flou du whip (12 px écran) : divisé par l'échelle cumulée, posé sur chaque objet (< 1800 px) */
+      CAM.fromTo(win, { filter: "blur(10.7px)" }, { filter: "blur(0px)", duration: 0.17, ease: "power3.out" }, 0);
+      CAM.fromTo(grid, { filter: "blur(12px)" }, { filter: "blur(0px)", duration: 0.17, ease: "power3.out" }, 0);
+      /* 0.17 → 1.42 : dérive (poussée 2 %/s + 18 px vers la gauche) */
+      CAM.fromTo(world, { x: 235.7 }, { x: 219.7, duration: 1.25, ease: "none", immediateRender: NO }, 0.17);
+      CAM.fromTo(cam, { scale: 1.12 }, { scale: 1.145, duration: 1.25, ease: "none", immediateRender: NO }, 0.17);
+      /* 1.42 → 1.67 : recul expo.out jusqu'au cadrage de P17 (×0,978, l'identité à 2.77) */
+      CAM.fromTo(world, { x: 219.7, y: -272.3 }, { x: 0, y: 0, duration: 0.25, ease: "expo.out", immediateRender: NO }, 1.42);
+      CAM.fromTo(cam, { scale: 1.145 }, { scale: 0.978, duration: 0.25, ease: "expo.out", immediateRender: NO }, 1.42);
+      CAM.fromTo(win, { filter: "blur(0px)" }, { filter: "blur(3.5px)", duration: 0.03, ease: "none", immediateRender: NO }, 1.42);
+      CAM.fromTo(win, { filter: "blur(3.5px)" }, { filter: "blur(0px)", duration: 0.22, ease: "expo.out", immediateRender: NO }, 1.45);
+      /* 1.67 → 3.12 : poussée 2 %/s (×0,978 → ×1,007) */
+      CAM.fromTo(cam, { scale: 0.978 }, { scale: 1.007, duration: 1.45, ease: "none", immediateRender: NO }, 1.67);
+      /* 3.12 → 3.33 : recul power2.in, la fenêtre rétrécit au centre jusqu'à ×0,6, flou 0 → 12 px écran (20 / 0,6) */
+      CAM.fromTo(cam, { scale: 1.007 }, { scale: 0.6, duration: 0.21, ease: "power2.in", immediateRender: NO }, 3.12);
+      CAM.fromTo(win, { filter: "blur(0px)" }, { filter: "blur(20px)", duration: 0.21, ease: "power2.in", immediateRender: NO }, 3.12);
+      /* dérive de fond : jamais d'arrêt */
+      CAM.fromTo(drift, { x: 0, y: 0 }, { x: -10, y: -6, duration: T, ease: "none" }, 0);
+      CAM.fromTo(dots, { x: 0 }, { x: -24, duration: T, ease: "none" }, 0);
+      tl.add(CAM, 0);
+
+      /* la grille est hors champ dès 0.17 ; on l'éteint pour qu'elle ne revienne pas au recul final */
+      tl.set(grid, { opacity: 0, immediateRender: NO }, 0.3);
+
+      /* =====================================================================================
+         SCÈNE 1 (0.00 → 1.57) : P16, « Pas besoin d’être [technique] : »
+         ===================================================================================== */
+      /* 0.17 : la carte de code arrive de la caméra, à gauche (×1,3, flou 10 → net en 0,14 s), par-dessus le champ */
+      tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out", immediateRender: NO }, 0.17);
+      tl.fromTo(card, { x: -320, y: 24, scale: 1.3, rotation: -5 },
+        { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.14, ease: "expo.out", immediateRender: NO }, 0.17);
+      tl.fromTo(streak, { attr: { stdDeviation: "10 10" } }, { attr: { stdDeviation: "0 0" }, duration: 0.14, ease: "expo.out", immediateRender: NO }, 0.17);
+      /* tenue vivante : la carte (avant-plan) glisse plus vite que le monde */
+      tl.fromTo(card, { x: 0, y: 0 }, { x: -12, y: -4, duration: 0.67, ease: "none", immediateRender: NO }, 0.31);
+      gsap.set([gh1, gh2], { x: -12, y: -4 });
+
+      /* 0.98 (« technique » à 1.03, l'image devance de 1,5 image) : la carte bascule 0° → -16° (0,15 s power2.in)
+         et tombe hors champ en bas à gauche (0,35 s, chute accélérée power1.in), flou vertical qui suit la vitesse ;
+         traînée de 2 échos (motion-blur-streak, voie B) */
+      var FALL = 0.98;
+      tl.fromTo(card, { rotation: 0 }, { rotation: -16, duration: 0.15, ease: "power2.in", immediateRender: NO }, FALL);
+      tl.fromTo(card, { x: -12, y: -4 }, { x: -840, y: 756, duration: 0.35, ease: "power1.in", immediateRender: NO }, FALL);
+      tl.fromTo(streak, { attr: { stdDeviation: "0 0" } }, { attr: { stdDeviation: "0 9" }, duration: 0.35, ease: "none", immediateRender: NO }, FALL);
+      tl.set(card, { opacity: 0, immediateRender: NO }, FALL + 0.38);
+      [[gh1, 0.04, 0.22], [gh2, 0.08, 0.11]].forEach(function (g) {
+        var el = g[0], lag = g[1];
+        tl.fromTo(el, { opacity: 0 }, { opacity: g[2], duration: 0.05, ease: "none", immediateRender: NO }, FALL + 0.03);
+        tl.fromTo(el, { rotation: 0 }, { rotation: -16, duration: 0.15, ease: "power2.in", immediateRender: NO }, FALL + lag);
+        tl.fromTo(el, { x: -12, y: -4 }, { x: -840, y: 756, duration: 0.35, ease: "power1.in", immediateRender: NO }, FALL + lag);
+        /* les échos ne vivent que le début de la chute (P16), puis s'éteignent : le flou vertical prend le relais */
+        tl.fromTo(el, { opacity: g[2] }, { opacity: 0, duration: 0.1, ease: "power1.in", immediateRender: NO }, FALL + 0.17);
+      });
+
+      /* =====================================================================================
+         SCÈNE 2 (1.57 → 3.33) : P17, « il faut juste [apprendre à lui parler]. »
+         ===================================================================================== */
+      /* 1.47 : pendant le recul, la fenêtre « Assistant IA » se révèle autour du champ */
+      tl.fromTo([wincard, winhead], { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out", immediateRender: NO }, 1.47);
+      tl.fromTo([wincard, winhead], { scale: 1.03, transformOrigin: "600px 370px" },
+        { scale: 1, duration: 0.3, ease: "expo.out", immediateRender: NO }, 1.47);
+      tl.fromTo(fshadow, { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.out", immediateRender: NO }, 1.47);
+      /* 1.50 : la demande part (envoyée) ; 1.62 : le champ redevient vide, caret jaune */
+      tl.fromTo(ftxt, { y: 0, opacity: 1 }, { y: -14, opacity: 0, duration: 0.12, ease: "power2.in", immediateRender: NO }, 1.5);
+      tl.fromTo(fph, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.16, ease: "power3.out", immediateRender: NO }, 1.62);
+      [[2.05, 0], [2.35, 1], [2.9, 0], [3.12, 1]].forEach(function (k) {
+        tl.set(caret, { opacity: k[1], immediateRender: NO }, k[0]);
+      });
+
+      /* les bulles montent (y 20 → 0, 0,12 s) : 1.67 toi, 2.07 l'IA, 2.47 toi */
+      function bubble(el, t, origin) {
+        tl.fromTo(el, { opacity: 0, y: 20, scale: 0.96, transformOrigin: origin },
+          { opacity: 1, y: 0, scale: 1, duration: 0.12, ease: "power3.out", immediateRender: NO }, t);
+      }
+      bubble(b1, 1.67, "100% 100%");
+      bubble(b2, 2.07, "0% 100%");
+      bubble(b3, 2.47, "100% 100%");
+
+      /* 2.87 : le point de l'IA pulse */
+      tl.fromTo(hdot, { scale: 1 }, { scale: 1.7, duration: 0.1, ease: "power2.out", immediateRender: NO }, 2.87);
+      tl.fromTo(hdot, { scale: 1.7 }, { scale: 1, duration: 0.24, ease: "power2.inOut", immediateRender: NO }, 2.97);
+      tl.fromTo(ring, { opacity: 0.85, scale: 1 }, { opacity: 0, scale: 3.4, duration: 0.36, ease: "power2.out", immediateRender: NO }, 2.87);
+
+      /* =====================================================================================
+         SOUS-TITRE : chaque mot sur son horodatage (1 image avant), gris (35 %) puis encre pleine ; sortie 0,14 s
+         ===================================================================================== */
+      function word(id, cue) {
+        var el = byId(id), t = cue - 0.033;
+        tl.fromTo(el, { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: NO }, t);
+        tl.fromTo(el, { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power1.inOut", immediateRender: NO }, t + 0.14);
+      }
+      function out(ids, t) {
+        var els = ids.map(byId);
+        tl.fromTo(els, { opacity: 1, filter: "blur(0px)" },
+          { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: NO }, t);
+      }
+
+      /* phrase 1 */
+      word("f09-s1a", 0.23);
+      word("f09-s1b", 0.43);
+      word("f09-s1c", 0.78);
+      /* 1.01 : le surligneur se trace depuis la gauche (0,16 s power3.out), 2 images avant « technique » */
+      tl.fromTo(hlbg, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: NO }, 1.01);
+      word("f09-s1d", 1.03);
+      word("f09-s1e", 1.03);
+      out(["f09-s1a", "f09-s1b", "f09-s1c", "f09-s1hl", "f09-s1e"], 1.44);
+
+      /* phrase 2 */
+      word("f09-s2a", 1.61);
+      word("f09-s2b", 1.77);
+      word("f09-s2c", 1.96);
+      word("f09-s2d", 2.23);
+      word("f09-s2e", 2.38);
+      word("f09-s2f", 2.62);
+      word("f09-s2g", 2.79);
+      word("f09-s2h", 2.79);
+      /* 2.23 → 2.63 : le trait de pinceau jaune se dessine de gauche à droite (svg-path-draw sur le masque du trait) */
+      var len = 0;
+      try { len = pkdraw.getTotalLength(); } catch (e) { len = 0; }
+      if (!(len > 1)) len = 440;
+      var L = Math.ceil(len * 1.05) + 4;
+      pkdraw.style.strokeDasharray = L + " " + L;
+      pkdraw.style.strokeDashoffset = String(L);
+      tl.fromTo(pksvg, { opacity: 0 }, { opacity: 1, duration: 0.02, ease: "none", immediateRender: NO }, 2.23);
+      tl.fromTo(pkdraw, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out", immediateRender: NO }, 2.23);
+      /* 3.07 : le sous-titre sort avant la couture */
+      out(["f09-s2a", "f09-s2b", "f09-s2c", "f09-s2pk", "f09-s2h"], 3.07);
+
+      /* longueur exacte du plan */
+      tl.set({}, {}, T);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,429 @@
+<template>
+<style>
+/* ===== kit de dessin (styleframes/_kit.css), copie mot pour mot, sans les règles de page ; ../assets/ devient assets/ ===== */
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+
+/* ===================== 04-soiree : CSS propre à la séquence (préfixe f04-) ===================== */
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif;
+  -webkit-font-smoothing: antialiased; }
+.f04-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f04-stage { overflow: hidden; }
+/* piste caméra : #f04-drift (dérive, poussée) > #f04-cam (échelle autour du centre du cadre) > #f04-world (contre-translation) */
+#f04-drift, #f04-cam, #f04-world, #f04-pane { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+/* sol de nuit plus grand que le cadre : couvre l'atterrissage (×1,39) et la dérive (-42 px, ×1,027) */
+#f04-ground { position: absolute; left: -300px; top: -200px; width: 2520px; height: 1480px; }
+/* halos teintés derrière l'horloge (bleu nuit, puis chaud), au-dessus du halo du kit */
+.f04-halo { position: absolute; left: -135px; top: -20px; width: 1500px; height: 1300px; border-radius: 50%; opacity: 0; }
+#f04-halo-night { background: radial-gradient(closest-side, rgba(34,52,122,.36), rgba(26,38,90,.14) 55%, rgba(13,15,20,0)); }
+#f04-halo-warm { background: radial-gradient(closest-side, rgba(255,214,90,.075), rgba(255,214,90,.025) 55%, rgba(13,15,20,0)); }
+/* les applis : groupe 1 (bord du portable + fenêtre « Présentation »), groupe 2 (« Messagerie ») à +1920 px dans le volet */
+#f04-g1 { position: absolute; left: 557px; top: 92px; width: 1216px; height: 756px; }
+#f04-g2 { position: absolute; left: 2495px; top: 110px; width: 1180px; height: 720px; transform-origin: 590px 360px; opacity: 0; filter: blur(10px); }
+.f04-pop { opacity: 0; }
+.f04-row { opacity: 0; }
+#f04-phtext { position: relative; }
+#f04-caret { position: absolute; left: -12px; top: -6px; width: 3px; height: 50px; background: #17181c; opacity: 0; }
+#f04-cur { position: absolute; left: 412px; top: 335px; width: 48px; height: 64px; opacity: 0; transform-origin: 4px 3px; }
+#f04-cur svg { display: block; overflow: visible; }
+#f04-ripple { position: absolute; left: 384px; top: 306px; width: 64px; height: 64px; border-radius: 50%; border: 4px solid #f7d038; opacity: 0; }
+.f04-num { display: inline-block; font-size: 20px; font-variant-numeric: tabular-nums; transform-origin: 100% 80%; }
+/* l'ancre : l'horloge murale, hors caméra (Ø 300, centre (315, 430)) */
+#f04-clockgrp { position: absolute; left: 140px; top: 255px; width: 350px; height: 400px; transform-origin: 175px 175px; opacity: 0; }
+/* sous-titres : mots cachés avant leur horodatage ; surligneur révélé de gauche à droite */
+.f04-w { opacity: 0; }
+.f04-wi { display: inline-block; }
+#f04-hl1, #f04-hl2 { clip-path: inset(-12% 106% -12% -6%); }
+</style>
+
+<div id="root" data-composition-id="04-soiree" data-width="1920" data-height="1080" data-duration="3.65">
+
+  <!-- piste 0 : le bureau de nuit et les applis, sous la piste caméra -->
+  <div id="f04-stage" class="clip f04-layer" data-start="0" data-duration="3.65" data-track-index="0" data-layout-allow-overflow>
+    <div id="f04-drift"><div id="f04-cam"><div id="f04-world">
+      <div id="f04-ground" data-layout-ignore>
+        <div class="g-dark"><div class="dots"></div><div class="halo" style="left:360px;top:170px;width:1800px;height:1000px"></div><div id="f04-halo-night" class="f04-halo"></div><div id="f04-halo-warm" class="f04-halo"></div></div>
+      </div>
+      <div id="f04-pane" data-layout-allow-overflow>
+        <div id="f04-g1">
+          <div id="f04-lid" class="laptop-lid" style="left:0;top:0;width:1216px;height:756px"></div>
+          <div id="f04-win1" class="win" style="left:18px;top:18px;width:1180px;height:720px;"><div class="win-bar"><i></i><i></i><i></i><span>Présentation</span></div><div class="abs" style="left:0;top:52px;right:0;bottom:0"><div class="abs" style="left:24px;top:24px;width:150px;display:grid;gap:14px"><div class="f04-pop f04-thumb" style="height:74px;border-radius:6px;background:#fff;border:3px solid #17181c"></div><div class="f04-pop f04-thumb" style="height:74px;border-radius:6px;background:#fff;border:1px solid #e1dccf"></div><div class="f04-pop f04-thumb" style="height:74px;border-radius:6px;background:#fff;border:1px solid #e1dccf"></div><div class="f04-pop f04-thumb" style="height:74px;border-radius:6px;background:#fff;border:1px solid #e1dccf"></div><div class="f04-pop f04-thumb" style="height:74px;border-radius:6px;background:#fff;border:1px solid #e1dccf"></div></div><div id="f04-slide" class="abs f04-pop" style="left:200px;top:24px;width:930px;height:558px;background:#fff;border:1px solid #e1dccf;border-radius:6px"><div id="f04-ph" class="abs f04-pop" style="left:60px;right:60px;top:179px;height:120px;border:3px dashed #c9c3b6;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 40px/1 Instrument Sans;color:#a19c90"><span id="f04-phtext">Cliquez pour ajouter un titre<i id="f04-caret"></i></span></div></div><div id="f04-count1" class="abs micro f04-pop" style="left:200px;bottom:34px">Diapo 1 / 20</div></div>
+            <!-- handoff_in : la dalle du portable 2026 (l'assistant IA, flou), qui devient la fenêtre -->
+            <div id="f04-skin" class="laptop-screen" style="left:0;top:0;width:1180px;height:720px"><div id="f04-skinui" style="position:absolute;left:0;top:0;width:1024px;height:650px;transform:scale(1.1523,1.1077);transform-origin:0 0"><div class="ai"><div class="ai-head"><span class="ai-dot"></span>Assistant IA</div><div class="ai-hello">Bonjour. Que veux-tu faire aujourd’hui ?</div><div class="ai-field">Écris ta demande…<span class="caret" style="height:36px;margin-left:4px"></span><div class="send" style="right:16px;top:15px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 24 V7 M8 13 L15 6 L22 13" stroke="#17181c" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div></div></div>
+          </div>
+          <div id="f04-ripple"></div>
+          <div id="f04-cur"><svg width="48" height="64" viewBox="0 0 48 64"><path d="M4 3 L4 50 L16 39 L24 58 L32 54 L24 36 L40 36 Z" fill="#fff" stroke="#17181c" stroke-width="3" stroke-linejoin="round" style="filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))"/></svg></div>
+        </div>
+        <div id="f04-g2">
+          <div id="f04-win2" class="win" style="left:0;top:0;width:1180px;height:720px;"><div class="win-bar"><i></i><i></i><i></i><span>Messagerie</span></div><div class="abs" style="left:0;top:52px;right:0;bottom:0"><div style="display:flex;align-items:baseline;gap:20px;padding:24px 26px 18px"><span style="font:600 34px/1 Instrument Sans;color:#17181c">Boîte de réception</span><span class="micro" style="color:#17181c"><span id="f04-unread" class="f04-num">87</span> non lus</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Service client</span><span class="ui" style="color:#55565c">Relance : votre commande</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Comptabilité</span><span class="ui" style="color:#55565c">Pièces manquantes</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Équipe projet</span><span class="ui" style="color:#55565c">Re: Re: point de lundi</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Fournisseur</span><span class="ui" style="color:#55565c">Devis à valider</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Banque</span><span class="ui" style="color:#55565c">Votre relevé</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Newsletter</span><span class="ui" style="color:#55565c">Les nouveautés</span></div><div class="f04-row" style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Rendez-vous</span><span class="ui" style="color:#55565c">Confirmation demandée</span></div></div></div>
+        </div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- piste 1 : l'ancre, l'horloge murale (hors caméra : elle ne bouge pas, seules ses aiguilles tournent) -->
+  <div id="f04-anchor" class="clip f04-layer" data-start="0" data-duration="3.65" data-track-index="1" data-layout-allow-overlap>
+    <div id="f04-clockgrp">
+      <div class="abs" style="left:25px;top:25px;width:300px;height:300px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.45)"></div>
+      <div class="clock" style="left:25px;top:25px;"><svg width="300" height="300" viewBox="0 0 300 300" style="overflow:visible"><circle cx="150.0" cy="150.0" r="146.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><line x1="150.0" y1="18.0" x2="150.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="216.0" y1="35.7" x2="210.0" y2="46.1" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="264.3" y1="84.0" x2="253.9" y2="90.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="282.0" y1="150.0" x2="260.0" y2="150.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="264.3" y1="216.0" x2="253.9" y2="210.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="216.0" y1="264.3" x2="210.0" y2="253.9" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="150.0" y1="282.0" x2="150.0" y2="260.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="84.0" y1="264.3" x2="90.0" y2="253.9" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="35.7" y1="216.0" x2="46.1" y2="210.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="150.0" x2="40.0" y2="150.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="35.7" y1="84.0" x2="46.1" y2="90.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="84.0" y1="35.7" x2="90.0" y2="46.1" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f04-hh" x1="150.0" y1="150.0" x2="150.0" y2="75.0" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f04-mh" x1="150.0" y1="150.0" x2="150.0" y2="39.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f04-sh" x1="150.0" y1="172.5" x2="150.0" y2="30.0" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="150.0" cy="150.0" r="8" fill="#17181c"/></svg></div>
+      <div id="f04-digit" class="clock-digit" style="left:175px;top:351px">18:00</div>
+    </div>
+  </div>
+
+  <!-- piste 2 : avant-plan, le post-it de la séquence 3 qui finit de sortir par le haut à gauche -->
+  <div id="f04-fg" class="clip f04-layer" data-start="0" data-duration="3.65" data-track-index="2" data-layout-ignore>
+    <div id="f04-postit" class="postit" style="left:0;top:0"><div class="band"></div><div class="hw">Pas pour<br>moi</div><div class="curl"></div></div>
+  </div>
+
+  <!-- piste 3 : la phrase de la voix, bas centre, mot par mot -->
+  <div id="f04-subs" class="clip f04-layer" data-start="0" data-duration="3.65" data-track-index="3" data-layout-allow-caption-zone>
+    <div id="f04-sub1" class="sub dark"><span class="w f04-w">Ta</span> <span class="w f04-w">présentation</span> <span class="w f04-w">te</span> <span class="w f04-w">prend</span>  <span id="f04-hl1" class="w hl"><span class="f04-w f04-wi">une</span> <span class="f04-w f04-wi">soirée</span></span><span class="w f04-w">.</span></div>
+    <div id="f04-sub2" class="sub dark"><span class="w f04-w">Tes</span> <span class="w f04-w">mails,</span>  <span id="f04-hl2" class="w hl"><span class="f04-w f04-wi">ta</span> <span class="f04-w f04-wi">matinée</span></span><span class="w f04-w">.</span></div>
+  </div>
+
+  <!-- piste 4 : grain et vignette du kit -->
+  <div id="f04-fx" class="clip f04-layer" data-start="0" data-duration="3.65" data-track-index="4" data-layout-ignore>
+    <div class="grain"></div><div class="vignette"></div>
+  </div>
+</div>
+
+<script src="assets/js/gsap.min.js"></script>
+<script>
+  (function () {
+    var FID = "04-soiree";
+    var D = 3.65;
+    var byId = function (id) { return document.getElementById(id); };
+    var toArr = function (list) { return Array.prototype.slice.call(list); };
+
+    /* ---------- réglages ---------- */
+    var S0 = 1638 / 1180;            /* handoff_in : la dalle remplit ~80 % du cadre (×1,6 de la dalle de 1024 px) */
+    var WIN_CX = 1165, WIN_CY = 470; /* centre de la fenêtre (monde) = la dalle dans laquelle pousse la séquence 3 */
+    var T_LAND = 0.15;               /* atterrissage expo.out */
+    var T_W1 = 1.95, T_W1D = 0.15;   /* whip 1 (fenêtre seulement) */
+    var T_W2 = 3.45;                 /* whip 2, jusqu'à la fin */
+    var DRIFT_V = -12;               /* px/s, toute la séquence */
+    var PUSH_V = 0.015;              /* échelle/s, scène 1 */
+    var SD = 1 + PUSH_V * (T_W1 - T_LAND);           /* 1,027 */
+    var XD1 = DRIFT_V * (T_W1 - T_LAND);             /* -21,6 px à 1.95 */
+    var XD_210 = XD1 + DRIFT_V * T_W1D;              /* -23,4 px à 2.10 */
+    var XD_END = XD1 + DRIFT_V * (D - T_W1);         /* -42 px à 3.65 */
+    /* le volet des applis : à 2.10 la « Messagerie » tombe exactement à la place de P08 (575, 110), dérive comprise */
+    var PANE_X = (-1920 - XD_210) / SD;
+    var PANE_S = 1 / SD;
+    var PANE_X2 = PANE_X - 1100 / SD;                /* whip 2 : 1100 px à l'écran à 3.65 */
+
+    var DARK = "#f3f1ec", DARK_GRAY = "rgba(243, 241, 236, 0.35)";
+    var INK = "#17181c", INK_GRAY = "rgba(23, 24, 28, 0.35)";
+
+    var digit = byId("f04-digit");
+    var unread = byId("f04-unread");
+    var HH = byId("f04-hh"), MH = byId("f04-mh"), SH = byId("f04-sh");
+
+    /* heure numérique et compteur : écrits par render() seul, à partir de deux proxys tweenés */
+    var clk = { m: 1080 };   /* minutes depuis minuit (18:00) */
+    var cnt = { n: 87 };
+    var lastD = "", lastN = "";
+    function hhmm(v) {
+      v = ((Math.round(v) % 1440) + 1440) % 1440;
+      var h = Math.floor(v / 60), m = v % 60;
+      return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+    }
+    function render() {
+      var d = hhmm(clk.m);
+      if (d !== lastD) { digit.textContent = d; lastD = d; }
+      var n = String(Math.round(cnt.n));
+      if (n !== lastN) { unread.textContent = n; lastN = n; }
+    }
+
+    var tl = gsap.timeline({ paused: true, defaults: { lazy: false }, onUpdate: render });
+
+    /* ================= PISTE CAMÉRA (à part des objets) ================= */
+    /* 0.00 à 0.15 : la poussée se pose (coordinate-target-zoom inversé : #f04-cam met l'échelle autour du centre,
+       #f04-world contre-translate de -offset ; même durée, même courbe) */
+    tl.fromTo("#f04-cam", { scale: S0 }, { scale: 1, duration: T_LAND, ease: "expo.out" }, 0);
+    tl.fromTo("#f04-world", { x: 960 - WIN_CX, y: 540 - WIN_CY }, { x: 0, y: 0, duration: T_LAND, ease: "expo.out" }, 0);
+    /* le flou retombe moins vite que l'échelle : le contenu de la dalle reste illisible pendant le fondu */
+    tl.fromTo("#f04-g1", { filter: "blur(14px)" }, { filter: "blur(0px)", duration: T_LAND, ease: "power2.out" }, 0);
+    /* dérive x -12 px/s, poussée 1,5 %/s (scène 1), puis dérive seule (scène 2) */
+    tl.fromTo("#f04-drift", { x: 0, scale: 1 }, { x: XD1, scale: SD, duration: T_W1 - T_LAND, ease: "none", immediateRender: false }, T_LAND);
+    tl.fromTo("#f04-drift", { x: XD1 }, { x: XD_END, duration: D - T_W1, ease: "none", immediateRender: false }, T_W1);
+    /* 1.95 à 2.10 : whip vers la droite sur la fenêtre seulement (expo.inOut, flou 10 px) ; l'horloge reste */
+    tl.set("#f04-g2", { opacity: 1 }, T_W1);
+    tl.fromTo("#f04-pane", { x: 0, scale: 1 }, { x: PANE_X, scale: PANE_S, duration: T_W1D, ease: "expo.inOut", immediateRender: false }, T_W1);
+    tl.fromTo("#f04-g1", { filter: "blur(0px)" }, { filter: "blur(10px)", duration: 0.08, ease: "power2.in", immediateRender: false }, T_W1);
+    /* 3.45 à 3.65 : whip vers la droite (power2.in, flou 0 → 14 px) : la « Messagerie » sort par la gauche */
+    tl.fromTo("#f04-pane", { x: PANE_X }, { x: PANE_X2, duration: D - T_W2, ease: "power2.in", immediateRender: false }, T_W2);
+    tl.fromTo("#f04-g2", { filter: "blur(0px)" }, { filter: "blur(14px)", duration: D - T_W2, ease: "power2.in", immediateRender: false }, T_W2);
+
+    /* ================= OBJETS ================= */
+    /* handoff_in : le post-it finit de sortir par le haut à gauche, flou (sortie par le mouvement, image 3) */
+    tl.fromTo("#f04-postit",
+      { x: -90, y: -150, rotation: -12, scale: 1.6, filter: "blur(14px)" },
+      { x: -570, y: -590, rotation: -20, scale: 1.6, filter: "blur(14px)", duration: 0.12, ease: "none" }, 0);
+    /* la dalle du portable devient la fenêtre « Présentation » (fondu après les 2 images de la couture) */
+    tl.fromTo("#f04-skinui", { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none", immediateRender: false }, 0.04);
+    tl.fromTo(["#f04-skin", "#f04-lid"], { opacity: 1 }, { opacity: 0, duration: 0.07, ease: "none", immediateRender: false }, 0.04);
+
+    /* l'horloge murale arrive de la caméra à gauche (×1,4, flou 10 → net en 0,14 s), à 18:00 */
+    tl.fromTo("#f04-clockgrp",
+      { opacity: 0, scale: 1.4, x: -40, filter: "blur(10px)" },
+      { opacity: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false }, 0.067);
+
+    /* aiguilles : rotation SVG autour du centre du cadran */
+    gsap.set([HH, MH, SH], { svgOrigin: "150 150" });
+    gsap.set(HH, { rotation: 540 });
+    gsap.set(MH, { rotation: 0 });
+    gsap.set(SH, { rotation: 0 });
+    function rot(el, a, b, t, d, ease) {
+      tl.fromTo(el, { rotation: a }, { rotation: b, duration: d, ease: ease, immediateRender: false }, t);
+    }
+    function tick(a, t) { rot(SH, a, a + 6, t, 0.06, "power3.out"); }
+    function roll(a, b, t, d, ease) {
+      tl.fromTo(clk, { m: a }, { m: b, duration: d, ease: ease, immediateRender: false }, t);
+    }
+
+    /* scène 1 : 18:00, la trotteuse avance */
+    tick(0, 0.30); tick(6, 0.55); tick(12, 0.80);
+    /* « te prend » : deux tours jusqu'à 22:47 (power2.inOut), posé à 1.65 pour l'image clé */
+    var R1 = 0.90, R1D = 0.75;
+    rot(HH, 540, 683.5, R1, R1D, "power2.inOut");
+    rot(MH, 0, 1002, R1, R1D, "power2.inOut");
+    rot(SH, 18, 894, R1, R1D, "power2.inOut");
+    roll(1080, 1367, R1, R1D, "power2.inOut");
+    tl.fromTo("#f04-halo-night", { opacity: 0 }, { opacity: 1, duration: R1D, ease: "sine.inOut", immediateRender: false }, R1);
+    tick(894, 1.85);
+    /* sous le whip : la nuit passe, 22:47 → 08:30 */
+    var RN = 1.95, RND = 0.25;
+    rot(HH, 683.5, 975, RN, RND, "power2.inOut");
+    rot(MH, 1002, 1620, RN, RND, "power2.inOut");
+    rot(SH, 900, 1440, RN, RND, "power2.inOut");
+    roll(1367, 1950, RN, RND, "power2.inOut");
+    tick(1440, 2.35); tick(1446, 2.50);
+    /* scène 2 : l'horloge file de 08:30 à 12:00, le halo devient chaud ; posée à 3.15 pour l'image clé */
+    var R3 = 2.62, R3D = 0.53;
+    rot(HH, 975, 1080, R3, R3D, "power2.inOut");
+    rot(MH, 1620, 2160, R3, R3D, "power2.inOut");
+    rot(SH, 1452, 2160, R3, R3D, "power2.inOut");
+    roll(1950, 2160, R3, R3D, "power2.inOut");
+    tl.fromTo("#f04-halo-night", { opacity: 1 }, { opacity: 0, duration: R3D, ease: "sine.inOut", immediateRender: false }, R3);
+    tl.fromTo("#f04-halo-warm", { opacity: 0 }, { opacity: 1, duration: R3D, ease: "sine.inOut", immediateRender: false }, R3);
+
+    /* scène 1 : 0.23 « Ta présentation » : diapo 1 sélectionnée, le titre vide, « DIAPO 1 / 20 » */
+    var thumbs = toArr(byId("f04-win1").getElementsByClassName("f04-thumb"));
+    tl.fromTo(thumbs, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.14, ease: "power3.out", stagger: 0.035, immediateRender: false }, 0.23);
+    tl.fromTo("#f04-slide", { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.16, ease: "expo.out", immediateRender: false }, 0.23);
+    tl.fromTo("#f04-ph", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.14, ease: "power3.out", immediateRender: false }, 0.30);
+    tl.fromTo("#f04-count1", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power3.out", immediateRender: false }, 0.36);
+
+    /* 0.65 : le curseur arrive d'un seul mouvement courbe (x et y sur deux courbes) et clique directement dans le titre */
+    tl.set("#f04-cur", { opacity: 1 }, 0.20);
+    tl.fromTo("#f04-cur", { x: 1016 }, { x: 0, duration: 0.45, ease: "power3.out", immediateRender: false }, 0.20);
+    tl.fromTo("#f04-cur", { y: 330 }, { y: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, 0.20);
+    tl.fromTo("#f04-cur", { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.out", immediateRender: false }, 0.65);
+    tl.fromTo("#f04-cur", { scale: 0.85 }, { scale: 1, duration: 0.08, ease: "power2.out", immediateRender: false }, 0.71);
+    tl.fromTo("#f04-ripple", { opacity: 1, scale: 0.3 }, { opacity: 0, scale: 1.6, duration: 0.35, ease: "power2.out", immediateRender: false }, 0.65);
+    /* le pointeur s'efface quand on écrit ; le caret clignote, rien ne s'écrit (éteint à l'image clé 1.65) */
+    tl.fromTo("#f04-cur", { opacity: 1 }, { opacity: 0, duration: 0.12, ease: "power1.in", immediateRender: false }, 0.90);
+    [[0.68, 1], [0.93, 0], [1.18, 1], [1.43, 0], [1.68, 1], [1.93, 0]].forEach(function (s) {
+      tl.set("#f04-caret", { opacity: s[1] }, s[0]);
+    });
+
+    /* scène 2 : 2.10 la boîte de réception se pose (fin du whip, expo.out) */
+    gsap.set("#f04-g2", { scale: 1.04 });
+    tl.fromTo("#f04-g2", { filter: "blur(10px)", scale: 1.04 }, { filter: "blur(0px)", scale: 1, duration: 0.16, ease: "expo.out", immediateRender: false }, T_W1 + 0.07);
+    /* 2.21 « Tes mails » : sept lignes montent du bas (décalage 0,04 s) */
+    var rows = toArr(byId("f04-win2").getElementsByClassName("f04-row"));
+    tl.fromTo(rows, { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", stagger: 0.04, immediateRender: false }, 2.21);
+    /* 2.45 : le compteur roule de 87 à 94 (counting-dynamic-scale : valeur et échelle, même courbe, même durée) */
+    gsap.set(unread, { scale: 0.8 });
+    tl.fromTo(cnt, { n: 87 }, { n: 94, duration: 0.6, ease: "power3.out", immediateRender: false }, 2.45);
+    tl.fromTo(unread, { scale: 0.8 }, { scale: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, 2.45);
+
+    /* ================= SOUS-TITRES ================= */
+    function word(el, t, gray, full) {
+      tl.fromTo(el,
+        { opacity: 0, y: 8, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: false }, t);
+      /* passe à l'encre pleine pendant l'arrivée : plein à t + 0,12 (images clés 1.65 et 3.15) */
+      tl.fromTo(el, { color: gray }, { color: full, duration: 0.12, ease: "power1.inOut", immediateRender: false }, t);
+    }
+    function box(el, t) {
+      tl.fromTo(el,
+        { clipPath: "inset(-12% 106% -12% -6%)" },
+        { clipPath: "inset(-12% -6% -12% -6%)", duration: 0.16, ease: "power3.out", immediateRender: false }, t);
+    }
+    function subOut(sub, t) {
+      tl.fromTo(toArr(sub.children),
+        { opacity: 1, filter: "blur(0px)" },
+        { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, t);
+    }
+    var F = 1 / 30;
+    /* « Ta présentation te prend [une soirée]. » : Ta@0.23 présentation@0.41 te@0.95 prend@1.17 une@1.32 soirée@1.53 */
+    var w1 = toArr(byId("f04-sub1").getElementsByClassName("f04-w"));
+    word(w1[0], 0.23 - F, DARK_GRAY, DARK);
+    word(w1[1], 0.41 - F, DARK_GRAY, DARK);
+    word(w1[2], 0.95 - F, DARK_GRAY, DARK);
+    word(w1[3], 1.17 - F, DARK_GRAY, DARK);
+    box(byId("f04-hl1"), 1.30);
+    word(w1[4], 1.30, INK_GRAY, INK);
+    word(w1[5], 1.53 - F, INK_GRAY, INK);
+    word(w1[6], 1.53 - F, DARK_GRAY, DARK);
+    subOut(byId("f04-sub1"), 1.92);
+    /* « Tes mails, [ta matinée]. » : Tes@2.21 mails@2.45 ta@2.92 matinée@3.06 */
+    var w2 = toArr(byId("f04-sub2").getElementsByClassName("f04-w"));
+    word(w2[0], 2.21 - F, DARK_GRAY, DARK);
+    word(w2[1], 2.45 - F, DARK_GRAY, DARK);
+    box(byId("f04-hl2"), 2.90);
+    word(w2[2], 2.90, INK_GRAY, INK);
+    word(w2[3], 3.06 - F, INK_GRAY, INK);
+    word(w2[4], 3.06 - F, DARK_GRAY, DARK);
+    subOut(byId("f04-sub2"), 3.35);
+
+    render();
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines[FID] = tl;
+  })();
+</script>
+</template>

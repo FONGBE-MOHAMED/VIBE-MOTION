@@ -1,0 +1,506 @@
+<template>
+  <style>
+    /* ===== kit (styleframes/_kit.css, copie mot pour mot ; seules les règles de page html, body et #stage sont omises) ===== */
+/* Kit de dessin du film « Pas pour moi » (charte : ../frame.md). Source unique : sol, frise, post-it, horloge,
+   appareils, interfaces, sous-titre, surligneur, trait de pic, curseur. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+@font-face { font-family: "Big Shoulders"; font-weight: 800; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/fonts/Caveat-700.woff2") format("woff2"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.abs { position: absolute; }
+
+/* ---- sols ---- */
+.g-dark { position: absolute; inset: 0; background: #0d0f14; }
+.g-dark .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52,66,102,.55), rgba(38,48,74,.18) 55%, rgba(13,15,20,0)); }
+.g-dark .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.g-light { position: absolute; inset: 0; background: #f5f2ea; }
+.g-light .halo { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(247,208,56,.16), rgba(247,208,56,.05) 55%, rgba(245,242,234,0)); }
+.g-light .dots { position: absolute; inset: -60px; background-image: radial-gradient(rgba(23,24,28,.07) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.g-light + .vignette, .vignette.light { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(120,100,60,.12) 100%); }
+
+/* ---- frise ---- */
+.frise { position: absolute; left: -200px; right: -200px; height: 2px; background: #8d8a84; }
+.frise.light { background: rgba(23,24,28,.4); }
+.tick { position: absolute; width: 2px; height: 18px; background: #8d8a84; }
+.tick.light { background: rgba(23,24,28,.4); }
+.year { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .18em; color: #c9c6bf; }
+.year.light { color: #55565c; }
+.year.ghost { color: rgba(201,198,191,.35); }
+.contact { position: absolute; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+.contact.light { background: radial-gradient(closest-side, rgba(60,45,20,.22), rgba(0,0,0,0)); }
+
+/* ---- post-it ---- */
+.postit { position: absolute; width: 300px; height: 300px; transform-origin: 50% 10%;
+  background: linear-gradient(180deg, #ffe066 0%, #f7d038 26%, #f2c92c 100%);
+  box-shadow: 0 18px 30px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.18); }
+.postit .band { position: absolute; left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(201,154,6,.22), rgba(201,154,6,.08)); }
+.postit .curl { position: absolute; right: 0; bottom: 0; width: 64px; height: 64px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, rgba(150,112,0,.28) 51%, #ffeea0 78%, #fff6c8 100%); }
+.postit .hw { position: absolute; left: 34px; top: 74px; font: 700 76px/.95 "Caveat", cursive; color: #17181c; }
+.postit .strike { position: absolute; }
+
+/* ---- horloge ---- */
+.clock { position: absolute; }
+.clock-digit { position: absolute; transform: translateX(-50%); font: 700 30px/1 "Space Mono", monospace; letter-spacing: .06em; color: #f3f1ec; white-space: nowrap; }
+.clock-digit.light { color: #17181c; }
+
+/* ---- appareils ---- */
+.crt { position: absolute; width: 600px; height: 522px; }
+.crt-body { position: absolute; left: 0; top: 0; width: 600px; height: 470px; border-radius: 22px;
+  background: linear-gradient(160deg, #e6dfd0 0%, #d9d2c3 45%, #c3bba9 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -8px 18px rgba(0,0,0,.18), 0 30px 60px rgba(0,0,0,.5); }
+.crt-screen { position: absolute; left: 46px; top: 40px; width: 508px; height: 372px; border-radius: 28px / 24px; overflow: hidden;
+  background: radial-gradient(ellipse at 45% 40%, #2c4b44 0%, #183029 55%, #0d1a17 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.75), inset 0 0 0 6px #b3ab99; }
+.crt-screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(130deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 32%),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, rgba(0,0,0,0) 2px 4px); }
+.crt-led { position: absolute; right: 70px; top: 432px; width: 12px; height: 12px; border-radius: 50%; background: #7bd36b; box-shadow: 0 0 10px #7bd36b; }
+.crt-neck { position: absolute; left: 220px; top: 470px; width: 160px; height: 30px; background: linear-gradient(180deg, #b9b19f, #cfc7b6); }
+.crt-foot { position: absolute; left: 150px; top: 498px; width: 300px; height: 24px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #d9d2c3, #b3ab99); }
+.w98 { position: absolute; width: 380px; background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 2px 2px 0 #000; }
+.w98-title { height: 34px; padding: 0 10px; display: flex; align-items: center; color: #fff; font: 700 19px/1 "Instrument Sans";
+  background: linear-gradient(90deg, #0a246a, #3a6ea5); }
+.w98-body { padding: 20px 18px 18px; font: 500 23px/1.25 "Instrument Sans"; color: #111; }
+.w98-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px; }
+.w98-btn { padding: 6px 18px; font: 500 18px/1 "Instrument Sans"; color: #111; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #d4d0c8; }
+
+.phone10 { position: absolute; width: 300px; height: 560px; border-radius: 44px; background: linear-gradient(160deg, #2b2e35, #121318 60%, #1c1e24);
+  box-shadow: inset 0 0 0 3px #3a3d45, 0 30px 60px rgba(0,0,0,.55); }
+.phone10-screen { position: absolute; left: 22px; top: 78px; width: 256px; height: 396px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(180deg, #23324d, #121a2a); }
+.phone10-ear { position: absolute; left: 115px; top: 36px; width: 70px; height: 8px; border-radius: 4px; background: #08090b; }
+.phone10-home { position: absolute; left: 123px; top: 492px; width: 54px; height: 54px; border-radius: 50%; border: 3px solid #3a3d45; }
+.app-grid { position: absolute; left: 18px; top: 34px; display: grid; grid-template-columns: repeat(4, 46px); gap: 16px 12px; }
+.app-grid i { width: 46px; height: 46px; border-radius: 11px; background: linear-gradient(160deg, #5b6476, #3a4152); opacity: .75; }
+.notif10 { position: absolute; left: 12px; right: 12px; top: 150px; padding: 14px 14px 12px; border-radius: 10px; background: rgba(245,245,245,.96);
+  box-shadow: 0 6px 18px rgba(0,0,0,.4); font: 600 20px/1.2 "Instrument Sans"; color: #17181c; }
+.notif10 .btn { display: inline-block; margin-top: 10px; padding: 7px 14px; border-radius: 6px; background: #3e4656; color: #fff; font: 600 17px/1 "Instrument Sans"; }
+
+.laptop { position: absolute; width: 1200px; height: 740px; transform-origin: 50% 100%; }
+.laptop-lid { position: absolute; left: 70px; top: 0; width: 1060px; height: 700px; border-radius: 26px 26px 6px 6px; background: #2a2d33;
+  box-shadow: inset 0 0 0 2px #3c4048, 0 40px 80px rgba(0,0,0,.55); }
+.laptop-screen { position: absolute; left: 18px; top: 18px; width: 1024px; height: 650px; border-radius: 12px; overflow: hidden; background: #15181f; }
+.laptop-base { position: absolute; left: 0; top: 700px; width: 1200px; height: 30px; border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, #b9bcc4, #8e929b 70%, #6c7079); }
+.laptop-notch { position: absolute; left: 520px; top: 700px; width: 160px; height: 10px; border-radius: 0 0 10px 10px; background: #6c7079; }
+.laptop.light .laptop-lid { background: #c9ccd2; box-shadow: inset 0 0 0 2px #b4b8bf, 0 40px 80px rgba(60,45,20,.22); }
+.laptop.light .laptop-screen { background: #fffdf8; }
+
+/* ---- interfaces ---- */
+.ai { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.ai-head { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 28px; font: 600 24px/1 "Instrument Sans"; color: #f3f1ec;
+  border-bottom: 1px solid rgba(255,255,255,.07); }
+.ai-dot { width: 14px; height: 14px; border-radius: 50%; background: #f7d038; box-shadow: 0 0 14px rgba(247,208,56,.7); }
+.ai-hello { position: absolute; left: 0; right: 0; top: 210px; text-align: center; font: 600 40px/1.2 "Instrument Sans"; color: #f3f1ec; letter-spacing: -.01em; }
+.ai-field { position: absolute; left: 82px; right: 82px; bottom: 60px; height: 92px; border-radius: 20px; background: #1f232c;
+  border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; padding: 0 26px; font: 500 28px/1 "Instrument Sans"; color: #8d8a84; }
+.send { position: absolute; width: 60px; height: 60px; border-radius: 14px; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.caret { display: inline-block; width: 4px; background: #f7d038; vertical-align: middle; }
+.ai.light .ai-head { color: #17181c; border-bottom-color: rgba(23,24,28,.08); }
+.ai.light .ai-hello { color: #17181c; }
+.ai.light .ai-field { background: #fff; border-color: rgba(23,24,28,.14); box-shadow: 0 10px 30px rgba(60,45,20,.08); color: #8d8a84; }
+
+.win { position: absolute; border-radius: 16px; overflow: hidden; background: #fffdf8; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+.win.light { box-shadow: 0 30px 80px rgba(60,45,20,.16), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.win-bar { height: 52px; display: flex; align-items: center; gap: 9px; padding: 0 20px; background: #efebe2; border-bottom: 1px solid #e1dccf;
+  font: 600 20px/1 "Instrument Sans"; color: #55565c; }
+.win-bar i { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b6; }
+.win-bar span { margin-left: 14px; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: #8d8a84; }
+.ui { font: 500 24px/1.35 "Instrument Sans"; color: #17181c; }
+.line { height: 14px; border-radius: 7px; background: #e6e1d6; }
+.card { position: absolute; border-radius: 16px; background: #fffdf8; box-shadow: 0 30px 80px rgba(60,45,20,.14), 0 2px 6px rgba(60,45,20,.08), 0 0 0 1px rgba(23,24,28,.05); }
+.card.dark { background: linear-gradient(160deg, #1d2129, #161a22); box-shadow: 0 40px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.07); }
+.check { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #f7d038; display: flex; align-items: center; justify-content: center; }
+.pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font: 700 18px/1 "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- texte ---- */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f3f1ec; text-shadow: 0 2px 16px rgba(13,15,20,.9); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(245,242,234,.95), 0 0 2px rgba(245,242,234,.9); }
+.sub .w { display: inline-block; }
+.sub .w.off { visibility: hidden; }
+.sub .w.arriving { opacity: .35; filter: blur(2px); }
+.hl { position: relative; display: inline-block; isolation: isolate; color: #17181c; text-shadow: none; }
+.hl::before { content: ""; position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1; }
+.pk { position: relative; display: inline-block; }
+.pk svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f3f1ec; white-space: nowrap; }
+.cta { font: 800 56px/1 "Big Shoulders", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #17181c; }
+.code { font: 400 22px/1.5 "Space Mono", monospace; color: #c9c6bf; white-space: pre; }
+.code b { color: #ffe066; font-weight: 400; }
+
+/* ---- profondeur et mouvement ---- */
+.fg-blur { filter: blur(14px); }
+.mid-blur { filter: blur(5px); }
+.moving { filter: blur(3px); }
+    /* ===== fin du kit ===== */
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      font-family: "Instrument Sans", sans-serif;
+    }
+
+    /* ===================== 05-cafe : propre à la séquence ===================== */
+    .f05-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .f05-hide { opacity: 0; }
+    /* halo chaud du raccord (handoff_in), qui laisse la place au halo gris-bleu du kit sur « ton dimanche » */
+    .f05-halo-warm { position: absolute; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(201,154,6,.24), rgba(150,112,20,.08) 55%, rgba(13,15,20,0)); }
+    #f05-halo-g { opacity: 0; }
+    /* le partage P10 est posé 51 px à droite dans le monde : la dérive (-21) et le cran (-30) le recentrent */
+    #f05-split, #f05-fg { left: 51px; }
+    /* la fenêtre du tableur : couche de profondeur (flou de mise au point) qui devient la carte « Compta » */
+    #f05-wwrap { position: absolute; left: 575px; top: 110px; width: 1180px; height: 720px; --dof: 0px; filter: blur(var(--dof)); }
+    .f05-wdark { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(160deg, #1d2129, #161a22); opacity: 0; }
+    .f05-c { display: inline-block; opacity: 0; }
+    .f05-ch { opacity: 0; }
+    .f05-caret { position: absolute; left: 16px; top: 1px; width: 3px; height: 28px; background: #17181c; opacity: 0; }
+    .f05-sel { position: absolute; box-shadow: inset 0 0 0 2px #17181c; border-radius: 2px; opacity: 0; }
+    .f05-total { position: absolute; display: flex; align-items: center; border-top: 2px solid #e1dccf; border-bottom: 1px solid #ece7dc; opacity: 0; }
+    .f05-vl { position: absolute; top: 0; bottom: 0; width: 1px; background: #ece7dc; }
+    #f05-dim { opacity: 0; }
+    .f05-cardg { position: absolute; width: 700px; height: 170px; }
+    #f05-mug { position: absolute; left: 1300px; top: 560px; width: 260px; height: 300px; opacity: 0; }
+    #f05-mug svg { display: block; overflow: visible; }
+    /* sous-titre : mot par mot, gris (encre à 35 %) puis encre pleine ; surligneur jaune tracé depuis la gauche */
+    .f05-sub .f05-w { opacity: 0; color: rgba(243,241,236,.35); }
+    .f05-hlw { position: relative; display: inline-block; isolation: isolate; text-shadow: none; }
+    .f05-box { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px;
+      z-index: -1; opacity: 0; transform-origin: 0 50%; }
+    .f05-sub .f05-hlw .f05-w { color: rgba(23,24,28,.35); }
+  </style>
+
+  <div id="root" data-composition-id="05-cafe" data-width="1920" data-height="1080" data-duration="4.4">
+
+    <!-- sol : bureau de nuit ; la trame de points suit la même piste caméra que le monde -->
+    <div id="f05-ground" class="clip" data-start="0" data-duration="4.4" data-track-index="0">
+      <div class="g-dark">
+        <div id="f05-gdrift" class="f05-layer"><div id="f05-gcam" class="f05-layer"><div id="f05-gworld" class="f05-layer"><div class="dots"></div></div></div></div>
+        <div id="f05-halo-w" class="f05-halo-warm" style="left:60px;top:-30px;width:1800px;height:1000px"></div>
+        <div id="f05-halo-g" class="halo" style="left:60px;top:-30px;width:1800px;height:1000px"></div>
+      </div>
+    </div>
+
+    <!-- monde : #drift (dérive x, poussée) > #cam (recul) > #world (cran) -->
+    <div id="f05-stage" class="clip" data-start="0" data-duration="4.4" data-track-index="1">
+      <div id="f05-drift" class="f05-layer"><div id="f05-cam" class="f05-layer"><div id="f05-world" class="f05-layer">
+
+        <!-- ===== P10 : le partage « Toi » / « D'autres » ===== -->
+        <div id="f05-split" class="f05-layer">
+          <div id="f05-ltoi" class="abs micro f05-hide" style="left:180px;top:116px;color:#c9c6bf;font-size:22px">Toi</div>
+          <div id="f05-lautres" class="abs micro f05-hide" style="left:1040px;top:116px;color:#c9c6bf;font-size:22px">D’autres</div>
+
+          <div id="f05-cl1" class="f05-cardg f05-hide" style="left:180px;top:170px">
+            <div class="card dark" style="left:0;top:0;width:700px;height:170px"></div>
+            <div class="abs" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Présentation</div>
+            <div class="abs" style="left:560px;top:25px;width:120px;height:120px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.45)"></div>
+            <div class="clock" style="left:560px;top:25px;"><svg width="120" height="120" viewBox="0 0 120 120" style="overflow:visible"><circle cx="60.0" cy="60.0" r="56.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><line x1="60.0" y1="18.0" x2="60.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="81.0" y1="23.6" x2="75.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="96.4" y1="39.0" x2="86.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="102.0" y1="60.0" x2="80.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="96.4" y1="81.0" x2="86.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="81.0" y1="96.4" x2="75.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="60.0" y1="102.0" x2="60.0" y2="80.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="39.0" y1="96.4" x2="45.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="23.6" y1="81.0" x2="34.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="60.0" x2="40.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="23.6" y1="39.0" x2="34.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="39.0" y1="23.6" x2="45.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f05-h1h" x1="60" y1="60" x2="60" y2="30" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f05-h1m" x1="60" y1="60" x2="60" y2="15.6" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f05-h1s" x1="60" y1="69" x2="60" y2="12" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="60.0" cy="60.0" r="8" fill="#17181c"/></svg></div>
+            <div id="f05-d1" class="abs" style="left:380px;top:66px;font:700 30px/1 Space Mono;color:#c9c6bf">22:47</div>
+          </div>
+
+          <div id="f05-cl2" class="f05-cardg f05-hide" style="left:180px;top:380px">
+            <div class="card dark" style="left:0;top:0;width:700px;height:170px"></div>
+            <div class="abs" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Mails</div>
+            <div class="abs" style="left:560px;top:25px;width:120px;height:120px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.45)"></div>
+            <div class="clock" style="left:560px;top:25px;"><svg width="120" height="120" viewBox="0 0 120 120" style="overflow:visible"><circle cx="60.0" cy="60.0" r="56.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><line x1="60.0" y1="18.0" x2="60.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="81.0" y1="23.6" x2="75.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="96.4" y1="39.0" x2="86.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="102.0" y1="60.0" x2="80.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="96.4" y1="81.0" x2="86.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="81.0" y1="96.4" x2="75.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="60.0" y1="102.0" x2="60.0" y2="80.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="39.0" y1="96.4" x2="45.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="23.6" y1="81.0" x2="34.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="60.0" x2="40.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="23.6" y1="39.0" x2="34.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="39.0" y1="23.6" x2="45.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f05-h2h" x1="60" y1="60" x2="60" y2="30" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f05-h2m" x1="60" y1="60" x2="60" y2="15.6" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f05-h2s" x1="60" y1="69" x2="60" y2="12" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="60.0" cy="60.0" r="8" fill="#17181c"/></svg></div>
+            <div id="f05-d2" class="abs" style="left:380px;top:66px;font:700 30px/1 Space Mono;color:#c9c6bf">12:00</div>
+          </div>
+
+          <!-- la carte « Compta » : sa forme vient de la fenêtre, son horloge de la grande horloge -->
+          <div id="f05-cl3" class="f05-cardg" style="left:180px;top:590px">
+            <div id="f05-c3bg" class="card dark f05-hide" style="left:0;top:0;width:700px;height:170px"></div>
+            <div id="f05-c3t" class="abs f05-hide" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Compta</div>
+            <div id="f05-c3clk" class="abs f05-hide" style="left:560px;top:25px;width:120px;height:120px">
+              <div class="abs" style="left:0;top:0;width:120px;height:120px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.45)"></div>
+              <div class="clock" style="left:0;top:0;"><svg width="120" height="120" viewBox="0 0 120 120" style="overflow:visible"><circle cx="60.0" cy="60.0" r="56.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><line x1="60.0" y1="18.0" x2="60.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="81.0" y1="23.6" x2="75.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="96.4" y1="39.0" x2="86.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="102.0" y1="60.0" x2="80.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="96.4" y1="81.0" x2="86.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="81.0" y1="96.4" x2="75.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="60.0" y1="102.0" x2="60.0" y2="80.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="39.0" y1="96.4" x2="45.0" y2="86.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="23.6" y1="81.0" x2="34.0" y2="75.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="60.0" x2="40.0" y2="60.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="23.6" y1="39.0" x2="34.0" y2="45.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="39.0" y1="23.6" x2="45.0" y2="34.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line id="f05-h3h" x1="60" y1="60" x2="60" y2="30" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f05-h3m" x1="60" y1="60" x2="60" y2="15.6" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f05-h3s" x1="60" y1="69" x2="60" y2="12" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="60.0" cy="60.0" r="8" fill="#17181c"/></svg></div>
+            </div>
+            <div id="f05-c3d" class="abs f05-hide" style="left:380px;top:66px;font:700 30px/1 Space Mono;color:#c9c6bf">DIM.</div>
+          </div>
+
+          <div id="f05-cr1" class="f05-cardg f05-hide" style="left:1040px;top:170px">
+            <div class="card dark" style="left:0;top:0;width:700px;height:170px"></div>
+            <div class="abs" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Présentation</div>
+            <div id="f05-ck1" class="check f05-hide" style="left:600px;top:57px"><svg class="f05-hide" width="30" height="30" viewBox="0 0 30 30"><path d="M6 16 L12 22 L24 8" stroke="#17181c" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div id="f05-cr2" class="f05-cardg f05-hide" style="left:1040px;top:380px">
+            <div class="card dark" style="left:0;top:0;width:700px;height:170px"></div>
+            <div class="abs" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Mails</div>
+            <div id="f05-ck2" class="check f05-hide" style="left:600px;top:57px"><svg class="f05-hide" width="30" height="30" viewBox="0 0 30 30"><path d="M6 16 L12 22 L24 8" stroke="#17181c" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div id="f05-cr3" class="f05-cardg f05-hide" style="left:1040px;top:590px">
+            <div class="card dark" style="left:0;top:0;width:700px;height:170px"></div>
+            <div class="abs" style="left:40px;top:60px;font:600 40px/1 Instrument Sans;color:#f3f1ec">Compta</div>
+            <div id="f05-ck3" class="check f05-hide" style="left:600px;top:57px"><svg class="f05-hide" width="30" height="30" viewBox="0 0 30 30"><path d="M6 16 L12 22 L24 8" stroke="#17181c" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+
+        <!-- ===== P09 : le tableur et l'horloge, contre-zoomés (la caméra part de ×1,1) ===== -->
+        <div id="f05-s1" class="f05-layer">
+          <!-- le whip continue : « Messagerie » sort par la gauche, « Compta 2026 » arrive de la droite -->
+          <div id="f05-strip" class="f05-layer">
+            <div id="f05-msg" class="win" style="left:-1585px;top:110px;width:1180px;height:720px;"><div class="win-bar"><i></i><i></i><i></i><span>Messagerie</span></div><div class="abs" style="left:0;top:52px;right:0;bottom:0"><div style="display:flex;align-items:baseline;gap:20px;padding:24px 26px 18px"><span style="font:600 34px/1 Instrument Sans;color:#17181c">Boîte de réception</span><span class="micro" style="color:#17181c">94 non lus</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Service client</span><span class="ui" style="color:#55565c">Relance : votre commande</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Comptabilité</span><span class="ui" style="color:#55565c">Pièces manquantes</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Équipe projet</span><span class="ui" style="color:#55565c">Re: Re: point de lundi</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Fournisseur</span><span class="ui" style="color:#55565c">Devis à valider</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Banque</span><span class="ui" style="color:#55565c">Votre relevé</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Newsletter</span><span class="ui" style="color:#55565c">Les nouveautés</span></div><div style="display:flex;align-items:center;gap:18px;height:70px;border-bottom:1px solid #ece7dc;padding:0 26px"><span style="width:12px;height:12px;border-radius:50%;background:#17181c"></span><span class="ui" style="font-weight:700;width:250px">Rendez-vous</span><span class="ui" style="color:#55565c">Confirmation demandée</span></div></div></div>
+
+            <div id="f05-wwrap">
+              <div id="f05-win" class="win" style="left:0;top:0;width:1180px;height:720px;"><div class="win-bar"><i></i><i></i><i></i><span>Compta 2026</span></div><div class="abs" style="left:0;top:52px;right:0;bottom:0"><div class="abs" style="left:26px;top:26px;width:700px"><div style="display:flex;height:46px;align-items:center;background:#f3efe6"><div style="width:140px;padding:0 16px" class="micro">Date</div><div style="width:360px;padding:0 16px" class="micro">Libellé</div><div style="width:200px;padding:0 16px" class="micro">Montant</div></div><div id="f05-r1" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">02/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Fournitures</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">84,20</span></div></div><div id="f05-r2" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">05/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Abonnement</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">29,00</span></div></div><div id="f05-r3" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">09/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Déplacement</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">146,50</span></div></div><div id="f05-r4" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">12/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Logiciel</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">59,99</span></div></div><div id="f05-r5" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">16/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Repas client</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">72,40</span></div></div><div id="f05-r6" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">21/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Téléphone</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">34,99</span></div></div><div id="f05-r7" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">24/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Formation</span></div><div class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">390,00</span></div></div><div id="f05-r8" style="display:flex;height:58px;align-items:center;border-bottom:1px solid #ece7dc"><div class="ui" style="width:140px;padding:0 16px;font-family:Space Mono;font-size:22px"><span class="f05-c">28/03</span></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px"><span class="f05-c">Matériel</span></div><div id="f05-amt8" class="ui" style="width:200px;padding:0 16px;font-family:Space Mono;font-size:22px;position:relative"><span class="f05-ch">2</span><span class="f05-ch">4</span><span class="f05-ch">9</span><span class="f05-ch">,</span><span class="f05-ch">0</span><span class="f05-ch">0</span><i id="f05-caret" class="f05-caret"></i></div></div><div class="abs" style="left:140px;top:0;bottom:0;width:1px;background:#ece7dc"></div><div class="abs" style="left:500px;top:0;bottom:0;width:1px;background:#ece7dc"></div><i id="f05-sel" class="f05-sel" style="left:500px;top:452px;width:200px;height:58px"></i><div id="f05-total" class="f05-total" style="left:0;top:510px;width:700px;height:58px"><div style="width:140px"></div><div class="ui" style="width:360px;padding:0 16px;font-family:Instrument Sans;font-size:24px;font-weight:700">Total</div><div class="ui" style="width:200px;height:30px;padding:0 16px;position:relative"><i id="f05-caret2" class="f05-caret"></i></div><i class="f05-vl" style="left:140px"></i><i class="f05-vl" style="left:500px"></i><i class="f05-sel" style="left:500px;top:0;width:200px;height:100%;opacity:1"></i></div></div></div><div id="f05-wdark" class="f05-wdark"></div></div>
+            </div>
+          </div>
+
+          <!-- la grande horloge : reste à sa place (handoff_in), « DIM. », puis devient l'horloge de la carte « Compta » -->
+          <div id="f05-bclock" class="f05-layer">
+            <div class="abs" style="left:165.0px;top:280.0px;width:300px;height:300px;border-radius:50%;box-shadow:0 30px 60px rgba(0,0,0,0.45)"></div>
+            <div class="clock" style="left:165.0px;top:280.0px;"><svg width="300" height="300" viewBox="0 0 300 300" style="overflow:visible"><circle cx="150.0" cy="150.0" r="146.0" fill="#fffdf8" stroke="#17181c" stroke-width="8"/><line x1="150.0" y1="18.0" x2="150.0" y2="40.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="216.0" y1="35.7" x2="210.0" y2="46.1" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="264.3" y1="84.0" x2="253.9" y2="90.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="282.0" y1="150.0" x2="260.0" y2="150.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="264.3" y1="216.0" x2="253.9" y2="210.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="216.0" y1="264.3" x2="210.0" y2="253.9" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="150.0" y1="282.0" x2="150.0" y2="260.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="84.0" y1="264.3" x2="90.0" y2="253.9" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="35.7" y1="216.0" x2="46.1" y2="210.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="18.0" y1="150.0" x2="40.0" y2="150.0" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line x1="35.7" y1="84.0" x2="46.1" y2="90.0" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><line x1="84.0" y1="35.7" x2="90.0" y2="46.1" stroke="#17181c" stroke-width="3" stroke-linecap="round"/><text id="f05-dim" x="150.0" y="213.0" text-anchor="middle" font-family="Space Mono" font-weight="700" font-size="22" letter-spacing="3" fill="#55565c">DIM.</text><line id="f05-bh" x1="150" y1="150" x2="150" y2="75" stroke="#17181c" stroke-width="10" stroke-linecap="round"/><line id="f05-bm" x1="150" y1="150" x2="150" y2="39" stroke="#17181c" stroke-width="6" stroke-linecap="round"/><line id="f05-bs" x1="150" y1="172.5" x2="150" y2="30" stroke="#f7d038" stroke-width="3" stroke-linecap="round"/><circle cx="150.0" cy="150.0" r="8" fill="#17181c"/></svg></div>
+            <div id="f05-bdig" class="clock-digit" style="left:315px;top:606.0px">12:00</div>
+          </div>
+        </div>
+
+        <!-- ===== avant-plan : la tasse de P3, fumée vivante ===== -->
+        <div id="f05-fg" class="f05-layer">
+          <div id="f05-mug"><svg width="260" height="300" viewBox="0 0 260 300"><path id="f05-st1" d="M70 20 C 60 45, 92 60, 80 90" stroke="rgba(243,241,236,.45)" stroke-width="8" fill="none" stroke-linecap="round"/><path id="f05-st2" d="M115 10 C 105 40, 138 55, 125 92" stroke="rgba(243,241,236,.45)" stroke-width="8" fill="none" stroke-linecap="round"/><path id="f05-st3" d="M160 22 C 150 47, 182 62, 170 92" stroke="rgba(243,241,236,.45)" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M40 110 H200 V240 C200 270, 180 288, 150 288 H90 C60 288, 40 270, 40 240 Z" fill="#e9e4d8" stroke="#17181c" stroke-width="6"/><path d="M200 140 C 250 140, 250 220, 200 220" stroke="#17181c" stroke-width="12" fill="none"/><ellipse cx="120" cy="112" rx="80" ry="12" fill="#3b2a1e"/></svg></div>
+        </div>
+
+      </div></div></div>
+    </div>
+
+    <!-- sous-titres : la phrase de la voix, bas centre, hors caméra -->
+    <div id="f05-subs" class="clip" data-start="0" data-duration="4.4" data-track-index="2">
+      <div id="f05-sub1" class="sub dark f05-sub"><span id="f05-a1" class="w f05-w">Ta</span> <span id="f05-a2" class="w f05-w">compta,</span> <span id="f05-hl1" class="f05-hlw"><i id="f05-box1" class="f05-box"></i><span id="f05-a3" class="w f05-w">ton</span> <span id="f05-a4" class="w f05-w">dimanche</span></span><span id="f05-a5" class="w f05-w">.</span></div>
+      <div id="f05-sub2" class="sub dark f05-sub"><span id="f05-b1" class="w f05-w">Pour</span> <span id="f05-b2" class="w f05-w">d’autres,</span> <span id="f05-b3" class="w f05-w">c’est</span> <span id="f05-b4" class="w f05-w">réglé</span> <span id="f05-hl2" class="f05-hlw"><i id="f05-box2" class="f05-box"></i><span id="f05-b5" class="w f05-w">avant</span> <span id="f05-b6" class="w f05-w">le</span> <span id="f05-b7" class="w f05-w">café</span></span><span id="f05-b8" class="w f05-w">.</span></div>
+    </div>
+
+    <div id="f05-fx" class="clip" data-start="0" data-duration="4.4" data-track-index="3">
+      <div class="grain"></div>
+      <div class="vignette"></div>
+    </div>
+
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "05-cafe";
+      var D = 4.4;
+      var S1 = 1.1; /* la caméra part de ×1,1 sur le monde de P09 (contre-zoomé) ; le recul la ramène à ×1 */
+      var $ = function (id) { return document.getElementById(id); };
+      var INK = "#f3f1ec", INK_GRAY = "rgba(243, 241, 236, 0.35)";
+      var INK_DARK = "#17181c", INK_DARK_GRAY = "rgba(23, 24, 28, 0.35)";
+
+      var tl = gsap.timeline({ paused: true, defaults: { lazy: false }, onUpdate: render });
+
+      /* ---------- outils ---------- */
+      function on(el, t) { tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, t); }
+      function off(el, t) { tl.fromTo(el, { opacity: 1 }, { opacity: 0, duration: 0.01, ease: "none", immediateRender: false }, t); }
+      /* arrivée en cascade (waterfall-entry) : opacité binaire, fouet depuis le bas */
+      function pop(el, t, dy, d) {
+        on(el, t);
+        tl.fromTo(el, { y: dy }, { y: 0, duration: d, ease: "power4.out", immediateRender: false }, t);
+      }
+      /* se pose (loi 4) : un peu trop grand et flou, puis net */
+      function land(el, t) {
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, t);
+        tl.fromTo(el, { scale: 1.08, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false }, t);
+      }
+      /* un mot du sous-titre : gris, y +8, flou 6 → net en 0,14 s, puis encre pleine */
+      function word(el, t, inBox) {
+        tl.fromTo(el, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(el, { color: inBox ? INK_DARK_GRAY : INK_GRAY }, { color: inBox ? INK_DARK : INK, duration: inBox ? 0.1 : 0.2, ease: "power1.inOut", immediateRender: false }, t + (inBox ? 0.03 : 0.1));
+      }
+      /* le surligneur se trace depuis la gauche (0,16 s power3.out) */
+      function box(el, t) {
+        on(el, t);
+        tl.fromTo(el, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, transformOrigin: "0% 50%", duration: 0.16, ease: "power3.out", immediateRender: false }, t);
+      }
+      /* sortie du sous-titre : opacité 1 → 0 et flou 0 → 6 px en 0,14 s (sur chaque mot, pas sur la bande entière) */
+      function exitSub(els, t) {
+        tl.fromTo(els, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, t);
+      }
+
+      /* ================= PISTE CAMÉRA (à part des objets) ================= */
+      var DRIFT = [$("f05-drift"), $("f05-gdrift")];
+      var CAM = [$("f05-cam"), $("f05-gcam")];
+      var WORLD = [$("f05-world"), $("f05-gworld")];
+      gsap.set(DRIFT.concat(CAM), { transformOrigin: "960px 540px" });
+      gsap.set(CAM, { scale: S1 });
+      gsap.set($("f05-s1"), { scale: 1 / S1, transformOrigin: "960px 540px" });
+      /* Scene 1 : dérive x -12 px/s */
+      tl.fromTo(DRIFT, { x: 0 }, { x: -21, duration: 1.75, ease: "none" }, 0);
+      /* 1.75 à 2.10 : recul expo.out vers le partage */
+      tl.fromTo(CAM, { scale: S1 }, { scale: 1, duration: 0.35, ease: "expo.out", immediateRender: false }, 1.75);
+      /* 2.10 : cran léger vers la colonne de droite (0,12 s) */
+      tl.fromTo(WORLD, { x: 0 }, { x: -30, duration: 0.12, ease: "expo.inOut", immediateRender: false }, 2.1);
+      /* Scene 2 : poussée lente ×1 → ×1,03 jusqu'à la coupe */
+      tl.fromTo(DRIFT, { scale: 1 }, { scale: 1.03, duration: D - 2.1, ease: "none", immediateRender: false }, 2.1);
+
+      /* ================= Scene 1 (0.00 à 1.90) : Ta compta, ton dimanche ================= */
+      /* 0.00 à 0.16 : le whip se termine, le tableur se pose ; l'horloge reste nette à sa place */
+      tl.fromTo($("f05-strip"), { x: 1400 }, { x: 0, duration: 0.16, ease: "power3.out" }, 0);
+      tl.fromTo([$("f05-msg"), $("f05-win")], { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.16, ease: "power3.out" }, 0);
+
+      /* 0.22 « Ta compta » : les lignes se remplissent une à une (0,05 s) : date, libellé, montant */
+      for (var r = 0; r < 8; r++) {
+        var cs = $("f05-r" + (r + 1)).getElementsByClassName("f05-c");
+        for (var c = 0; c < cs.length; c++) pop(cs[c], 0.2 + r * 0.05 + c * 0.017, 16, 0.13);
+        if (r < 7) pop($("f05-r" + (r + 1)).children[2].firstElementChild, 0.2 + r * 0.05 + 2 * 0.017, 16, 0.13);
+      }
+      /* 0.70 : le curseur tape dans une cellule (le montant de la dernière ligne) */
+      var CW = 0.612 * 22; /* chasse de Space Mono à 22 px */
+      var caret = $("f05-caret"), sel = $("f05-sel");
+      var chs = $("f05-amt8").getElementsByClassName("f05-ch");
+      on(sel, 0.66);
+      on(caret, 0.66);
+      for (var k = 0; k < chs.length; k++) {
+        var tk = 0.7 + k * 0.035;
+        on(chs[k], tk);
+        tl.fromTo(caret, { x: k * CW }, { x: (k + 1) * CW, duration: 0.01, ease: "none", immediateRender: false }, tk);
+      }
+      off(caret, 0.96);
+      tl.fromTo(sel, { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power1.out", immediateRender: false }, 1.03);
+
+      /* 1.03 « ton dimanche » : « DIM. » s'imprime, les aiguilles filent de 10:00 à 18:30, le halo devient gris */
+      var dim = $("f05-dim");
+      gsap.set(dim, { svgOrigin: "150 206" });
+      on(dim, 1.02);
+      tl.fromTo(dim, { scale: 1.45 }, { scale: 1, duration: 0.14, ease: "expo.out", immediateRender: false }, 1.02);
+      var bh = $("f05-bh"), bm = $("f05-bm"), bs = $("f05-bs");
+      gsap.set([bh, bm, bs], { svgOrigin: "150 150", rotation: 0 });
+      tl.fromTo(bh, { rotation: 0 }, { rotation: -60, duration: 0.01, ease: "none", immediateRender: false }, 1.02);
+      tl.fromTo(bh, { rotation: -60 }, { rotation: 195, duration: 0.36, ease: "power2.inOut", immediateRender: false }, 1.035);
+      tl.fromTo(bm, { rotation: 0 }, { rotation: 900, duration: 0.36, ease: "power2.inOut", immediateRender: false }, 1.035);
+      tl.fromTo(bs, { rotation: 0 }, { rotation: 1260, duration: 0.36, ease: "power2.inOut", immediateRender: false }, 1.035);
+      tl.fromTo($("f05-halo-g"), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.inOut", immediateRender: false }, 1.03);
+      tl.fromTo($("f05-halo-w"), { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "sine.inOut", immediateRender: false }, 1.03);
+      /* mise au point : l'horloge est le sujet, le tableur recule (flou léger + baisse), puis revient */
+      var wwrap = $("f05-wwrap"), win = $("f05-win");
+      tl.fromTo(wwrap, { "--dof": "0px" }, { "--dof": "1.2px", duration: 0.24, ease: "power2.inOut", immediateRender: false }, 1.03);
+      tl.fromTo(win, { opacity: 1 }, { opacity: 0.88, duration: 0.24, ease: "power2.inOut", immediateRender: false }, 1.03);
+      tl.fromTo(wwrap, { "--dof": "1.2px" }, { "--dof": "0px", duration: 0.14, ease: "power2.out", immediateRender: false }, 1.5);
+      tl.fromTo(win, { opacity: 0.88 }, { opacity: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, 1.5);
+
+      /* 1.60 : pas de total (la ligne « Total » reste vide, le caret attend) */
+      pop($("f05-total"), 1.6, 14, 0.14);
+      on($("f05-caret2"), 1.64);
+      off($("f05-caret2"), 1.8);
+
+      /* ================= 1.80 à 2.20 : l'horloge et la fenêtre deviennent la carte « Compta » ================= */
+      var bclock = $("f05-bclock");
+      gsap.set(bclock, { transformOrigin: "315px 430px" });
+      tl.fromTo($("f05-bdig"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in", immediateRender: false }, 1.8);
+      tl.fromTo(dim, { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power1.in", immediateRender: false }, 1.86);
+      /* centre de l'horloge de la carte « Compta » (P10 (800, 675) + 51) ramené dans le repère contre-zoomé */
+      tl.fromTo(bclock, { x: 0, y: 0, scale: 1 }, { x: 525.1, y: 258.5, scale: 0.44, duration: 0.24, ease: "power3.inOut", immediateRender: false }, 1.82);
+      /* la fenêtre rétrécit dans la carte (rectangle de P10 (180, 590, 700 × 170) + 51, même repère) */
+      gsap.set(wwrap, { transformOrigin: "0px 0px" });
+      tl.fromTo($("f05-wdark"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.9);
+      tl.fromTo(wwrap, { x: 0, y: 0, scaleX: 1, scaleY: 1 }, { x: -416.9, y: 485, scaleX: 0.6525, scaleY: 0.2597, duration: 0.22, ease: "power2.inOut", immediateRender: false }, 1.9);
+      tl.fromTo($("f05-c3bg"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, 2.1);
+      tl.fromTo(wwrap, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none", immediateRender: false }, 2.12);
+      pop($("f05-c3t"), 2.12, 10, 0.14);
+      pop($("f05-c3d"), 2.14, 10, 0.14);
+      tl.fromTo($("f05-c3clk"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, 2.13);
+      tl.fromTo(bclock, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none", immediateRender: false }, 2.15);
+
+      /* ================= Scene 2 (1.90 à 4.40) : Avant le café ================= */
+      /* « Présentation · 22:47 » et « Mails · 12:00 » se posent au-dessus (décalage 0,05 s) */
+      pop($("f05-ltoi"), 1.98, 10, 0.14);
+      land($("f05-cl1"), 2.03);
+      land($("f05-cl2"), 2.08);
+      /* 2.10 « Pour d'autres » : la colonne « D'autres » glisse depuis la droite */
+      [["f05-lautres", 2.06], ["f05-cr1", 2.07], ["f05-cr2", 2.1], ["f05-cr3", 2.13]].forEach(function (p) {
+        var el = $(p[0]);
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, p[1]);
+        tl.fromTo(el, { x: 760, filter: "blur(10px)" }, { x: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out", immediateRender: false }, p[1]);
+      });
+      /* 2.69, 2.85, 3.00 « c'est réglé » : trois coches jaunes */
+      [[1, 2.66], [2, 2.82], [3, 2.97]].forEach(function (p) {
+        var ck = $("f05-ck" + p[0]), tick = ck.firstElementChild, t = p[1];
+        on(ck, t);
+        tl.fromTo(ck, { scale: 1.7, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out", immediateRender: false }, t);
+        tl.fromTo(tick, { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power3.out", immediateRender: false }, t + 0.04);
+      });
+      /* 3.06 « avant le café » : la tasse arrive devant (de la caméra, floue, puis posée) */
+      var mug = $("f05-mug");
+      gsap.set(mug, { scale: 0.85, transformOrigin: "50% 100%" });
+      tl.fromTo(mug, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", immediateRender: false }, 3.04);
+      tl.fromTo(mug, { scale: 1.45, x: 90, filter: "blur(12px)" }, { scale: 0.85, x: 0, filter: "blur(0px)", duration: 0.28, ease: "expo.out", immediateRender: false }, 3.04);
+      /* fumée vivante jusqu'à la coupe (boucle déroulée, répétitions finies) */
+      ["f05-st1", "f05-st2", "f05-st3"].forEach(function (id, i) {
+        var el = $(id), t = 3.16 + i * 0.13, up = true, P = 0.44;
+        while (t < D - 0.02) {
+          var d = Math.min(P, D - t);
+          tl.fromTo(el, { y: up ? 0 : -10, opacity: up ? 1 : 0.4 }, { y: up ? -10 : 0, opacity: up ? 0.4 : 1, duration: d, ease: "sine.inOut", immediateRender: false }, t);
+          t += P;
+          up = !up;
+        }
+      });
+      /* 3.80 : les petites horloges de gauche tournent encore (jusqu'à la coupe) */
+      [[1, 323.5, 282, 174], [2, 0, 0, 0], [3, 195, 180, 180]].forEach(function (c) {
+        var h = $("f05-h" + c[0] + "h"), m = $("f05-h" + c[0] + "m"), s = $("f05-h" + c[0] + "s");
+        gsap.set([h, m, s], { svgOrigin: "60 60" });
+        gsap.set(h, { rotation: c[1] });
+        gsap.set(m, { rotation: c[2] });
+        gsap.set(s, { rotation: c[3] });
+        tl.fromTo(h, { rotation: c[1] }, { rotation: c[1] + 12.5, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
+        tl.fromTo(m, { rotation: c[2] }, { rotation: c[2] + 150, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
+        tl.fromTo(s, { rotation: c[3] }, { rotation: c[3] + 900, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
+      });
+
+      /* ================= sous-titres ================= */
+      word($("f05-a1"), 0.2);
+      word($("f05-a2"), 0.33);
+      box($("f05-box1"), 0.99);
+      word($("f05-a3"), 1.01, true);
+      word($("f05-a4"), 1.23, true);
+      word($("f05-a5"), 1.25);
+      exitSub([$("f05-a1"), $("f05-a2"), $("f05-hl1"), $("f05-a5")], 1.88);
+
+      word($("f05-b1"), 2.08);
+      word($("f05-b2"), 2.28);
+      word($("f05-b3"), 2.44);
+      word($("f05-b4"), 2.67);
+      box($("f05-box2"), 3.02);
+      word($("f05-b5"), 3.04, true);
+      word($("f05-b6"), 3.4, true);
+      word($("f05-b7"), 3.6, true);
+      word($("f05-b8"), 3.62);
+      /* 3.98 : le sous-titre sort */
+      exitSub([$("f05-b1"), $("f05-b2"), $("f05-b3"), $("f05-b4"), $("f05-hl2"), $("f05-b8")], 3.98);
+
+      /* ================= heures numériques (calculées depuis le temps de la timeline) ================= */
+      var E_SPIN = gsap.parseEase("power2.inOut"), E_TURN = gsap.parseEase("power1.in");
+      var bdig = $("f05-bdig"), d1 = $("f05-d1"), d2 = $("f05-d2");
+      function hhmm(v) {
+        v = Math.floor(v + 1e-6);
+        var h = Math.floor(v / 60) % 24, m = v % 60;
+        return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+      }
+      function put(el, s) { if (el.textContent !== s) el.textContent = s; }
+      function render() {
+        var t = tl.time();
+        put(bdig, t < 1.02 ? "12:00" : hhmm(600 + 510 * E_SPIN(Math.min(1, Math.max(0, (t - 1.035) / 0.36)))));
+        var q = t < 3.8 ? 0 : 25 * E_TURN(Math.min(1, (t - 3.8) / (D - 3.8)));
+        put(d1, hhmm(22 * 60 + 47 + q));
+        put(d2, hhmm(12 * 60 + q));
+      }
+
+      tl.to({}, { duration: D }, 0);
+      render();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

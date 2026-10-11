@@ -265,9 +265,9 @@
         return { x: O.x + dx * Math.cos(RAD) - dy * Math.sin(RAD), y: O.y + dx * Math.sin(RAD) + dy * Math.cos(RAD) };
       }
       var PC = onNote(150, 150);                  // centre du post-it posé (975,5 ; 384,5)
-      var Z = onNote(130, 262);                   // zone jaune vierge sous « moi » : cible de la poussée finale
+      var Z = onNote(117.5, 258);                 // zone jaune vierge sous « moi » (encre : « moi » finit en y 207, bord en 300) : cible de la poussée finale
       var PAR = 0.304;                            // le fond pousse moins que le sujet : s_fond = 1 + (s - 1) × PAR
-      var S_END = 38;                             // poussée finale (power2.in) : le jaune remplit le cadre bien avant la fin
+      var S_END = 70;                             // poussée finale (power2.in, cubique) : à 3.50 déjà ×19, le cadre est tout jaune dans les deux dernières images
       var PEN_K = 1 / 2.15;                       // le feutre de P20 (60 × 420 px à l'écran pour un post-it à ×2,15)
       var PEN_ROT = 33;                           // 28° à l'écran dans P20 = 33° dans le repère du post-it (-5°)
       var REST = { x: 321, y: 68 };               // pointe du feutre posé (image clé P20), repère du post-it
@@ -312,8 +312,8 @@
         if (P.f > 0) {
           // poussée dans le jaune : échelle interpolée en log ; la zone vierge glisse au centre du cadre
           var sf = Math.exp(Math.log(s) + P.f * (Math.log(S_END) - Math.log(s)));
-          var zx0 = ax + s * (Z.x - tx), zy0 = ay + s * (Z.y - ty);
-          var zx = 960 + (zx0 - 960) * (1 - P.f), zy = 540 + (zy0 - 540) * (1 - P.f);
+          var zx0 = ax + s * (Z.x - tx), zy0 = ay + s * (Z.y - ty), g = (1 - P.f) * (1 - P.f);
+          var zx = 960 + (zx0 - 960) * g, zy = 540 + (zy0 - 540) * g;
           tx = Z.x - (zx - ax) / sf;
           ty = Z.y - (zy - ay) / sf;
           s = sf;

@@ -308,12 +308,16 @@
       var streaks = toArr(document.querySelectorAll(".f03-streak"));
 
       /* ---------------- caméra (piste à part) ----------------
+         Une fonction pure du temps t, écrite par UN seul écrivain (render), appelé par le setter d'une tween horloge :
+         il tourne à chaque image quel que soit le mode de recherche du moteur (seek avec ou sans événements).
          cam2(cx, cy, s) : le point monde (cx, cy) au centre du cadre, échelle s ; la dérive d est en px écran.
          pA : recul 0 → 0.40 (expo.out), depuis le champ de saisie à ×1,2 jusqu'à cam2(2220, 450, 0,5)
          pT : travelling 1.20 → 1.60 (expo.inOut) jusqu'à cam2(4740, 450, 0,5)
          pP : poussée 3.10 → 3.45 (power2.in) ×0,5 → ×1,6 dans notre écran
-         bI / bT / bP : flou caméra (px écran) ; k : taille d'écran de la frise ; flow : défilement de la ligne */
-      var C = { pA: 0, pT: 0, pP: 0, d: 0, bI: 14, bT: 0, bP: 0, flow: 0, clock: 0 };
+         b : flou caméra (px écran) ; k : taille d'écran de la frise ; flow : défilement de la ligne */
+      var EXPO_OUT = gsap.parseEase("expo.out"), EXPO_IN = gsap.parseEase("expo.in"), EXPO_INOUT = gsap.parseEase("expo.inOut");
+      var P2_IN = gsap.parseEase("power2.in"), P2_OUT = gsap.parseEase("power2.out");
+      function seg(t, t0, d, ease) { return ease(clamp((t - t0) / d, 0, 1)); }
 
       var S0 = 1.2, S1 = 0.5, S2 = 1.6;
       var FIELD = { x: 3480, y: 592 };            /* centre du champ de saisie (monde) */
@@ -321,26 +325,37 @@
       var PUSH = { x: 3520, y: 390 };             /* cible de la poussée : l'écran de 2026, le post-it sort en haut à gauche */
       var PUSH0 = { x: 960 + (PUSH.x - 4740) * S1, y: 540 + (PUSH.y - 450) * S1 };
 
-      function camera() {
+      function camAt(t) {
+        var pA = seg(t, 0, 0.4, EXPO_OUT);
+        var pT = seg(t, 1.2, 0.4, EXPO_INOUT);
+        var pP = seg(t, 3.1, 0.35, P2_IN);
+        /* dérive : +20 px/s en scène 1, remise à zéro sous le travelling, +30 px/s en scène 2 */
+        var d = t <= 1.2 ? -20 * t : t < 1.6 ? -24 * (1 - EXPO_INOUT((t - 1.2) / 0.4)) : -30 * (t - 1.6);
+        /* flou : recul 14 → 0 ; travelling 0 → 8 → 0 au milieu du trajet ; poussée 0 → 14 */
+        var b = 14 * (1 - pA);
+        if (t > 1.2 && t < 1.6) b += t < 1.4 ? 8 * EXPO_IN((t - 1.2) / 0.2) : 8 * (1 - EXPO_OUT((t - 1.4) / 0.2));
+        b += 14 * pP;
+        /* la ligne glisse à 0.90, défile pendant la course des autres, ralentit après */
+        var flowD = t < 0.9 ? 0 : t < 1.3 ? 400 * P2_IN((t - 0.9) / 0.4) : t < 2.65 ? 400 + 2000 * (t - 1.3) : 3100 + 800 * P2_OUT(clamp((t - 2.65) / 0.8, 0, 1));
         var s, cx, cy, sx, sy, p;
-        if (C.pP > 0) {
-          p = C.pP;
+        if (pP > 0) {
+          p = pP;
           s = S1 * Math.pow(S2 / S1, p);
-          sx = PUSH0.x + ((960 - C.d) - PUSH0.x) * p;
+          sx = PUSH0.x + ((960 - d) - PUSH0.x) * p;
           sy = PUSH0.y + (540 - PUSH0.y) * p;
           cx = PUSH.x - (sx - 960) / s;
           cy = PUSH.y - (sy - 540) / s;
-        } else if (C.pT > 0) {
-          s = S1; cx = 2220 + 2520 * C.pT; cy = 450;
+        } else if (pT > 0) {
+          s = S1; cx = 2220 + 2520 * pT; cy = 450;
         } else {
-          p = C.pA;
+          p = pA;
           s = S0 * Math.pow(S1 / S0, p);
           sx = 960 + (FIELD_WIDE.x - 960) * p;
           sy = 540 + (FIELD_WIDE.y - 540) * p;
           cx = FIELD.x - (sx - 960) / s;
           cy = FIELD.y - (sy - 540) / s;
         }
-        return { s: s, cx: cx, cy: cy };
+        return { s: s, cx: cx, cy: cy, d: d, b: b, k: 1 + pA, flow: flowD };
       }
 
       /* ---------------- les portables des autres (calque d'écran) ----------------
@@ -393,51 +408,40 @@
         }
       }
 
-      /* ---------------- l'unique écrivain : appelé par la timeline à chaque image ---------------- */
-      function render() {
-        var c = camera(), s = c.s;
-        driftEl.style.transform = "translate(" + C.d.toFixed(2) + "px,0px)";
+      /* ---------------- l'unique écrivain de la caméra (et des calques qui en dépendent) ---------------- */
+      function render(t) {
+        var c = camAt(t), s = c.s;
+        driftEl.style.transform = "translate(" + c.d.toFixed(2) + "px,0px)";
         camEl.style.transform = "scale(" + s.toFixed(5) + ")";
         worldEl.style.transform = "translate(" + (960 - c.cx).toFixed(2) + "px," + (540 - c.cy).toFixed(2) + "px)";
-
-        var b = C.bI + C.bT + C.bP;
-        lens.style.filter = b > 0.25 ? "blur(" + b.toFixed(2) + "px)" : "none";
+        lens.style.filter = c.b > 0.25 ? "blur(" + c.b.toFixed(2) + "px)" : "none";
 
         /* fond en parallaxe 1/3 (le sol est plus loin que la frise) : translation et échelle atténuées */
         var sf = Math.pow(s / S1, 0.35);
-        var fx = (-(c.cx - 2220) * S1 + C.d) / 3, fy = -(c.cy - 450) * S1 / 3;
+        var fx = (-(c.cx - 2220) * S1 + c.d) / 3, fy = -(c.cy - 450) * S1 / 3;
         var per = 36 * sf;
-        var mx = ((fx % per) + per) % per, my = ((fy % per) + per) % per;
+        var mx = ((fx % per) + per) % per - per, my = ((fy % per) + per) % per - per;
         dots.style.transform = "translate(" + mx.toFixed(2) + "px," + my.toFixed(2) + "px) scale(" + sf.toFixed(4) + ")";
 
         /* frise : ligne, graduations et années gardent la taille d'écran du plan large (k = 1 → 2 pendant le recul) */
-        var k = 1 + C.pA;
+        var k = c.k;
         line.style.transform = "scaleY(" + k.toFixed(4) + ")";
-        flow.style.transform = "translateX(" + (C.flow % 400).toFixed(2) + "px) scaleY(" + k.toFixed(4) + ")";
+        flow.style.transform = "translateX(" + (c.flow % 400).toFixed(2) + "px) scaleY(" + k.toFixed(4) + ")";
         var ks = "scale(" + k.toFixed(4) + ")";
         for (var i = 0; i < labs.length; i++) labs[i].style.transform = ks;
 
-        renderOthers(C.clock);
-        renderStreaks(C.clock);
+        renderOthers(t);
+        renderStreaks(t);
       }
 
-      var tl = gsap.timeline({ paused: true, onUpdate: render });
+      /* horloge : une tween linéaire 0 → T sur un getter/setter ; GSAP appelle le setter à chaque rendu */
+      var now = 0;
+      var clockDriver = { t: function (v) { if (arguments.length) { now = v; render(v); } return now; } };
+
+      var tl = gsap.timeline({ paused: true });
 
       /* ===== piste caméra ===== */
-      tl.fromTo(C, { clock: 0 }, { clock: T, duration: T, ease: "none" }, 0);
-      tl.fromTo(C, { pA: 0 }, { pA: 1, duration: 0.4, ease: "expo.out" }, 0);
-      tl.fromTo(C, { bI: 14 }, { bI: 0, duration: 0.4, ease: "expo.out" }, 0);
-      /* dérive : +20 px/s en scène 1, remise à zéro sous le travelling, +30 px/s en scène 2 */
-      tl.fromTo(C, { d: 0 }, { d: -24, duration: 1.2, ease: "none" }, 0);
-      tl.fromTo(C, { d: -24 }, { d: 0, duration: 0.4, ease: "expo.inOut", immediateRender: false }, 1.2);
-      tl.fromTo(C, { d: 0 }, { d: -55.5, duration: 1.85, ease: "none", immediateRender: false }, 1.6);
-      /* travelling vers la droite, flou au milieu du trajet */
-      tl.fromTo(C, { pT: 0 }, { pT: 1, duration: 0.4, ease: "expo.inOut", immediateRender: false }, 1.2);
-      tl.fromTo(C, { bT: 0 }, { bT: 8, duration: 0.2, ease: "expo.in", immediateRender: false }, 1.2);
-      tl.fromTo(C, { bT: 8 }, { bT: 0, duration: 0.2, ease: "expo.out", immediateRender: false }, 1.4);
-      /* poussée dans notre écran, flou 0 → 14 px sur la même courbe */
-      tl.fromTo(C, { pP: 0 }, { pP: 1, duration: 0.35, ease: "power2.in", immediateRender: false }, 3.1);
-      tl.fromTo(C, { bP: 0 }, { bP: 14, duration: 0.35, ease: "power2.in", immediateRender: false }, 3.1);
+      tl.fromTo(clockDriver, { t: 0 }, { t: T, duration: T, ease: "none" }, 0);
       /* le halo suit le sujet : plan large (P05) → notre portable à gauche (P06) → l'écran au centre */
       var halo = $("f03-halo");
       tl.fromTo(halo, { x: 0, scaleX: 1, scaleY: 1 }, { x: -260, scaleX: 0.895, scaleY: 1, duration: 0.4, ease: "expo.inOut", immediateRender: false }, 1.2);
@@ -462,9 +466,6 @@
       });
       /* 0.90 : la ligne commence à glisser vers la droite (le temps file), puis défile en scène 2 et ralentit */
       tl.fromTo(flow, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out", immediateRender: false }, 0.9);
-      tl.fromTo(C, { flow: 0 }, { flow: 400, duration: 0.4, ease: "power2.in", immediateRender: false }, 0.9);
-      tl.fromTo(C, { flow: 400 }, { flow: 3100, duration: 1.35, ease: "none", immediateRender: false }, 1.3);
-      tl.fromTo(C, { flow: 3100 }, { flow: 3900, duration: 0.8, ease: "power2.out", immediateRender: false }, 2.65);
 
       /* ===== Scene 2 (1.20 à 3.45) : P06, « Le monde, lui, n’a pas attendu. » ===== */
       /* « 2027 », « 2028 », « 2029 » défilent sous la ligne (300 unités monde/s), filés */
@@ -505,7 +506,7 @@
       word("f03-s2w7", 2.8);
       subOut("f03-s2", 3.08);
 
-      render();
+      render(0);
 
       window.__timelines = window.__timelines || {};
       window.__timelines[FID] = tl;

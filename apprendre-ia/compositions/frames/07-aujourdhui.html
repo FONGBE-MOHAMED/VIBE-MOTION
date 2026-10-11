@@ -404,7 +404,7 @@
       CARDS.forEach(function (c) {
         tl.fromTo($(c.id), { y: 0, scaleY: 1, filter: "blur(0px)" }, { y: CARD_UP, scaleY: 1.12, filter: "blur(8px)", duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
       });
-      tl.fromTo($("field"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 3.19);
+      tl.fromTo($("field"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 3.20);   // né hors champ, sous le cadre
       tl.fromTo($("field"), { y: FIELD_FROM, filter: "blur(16px)" }, { y: FIELD_TO, filter: "blur(10px)", duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
       tl.fromTo($("dots"), { opacity: 1 }, { opacity: 0.45, duration: 0.22, ease: "power1.in", immediateRender: false }, 3.20);
 

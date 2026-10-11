@@ -356,8 +356,8 @@
       /* 0.22 « Ta compta » : les lignes se remplissent une à une (0,05 s) : date, libellé, montant */
       for (var r = 0; r < 8; r++) {
         var cs = $("f05-r" + (r + 1)).getElementsByClassName("f05-c");
+        /* rangées 1 à 7 : date, libellé, montant ; rangée 8 : date, libellé (son montant est tapé à 0.70) */
         for (var c = 0; c < cs.length; c++) pop(cs[c], 0.2 + r * 0.05 + c * 0.017, 16, 0.13);
-        if (r < 7) pop($("f05-r" + (r + 1)).children[2].firstElementChild, 0.2 + r * 0.05 + 2 * 0.017, 16, 0.13);
       }
       /* 0.70 : le curseur tape dans une cellule (le montant de la dernière ligne) */
       var CW = 0.612 * 22; /* chasse de Space Mono à 22 px */

@@ -77,3 +77,19 @@ Apprends l'IA dès aujourd'hui.
 
 Réglages : Eleven v4, langue réglée sur Français, Stabilité 40 à 50 %, Similarité 80 à 90 %, 2 ou 3 prises.
 Fichier attendu : `apprendre-ia/assets/audio/voix.mp3`.
+
+## Description de la voix (ElevenLabs, Voice Design)
+
+Description (en anglais, l'outil la comprend mieux) :
+
+```
+A French male voice in his mid-thirties, native speaker from France with a neutral Parisian accent. Warm, slightly deep and confident timbre, like a modern advertising and tech launch narrator. He speaks directly to one person, in a friendly, informal way, with a hint of playful irony. Crisp articulation, moderately fast pace, short punchy sentences with clear pauses between them. Calm and assured, never shouting, never robotic. Studio-quality recording, close microphone, clean and dry, no reverb, no background noise or music.
+```
+
+Variante féminine : remplacer la première phrase par « A French female voice in her early thirties, native speaker from France with a neutral Parisian accent. » et « He speaks » par « She speaks ».
+
+Texte d'essai :
+
+```
+Deux mille. Un site internet ? Pas pour moi. Deux mille dix. Les réseaux sociaux ? Pas pour moi. Le problème ? Le monde, lui, n'a pas attendu. Tu lui expliques avec tes mots... elle fait le travail.
+```

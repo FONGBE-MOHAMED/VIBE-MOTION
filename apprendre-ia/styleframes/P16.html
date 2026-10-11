@@ -1,0 +1,8 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>P16</title>
+<link rel="stylesheet" href="_kit.css"></head><body><div id="stage"><div class="g-light"><div class="dots"></div><div class="halo" style="left:10.0px;top:0.0px;width:1900px;height:900px"></div></div><div class="abs" style="left:700px;top:300px;width:1100px;height:150px;border-radius:32px;background:#fff;border:2px solid rgba(23,24,28,.12);box-shadow:0 30px 80px rgba(60,45,20,.14);display:flex;align-items:center;padding:0 40px;font:600 36px/1.2 Instrument Sans;color:#17181c">Prépare ma présentation de lundi à partir de mes notes.</div><div class="card dark" style="left:20px;top:330px;width:760px;height:380px;transform:rotate(-12deg);opacity:0.24;filter:blur(10px)"></div><div class="card dark" style="left:40px;top:400px;width:760px;height:380px;transform:rotate(-14deg);opacity:0.12;filter:blur(10px)"></div><div class="card dark" style="left:60px;top:470px;width:760px;height:380px;padding:38px 40px;transform:rotate(-16deg);filter:blur(2.5px)"><div class="code"><b>import</b> pandas <b>as</b> pd
+<b>def</b> build_deck(notes, n=10):
+    df = pd.read_csv(notes)
+    slides = [s <b>for</b> s <b>in</b> df.groupby(<b>"theme"</b>)]
+    <b>return</b> render(slides[:n])
+<b>if</b> __name__ == <b>"__main__"</b>:
+    build_deck(<b>"notes.csv"</b>)</div></div><div class="sub light"><span class="w">Pas</span> <span class="w">besoin</span> <span class="w">d’être</span>  <span class="w hl">technique</span> <span class="w">:</span></div><div class="grain"></div><div class="vignette light"></div></div></body></html>

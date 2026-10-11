@@ -454,34 +454,35 @@
         gsap.set(h, { rotation: c[1] });
         gsap.set(m, { rotation: c[2] });
         gsap.set(s, { rotation: c[3] });
-        tl.fromTo(h, { rotation: c[1] }, { rotation: c[1] + 12.5, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
-        tl.fromTo(m, { rotation: c[2] }, { rotation: c[2] + 150, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
-        tl.fromTo(s, { rotation: c[3] }, { rotation: c[3] + 900, duration: D - 3.8, ease: "power1.in", immediateRender: false }, 3.8);
+        tl.fromTo(h, { rotation: c[1] }, { rotation: c[1] + 12.5, duration: D - 3.8, ease: "none", immediateRender: false }, 3.8);
+        tl.fromTo(m, { rotation: c[2] }, { rotation: c[2] + 150, duration: D - 3.8, ease: "none", immediateRender: false }, 3.8);
+        tl.fromTo(s, { rotation: c[3] }, { rotation: c[3] + 360, duration: D - 3.8, ease: "none", immediateRender: false }, 3.8);
       });
 
       /* ================= sous-titres ================= */
-      word($("f05-a1"), 0.2);
-      word($("f05-a2"), 0.33);
-      box($("f05-box1"), 0.99);
-      word($("f05-a3"), 1.01, true);
-      word($("f05-a4"), 1.23, true);
-      word($("f05-a5"), 1.25);
+      /* chaque mot démarre 0,04 s avant son repère : il est lisible à l'image du repère (0 à 2 images d'avance) */
+      word($("f05-a1"), 0.18);
+      word($("f05-a2"), 0.31);
+      box($("f05-box1"), 0.98);
+      word($("f05-a3"), 0.99, true);
+      word($("f05-a4"), 1.21, true);
+      word($("f05-a5"), 1.23);
       exitSub([$("f05-a1"), $("f05-a2"), $("f05-hl1"), $("f05-a5")], 1.88);
 
-      word($("f05-b1"), 2.08);
-      word($("f05-b2"), 2.28);
-      word($("f05-b3"), 2.44);
-      word($("f05-b4"), 2.67);
-      box($("f05-box2"), 3.02);
-      word($("f05-b5"), 3.04, true);
-      word($("f05-b6"), 3.4, true);
-      word($("f05-b7"), 3.6, true);
-      word($("f05-b8"), 3.62);
+      word($("f05-b1"), 2.06);
+      word($("f05-b2"), 2.26);
+      word($("f05-b3"), 2.42);
+      word($("f05-b4"), 2.65);
+      box($("f05-box2"), 3.01);
+      word($("f05-b5"), 3.02, true);
+      word($("f05-b6"), 3.38, true);
+      word($("f05-b7"), 3.58, true);
+      word($("f05-b8"), 3.6);
       /* 3.98 : le sous-titre sort */
       exitSub([$("f05-b1"), $("f05-b2"), $("f05-b3"), $("f05-b4"), $("f05-hl2"), $("f05-b8")], 3.98);
 
       /* ================= heures numériques (calculées depuis le temps de la timeline) ================= */
-      var E_SPIN = gsap.parseEase("power2.inOut"), E_TURN = gsap.parseEase("power1.in");
+      var E_SPIN = gsap.parseEase("power2.inOut"), E_TURN = gsap.parseEase("none");
       var bdig = $("f05-bdig"), d1 = $("f05-d1"), d2 = $("f05-d2");
       function hhmm(v) {
         v = Math.floor(v + 1e-6);

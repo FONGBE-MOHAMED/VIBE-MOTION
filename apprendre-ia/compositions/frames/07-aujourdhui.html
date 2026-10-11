@@ -187,7 +187,7 @@
 .f07-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #f7d038; border-radius: 3px; z-index: -1;
   opacity: 0; transform-origin: 0 50%; }
 /* le champ de saisie clair de la séquence 8 (P14), dessiné à 1/1,8 dans le monde, sous les cartes */
-#f07-fieldA { position: absolute; left: 165px; top: 801px; width: 1600px; height: 250px; transform: scale(0.555556); transform-origin: 50% 50%; }
+#f07-fieldA { position: absolute; left: 165.2px; top: 667.8px; width: 1600px; height: 250px; transform: scale(0.555556); transform-origin: 50% 50%; }
 #f07-field { position: absolute; left: 0; top: 0; width: 1600px; height: 250px; border-radius: 40px; background: #fff; border: 2px solid rgba(23,24,28,.12);
   box-shadow: 0 40px 100px rgba(60,45,20,.16); display: flex; align-items: center; padding: 0 200px 0 70px;
   font: 600 46px/1.2 "Instrument Sans"; color: #17181c; letter-spacing: -.015em; opacity: 0; }
@@ -255,9 +255,11 @@
       /* ---------- constantes de mise en scène ---------- */
       var SA = 1.16;                 // échelle de caméra de la scène 1 (posée)
       var S07 = SA * 1.008;          // échelle à 0.70 (poussée 2 %/s depuis 0.30) : #f07-s1 = scale(1 / S07)
-      var TY_END = -286;             // cran final vers le bas : translation du monde à 3.42
-      var CARD_UP = -160;            // les cartes partent vers le haut (monde)
-      var FIELD_RISE = 260 / 0.555556; // le champ monte de 260 px du monde (repère local à l'échelle 1/1,8)
+      var TY_END = -300;             // cran final vers le bas : translation du monde à 3.42 (même courbe que l'échelle)
+      var CARD_UP = -165;            // les cartes partent vers le haut (monde) : leur bas reste visible en haut à 3.42
+      // le champ (centre monde 965.2 / 792.8) monte de 380 à 70 px du monde sous sa place P14 ; il est encore lancé à la
+      // couture (power2.in) et la séquence 8 le pose (repère local du champ = monde × 1,8)
+      var FIELD_FROM = 380 * 1.8, FIELD_TO = 70 * 1.8;
       // la bulle de réponse (P12, écran : centre 958 / 468.2, 705.6 × 123.5) ramenée dans le monde
       var BX = 960 + (958 - 960) / S07, BY = 540 + (468.2 - 540) / S07, BW = 705.6 / S07, BH = 123.5 / S07;
       var PIECE = (BW - 16) / 3;     // la bulle se partage en trois morceaux, 8 px d'écart
@@ -313,9 +315,9 @@
       cam.fromTo($("world"), { x: 0 }, { x: 16, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 1.44);
       cam.fromTo($("world"), { x: 16 }, { x: 0, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 1.91);
       cam.fromTo($("world"), { x: 0 }, { x: -18, duration: 0.10, ease: "expo.inOut", immediateRender: false }, 2.66);
-      // 3.20 à 3.42 cran vers le bas ×1 → ×1,8 (expo.inOut) ; la translation est encore lancée à la couture
+      // 3.20 à 3.42 cran vers le bas ×1 → ×1,8 (expo.inOut, échelle et translation sur la même courbe : le champ monte sans retour)
       cam.fromTo($("cam"), { scale: 1 }, { scale: 1.8, duration: 0.22, ease: "expo.inOut", immediateRender: false }, 3.20);
-      cam.fromTo($("world"), { y: 0 }, { y: TY_END, duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
+      cam.fromTo($("world"), { y: 0 }, { y: TY_END, duration: 0.22, ease: "expo.inOut", immediateRender: false }, 3.20);
       tl.add(cam, 0);
 
       /* ---------- Scene 1 (0.00 à 1.40) : P12, « Aujourd’hui, l’IA » ---------- */
@@ -347,7 +349,7 @@
       word("w3", 1.93);
       word("w4", 2.68);
       // avant la couture, le sous-titre sort (opacité 1 → 0, flou 0 → 6 px, 0,14 s), mot par mot pour ne flouter aucun grand calque
-      tl.fromTo([$("w0"), $("hlw"), $("w2"), $("w3"), $("w4")], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 3.16);
+      tl.fromTo([$("w0"), $("hlw"), $("w2"), $("w3"), $("w4")], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 3.12);
 
       /* ---------- Scene 2 (1.40 à 3.42) : P13, « rédige, résume, calcule » ---------- */
       // 1.40 la bulle se partage en trois cartes qui se posent côte à côte ; le portable s'efface derrière elles
@@ -403,7 +405,7 @@
         tl.fromTo($(c.id), { y: 0, scaleY: 1, filter: "blur(0px)" }, { y: CARD_UP, scaleY: 1.12, filter: "blur(8px)", duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
       });
       tl.fromTo($("field"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 3.19);
-      tl.fromTo($("field"), { y: FIELD_RISE, filter: "blur(16px)" }, { y: 0, filter: "blur(10px)", duration: 0.22, ease: "power2.out", immediateRender: false }, 3.20);
+      tl.fromTo($("field"), { y: FIELD_FROM, filter: "blur(16px)" }, { y: FIELD_TO, filter: "blur(10px)", duration: 0.22, ease: "power2.in", immediateRender: false }, 3.20);
       tl.fromTo($("dots"), { opacity: 1 }, { opacity: 0.45, duration: 0.22, ease: "power1.in", immediateRender: false }, 3.20);
 
       render(0);

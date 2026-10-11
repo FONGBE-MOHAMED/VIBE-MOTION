@@ -285,7 +285,7 @@
       // réglé pour que la graduation « 2026 » (x 1360) arrive sous le bord droit du bouton pressé (x 1306) à 2.88
       tl.fromTo("#f12-frise-glide", { x: -54 + 12 * 2.88 }, { x: -54 - 12 * (D - 2.88), duration: D, ease: "none" }, 0);
 
-      // 0.58 à la fin : le halo respire (période 1,2 s, demi-cycles écrits un à un, aucun repeat)
+      // 0.58 à la fin : le halo respire (période 1,2 s, demi-cycles écrits un à un, en nombre fini)
       var H0 = { scale: 1, opacity: 0.85 };
       var H1 = { scale: 1.07, opacity: 1 };
       for (var b = 0; b < 6; b++) {

@@ -269,8 +269,10 @@
       var PAR = 0.304;                            // le fond pousse moins que le sujet : s_fond = 1 + (s - 1) × PAR
       var S_END = 70;                             // poussée finale (power2.in, cubique) : à 3.50 déjà ×19, le cadre est tout jaune dans les deux dernières images
       var PEN_K = 1 / 2.15;                       // le feutre de P20 (60 × 420 px à l'écran pour un post-it à ×2,15)
-      var PEN_ROT = 33;                           // 28° à l'écran dans P20 = 33° dans le repère du post-it (-5°)
-      var REST = { x: 321, y: 68 };               // pointe du feutre posé (image clé P20), repère du post-it
+      // tenu pour écrire : capuchon vers le haut à droite, pointe en bas à gauche (le corps ne cache jamais « moi ») ;
+      // même diagonale que le feutre de P20 (28° à l'écran = 33° dans le repère du post-it, retourné de 180°)
+      var PEN_ROT = -147;
+      var REST = { x: 214.5, y: 232.4 };          // pointe du feutre posé (diagonale de l'image clé P20), repère du post-it
 
       /* ---- le trait sur « Pas » : échantillonné par longueur d'arc (géométrie seule, aucune mesure de mise en page) ---- */
       var SEG = [[4, 34, 30, 30, 60, 27, 90, 26], [90, 26, 112, 25, 132, 22, 146, 18]];
@@ -302,8 +304,8 @@
          f : poussée finale ; land / dof / tile / pib / fgb / pb : flous en px écran ;
          px, py : pointe du feutre (repère du post-it, hors trait) ; draw : trait sur « Pas » ; pl, pr : lever, rotation */
       var P = { s: 1.1, tx: 960, ty: 540, ax: 960, ay: 540, f: 0,
-                land: 12, dof: 0, tile: 12, pib: 16, fgb: 0,
-                px: S0.x + 800, py: S0.y - 150, draw: 0, pl: 1.08, pr: 14, pb: 8 };
+                land: 12, dof: 0, tile: 12, pib: 10, fgb: 0,
+                px: S0.x + 800, py: S0.y - 58, draw: 0, pl: 1.08, pr: -14, pb: 8 };
 
       function blur(el, px) { el.style.filter = px > 0.05 ? "blur(" + px.toFixed(2) + "px)" : "none"; }
 
@@ -350,7 +352,7 @@
       tl.fromTo(drift, { x: 0 }, { x: -16, duration: 1.62, ease: "none" }, 0);
       tl.fromTo(drift, { scale: 1 }, { scale: 1 + 0.015 * (D - 1.62), duration: D - 1.62, ease: "none", immediateRender: false }, 1.62);
       // 0.00 → 0.22 atterrissage : le recul de la séquence 10 se pose (×1,1 → ×1, flou 12 → 0)
-      tl.fromTo(P, { s: 1.1 }, { s: 1, duration: 0.22, ease: "expo.out" }, 0);
+      tl.fromTo(P, { s: 1.1 }, { s: 1, duration: 0.22, ease: "power3.out" }, 0);
       tl.fromTo(P, { land: 12 }, { land: 0, duration: 0.24, ease: "power2.out" }, 0);
       // 1.32 → 1.62 poussée ×1 → ×2,1 sur le post-it (expo.inOut) ; le fond, plus loin, pousse moins (×1,33)
       tl.fromTo(P, { s: 1, tx: 960, ty: 540, ax: 960, ay: 540 },
@@ -364,7 +366,7 @@
 
       /* ===================== Scene 1 (0.00 à 1.62) : « L’intelligence artificielle ? » ===================== */
       // 0.00 → 0.22 les tuiles rentrent dans l'écran (elles continuent de rétrécir, floues, et s'y fondent)
-      tl.fromTo(tiles, { scale: 0.854, y: 11.7 }, { scale: 0.55, y: -79, duration: 0.22, ease: "power2.out" }, 0);
+      tl.fromTo(tiles, { scale: 0.854, y: 11.7 }, { scale: 0.55, y: -79, duration: 0.24, ease: "sine.out" }, 0);
       tl.fromTo(tiles, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power1.in", immediateRender: false }, 0.06);
       tl.fromTo(P, { tile: 12 }, { tile: 8, duration: 0.22, ease: "none" }, 0);
       // le portable clair posé sur la frise, « 2026 » dessous (la rime de P3), sort du flou
@@ -376,11 +378,13 @@
       // 0.22 le surligneur se trace (0,16 s power3.out), juste avant « L’intelligence »
       tl.fromTo(hl, { "--f11-k": 0 }, { "--f11-k": 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.22);
 
-      // 0.42 le post-it arrive de la caméra (×2,6, flou 16, depuis le bas à droite), passe par l'image clé P19
-      // (×1,25, -14°, flou 5, 0.52) et se colle : -14° → -5°, posé en 0,12 s expo.out, tassement 0,97 → 1 en 0,08 s
-      tl.fromTo(postit, { x: 300, y: 230, scale: 2.6, rotation: -18, opacity: 0 },
-        { x: 55, y: -5, scale: 1.25, rotation: -14, opacity: 0.9, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
-      tl.fromTo(P, { pib: 16 }, { pib: 5, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
+      // 0.42 le post-it arrive de la caméra (frame.md « se colle » : ×1,6, flou 10, -14°, un peu décalé vers le bas
+      // à droite), passe par l'image clé P19 (×1,25, -14°, flou 5, à 0.52) et se colle : -14° → -5°, posé en
+      // 0,12 s expo.out, tassement 0,97 → 1 en 0,08 s (claquement)
+      tl.fromTo(postit, { x: 150, y: 60, scale: 1.6, rotation: -14 },
+        { x: 55, y: -5, scale: 1.25, rotation: -14, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
+      tl.fromTo(postit, { opacity: 0 }, { opacity: 0.9, duration: 0.1, ease: "power1.out", immediateRender: false }, 0.42);
+      tl.fromTo(P, { pib: 10 }, { pib: 5, duration: 0.1, ease: "power2.in", immediateRender: false }, 0.42);
       tl.fromTo(postit, { x: 55, y: -5, scale: 1.25, rotation: -14, opacity: 0.9 },
         { x: 0, y: 0, scale: 0.97, rotation: -5, opacity: 1, duration: 0.12, ease: "expo.out", immediateRender: false }, 0.52);
       tl.fromTo(P, { pib: 5 }, { pib: 0, duration: 0.12, ease: "expo.out", immediateRender: false }, 0.52);
@@ -398,23 +402,27 @@
       tl.fromTo(veil, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
 
       /* ===================== Scene 2 (1.62 à 3.54) : « Cette fois… c’est pour toi. » ===================== */
-      // 1.82 « Cette fois » : le feutre noir entre par la droite et vient au-dessus de « Pas »
+      // 1.82 « Cette fois » : le feutre noir entre par la droite, pointe devant, au-dessus de la ligne d'écriture
+      // (x et y sur deux courbes : il file vers la gauche, puis descend se placer avant le « P »)
+      var HOVER = { x: S0.x - 6, y: S0.y - 12 }, HIGH = S0.y - 58;
+      var GO = { x: REST.x - (S1.x - S0.x), y: REST.y - (S1.y - S0.y) };   // pointe au repos, trait compris
       tl.fromTo(pen, { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, 1.82);
-      tl.fromTo(P, { px: S0.x + 800, py: S0.y - 150, pr: 14, pb: 8 },
-        { px: S0.x, py: S0.y - 10, pr: 0, pb: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, 1.82);
-      // 2.30 → 2.42 il se pose sur le papier
-      tl.fromTo(P, { py: S0.y - 10, pl: 1.08 }, { py: S0.y, pl: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, 2.3);
+      tl.fromTo(P, { px: S0.x + 800, pr: -14, pb: 8 },
+        { px: HOVER.x, pr: 0, pb: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, 1.82);
+      tl.fromTo(P, { py: HIGH }, { py: HOVER.y, duration: 0.32, ease: "power2.inOut", immediateRender: false }, 1.98);
+      // 2.30 → 2.42 il se pose sur le papier, au début du trait
+      tl.fromTo(P, { px: HOVER.x, py: HOVER.y, pl: 1.08 }, { px: S0.x, py: S0.y, pl: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, 2.3);
       // 2.42 il barre « Pas » : le trait se dessine en 0,25 s power2.out, la pointe le suit ; il reste « pour moi »
       tl.fromTo(P, { draw: 0 }, { draw: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, 2.42);
-      tl.fromTo(P, { pr: 0 }, { pr: -3, duration: 0.25, ease: "power1.inOut", immediateRender: false }, 2.42);
-      // 2.67 → 2.95 il se lève et se range sur le bord droit (pose de l'image clé P20)
-      tl.fromTo(P, { px: S0.x, py: S0.y, pr: -3 },
-        { px: REST.x - (S1.x - S0.x), py: REST.y - (S1.y - S0.y), pr: 0, duration: 0.28, ease: "power3.out", immediateRender: false }, 2.67);
+      tl.fromTo(P, { pr: 0 }, { pr: 3, duration: 0.25, ease: "power1.inOut", immediateRender: false }, 2.42);
+      // 2.67 → 2.95 il se lève et se range sur le bord droit (la diagonale du feutre de l'image clé P20)
+      tl.fromTo(P, { px: S0.x, py: S0.y, pr: 3 },
+        { px: GO.x, py: GO.y, pr: 0, duration: 0.28, ease: "power3.out", immediateRender: false }, 2.67);
       tl.fromTo(P, { pl: 1 }, { pl: 1.05, duration: 0.1, ease: "power2.out", immediateRender: false }, 2.67);
       tl.fromTo(P, { pl: 1.05 }, { pl: 1, duration: 0.12, ease: "power2.inOut", immediateRender: false }, 2.85);
       // 3.12 le feutre sort par la droite (plus vite qu'il n'est entré)
-      tl.fromTo(P, { px: REST.x - (S1.x - S0.x), py: REST.y - (S1.y - S0.y), pr: 0, pb: 0 },
-        { px: REST.x - (S1.x - S0.x) + 760, py: REST.y - (S1.y - S0.y) - 60, pr: 8, pb: 8, duration: 0.14, ease: "power2.in", immediateRender: false }, 3.12);
+      tl.fromTo(P, { px: GO.x, py: GO.y, pr: 0, pb: 0 },
+        { px: GO.x + 760, py: GO.y - 40, pr: -8, pb: 8, duration: 0.14, ease: "power2.in", immediateRender: false }, 3.12);
       tl.fromTo(pen, { opacity: 1 }, { opacity: 0, duration: 0.02, ease: "none", immediateRender: false }, 3.27);
 
       /* ===================== sous-titre ===================== */
@@ -426,9 +434,9 @@
           { color: "#17181c", duration: 0.2, ease: "power1.inOut", immediateRender: false }, t + 0.1);
       }
       words.forEach(function (w) { word(w, Math.max(0, parseFloat(w.getAttribute("data-cue")) - FR)); });
-      // la phrase 1 sort pendant la poussée
+      // la phrase 1 sort au départ de la poussée, avant que le portable ne traverse la bande du sous-titre
       tl.fromTo(sub1, { opacity: 1, filter: "blur(0px)" },
-        { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.44);
+        { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.32);
       // 2.92 → 3.32 le trait jaune sous « pour toi »
       tl.fromTo(pkSvg, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 2.92);
       // la phrase 2 sort avant la couture : aucun sous-titre dans les deux dernières images

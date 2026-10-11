@@ -253,116 +253,105 @@
 
   <script src="assets/js/gsap.min.js"></script>
   <script>
-      (function () {
-        var FID = "12-fin";
-        var D = 4.38;
-        var tl = gsap.timeline({ paused: true });
-        var IR = { immediateRender: false };
-        var at = function (vars) {
-          vars.immediateRender = false;
-          return vars;
-        };
+    (function () {
+      var FID = "12-fin";
+      var D = 4.38;
+      var tl = gsap.timeline({ paused: true });
 
-        /* ================= piste caméra (à part) : dérive x +10 px/s, poussée 1,5 %/s ================= */
-        // la caméra avance vers la droite : le monde glisse à gauche ; le bouton passe au centre exact à 2.00
-        tl.fromTo("#f12-drift", { x: 20, scale: 1 }, { x: 20 - 10 * D, scale: 1 + 0.015 * D, duration: D, ease: "none" }, 0);
-        // la trame du sol suit à mi-vitesse (parallaxe), elle rend la dérive lisible
-        tl.fromTo("#f12-dots", { x: 10, scale: 1 }, { x: 10 - 5 * D, scale: 1 + 0.0075 * D, duration: D, ease: "none" }, 0);
+      /* ================= piste caméra, à part des objets : dérive x +10 px/s, poussée 1,5 %/s ================= */
+      // la caméra avance vers la droite (le monde glisse à gauche) ; le bouton passe au centre exact du cadre à 2.00
+      tl.fromTo("#f12-drift", { x: 20, scale: 1 }, { x: 20 - 10 * D, scale: 1 + 0.015 * D, duration: D, ease: "none" }, 0);
+      // la trame de points du sol suit à mi-vitesse (parallaxe) : elle rend la dérive lisible
+      tl.fromTo("#f12-dots", { x: 10, scale: 1 }, { x: 10 - 5 * D, scale: 1 + 0.0075 * D, duration: D, ease: "none" }, 0);
 
-        /* ================= Scene 1 (0.00 à 1.78) : P21, Apprends l'IA ================= */
-        // 0.00 à 0.28 : le jaune du post-it (plein cadre) se replie vite en bouton (power3.in)
-        tl.fromTo("#f12-btnwrap", { scaleX: 2.9, scaleY: 8.4 }, { scaleX: 1, scaleY: 1, duration: 0.28, ease: "power3.in" }, 0);
-        // la surface du post-it devient la face du bouton
-        tl.fromTo("#f12-plate", { opacity: 1 }, at({ opacity: 0, duration: 0.14, ease: "power2.in" }), 0.14);
-        // le bureau de nuit apparaît autour : vignette claire (papier) vers vignette sombre
-        tl.fromTo("#f12-vig-l", { opacity: 1 }, at({ opacity: 0, duration: 0.2, ease: "power1.in" }), 0.08);
-        tl.fromTo("#f12-vig-d", { opacity: 0 }, at({ opacity: 1, duration: 0.2, ease: "power1.in" }), 0.08);
-        // 0.28 : le bouton se pose (petit tassement), le libellé et le coin plié arrivent
-        tl.fromTo("#f12-btn", { scale: 0.97 }, at({ scale: 1, duration: 0.1, ease: "power3.out" }), 0.28);
-        tl.fromTo("#f12-label", { opacity: 0, scale: 1.12, filter: "blur(6px)" }, at({ opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out" }), 0.28);
-        tl.fromTo("#f12-fold", { opacity: 1, scale: 0 }, at({ opacity: 1, scale: 1, duration: 0.16, ease: "expo.out" }), 0.3);
-        // le halo jaune s'ouvre derrière le bouton
-        tl.fromTo("#f12-halo", { opacity: 0, scale: 0.8 }, at({ opacity: 0.85, scale: 1, duration: 0.3, ease: "power3.out" }), 0.28);
+      /* ================= Scene 1 (0.00 à 1.78) : P21, Apprends l'IA ================= */
+      // 0.00 : handoff_in, le jaune du post-it remplit le cadre ; 0.00 à 0.28 il se replie vite en bouton (power3.in)
+      tl.fromTo("#f12-btnwrap", { scaleX: 2.9, scaleY: 8.4 }, { scaleX: 1, scaleY: 1, duration: 0.28, ease: "power3.in" }, 0);
+      // la surface du post-it devient la face du bouton
+      tl.fromTo("#f12-plate", { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in", immediateRender: false }, 0.14);
+      // le bureau de nuit apparaît autour : la vignette claire du papier cède à la vignette sombre
+      tl.fromTo("#f12-vig-l", { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false }, 0.08);
+      tl.fromTo("#f12-vig-d", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.in", immediateRender: false }, 0.08);
+      // 0.28 : le bouton se pose (petit tassement 0,97 → 1), le libellé et le coin plié arrivent
+      tl.fromTo("#f12-btn", { scale: 0.97 }, { scale: 1, duration: 0.1, ease: "power3.out", immediateRender: false }, 0.28);
+      tl.fromTo("#f12-label", { opacity: 0, scale: 1.12, filter: "blur(6px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false }, 0.28);
+      tl.fromTo("#f12-fold", { opacity: 1, scale: 0 }, { opacity: 1, scale: 1, duration: 0.16, ease: "expo.out", immediateRender: false }, 0.3);
+      // le halo jaune s'ouvre derrière le bouton
+      tl.fromTo("#f12-halo", { opacity: 0, scale: 0.8 }, { opacity: 0.85, scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 0.28);
 
-        // la frise du début passe derrière, en filet (balayage vers la gauche, puis glissement lent continu)
-        tl.fromTo("#f12-frise-sweep", { opacity: 0 }, at({ opacity: 1, duration: 0.16, ease: "power1.out" }), 0.18);
-        tl.fromTo("#f12-frise-sweep", { x: 200 }, at({ x: 0, duration: 0.9, ease: "power3.out" }), 0.18);
-        // glissement de 12 px/s : la graduation « 2026 » arrive sous le bord du bouton à 2.88
-        tl.fromTo("#f12-frise-glide", { x: -54 + 12 * 2.88 }, { x: -54 - 12 * (D - 2.88), duration: D, ease: "none" }, 0);
+      // la frise du début passe derrière, en filet : balayage vers la gauche, puis glissement continu de 12 px/s
+      tl.fromTo("#f12-frise-sweep", { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out", immediateRender: false }, 0.18);
+      tl.fromTo("#f12-frise-sweep", { x: 200 }, { x: 0, duration: 0.9, ease: "power3.out", immediateRender: false }, 0.18);
+      // réglé pour que la graduation « 2026 » (x 1360) arrive sous le bord droit du bouton pressé (x 1306) à 2.88
+      tl.fromTo("#f12-frise-glide", { x: -54 + 12 * 2.88 }, { x: -54 - 12 * (D - 2.88), duration: D, ease: "none" }, 0);
 
-        // 0.58 à la fin : le halo respire (période 1,2 s, pas finis, sans repeat)
-        var H0 = { scale: 1, opacity: 0.85 };
-        var H1 = { scale: 1.07, opacity: 1 };
-        var b;
-        for (b = 0; b < 6; b++) {
-          var a = b % 2 === 0 ? H0 : H1;
-          var z = b % 2 === 0 ? H1 : H0;
-          tl.fromTo("#f12-halo", { scale: a.scale, opacity: a.opacity }, at({ scale: z.scale, opacity: z.opacity, duration: 0.6, ease: "sine.inOut" }), 0.58 + b * 0.6);
-        }
-        tl.fromTo("#f12-halo", { scale: 1, opacity: 0.85 }, at({ scale: 1.025, opacity: 0.9, duration: D - 4.18, ease: "sine.in" }), 4.18);
+      // 0.58 à la fin : le halo respire (période 1,2 s, demi-cycles écrits un à un, aucun repeat)
+      var H0 = { scale: 1, opacity: 0.85 };
+      var H1 = { scale: 1.07, opacity: 1 };
+      for (var b = 0; b < 6; b++) {
+        var hA = b % 2 === 0 ? H0 : H1;
+        var hB = b % 2 === 0 ? H1 : H0;
+        tl.fromTo("#f12-halo", { scale: hA.scale, opacity: hA.opacity }, { scale: hB.scale, opacity: hB.opacity, duration: 0.6, ease: "sine.inOut", immediateRender: false }, 0.58 + b * 0.6);
+      }
+      tl.fromTo("#f12-halo", { scale: 1, opacity: 0.85 }, { scale: 1.025, opacity: 0.9, duration: D - 4.18, ease: "sine.in", immediateRender: false }, 4.18);
 
-        // sous-titre : « [boîte : Apprends l’IA] dès aujourd’hui. », boîte tracée à 0.22
-        tl.fromTo("#f12-box", { opacity: 1, scaleX: 0 }, at({ opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out" }), 0.22);
-        var CUES = [["#f12-w1", 0.24], ["#f12-w2", 0.62], ["#f12-w3", 0.99], ["#f12-w4", 1.21]];
-        CUES.forEach(function (c) {
-          var t0 = c[1] - 0.02;
-          tl.fromTo(c[0], { opacity: 0, y: 8, filter: "blur(6px)" }, at({ opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power3.out" }), t0);
-          tl.fromTo(c[0], { opacity: 0.35 }, at({ opacity: 1, duration: 0.2, ease: "power1.out" }), t0 + 0.14);
-        });
+      // sous-titre « [boîte : Apprends l’IA] dès aujourd’hui. » : surligneur tracé depuis la gauche à 0.22
+      tl.fromTo("#f12-box", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 0.22);
+      // chaque mot sur son horodatage (Apprends 0.24, l’IA 0.62, dès 0.99, aujourd’hui 1.21), 0 à 2 images en avance
+      var CUES = [["#f12-w1", 0.22], ["#f12-w2", 0.57], ["#f12-w3", 0.94], ["#f12-w4", 1.16]];
+      CUES.forEach(function (c) {
+        tl.fromTo(c[0], { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power3.out", immediateRender: false }, c[1]);
+        tl.fromTo(c[0], { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power1.out", immediateRender: false }, c[1] + 0.14);
+      });
 
-        // 1.28 : le curseur arrive d'un seul mouvement courbe depuis le bas à droite (0,45 s power3.out)
-        var CX0 = 2000, CY0 = 1120, CX1 = 1195, CY1 = 454;
-        tl.fromTo("#f12-cur", { opacity: 0 }, at({ opacity: 1, duration: 0.01, ease: "none" }), 1.28);
-        tl.fromTo("#f12-cur", { x: CX0 }, at({ x: CX1, duration: 0.45, ease: "power3.out" }), 1.28);
-        tl.fromTo("#f12-cur", { y: CY0 }, at({ y: CY1, duration: 0.45, ease: "power4.out" }), 1.28);
-        tl.fromTo("#f12-cur-blur", { filter: "blur(3px)" }, at({ filter: "blur(0px)", duration: 0.32, ease: "power1.in" }), 1.28);
+      // 1.28 : le curseur arrive d'un seul mouvement courbe depuis le bas à droite (0,45 s power3.out, x et y sur deux courbes)
+      var CX0 = 2000, CY0 = 1120, CX1 = 1195, CY1 = 454;
+      tl.fromTo("#f12-cur", { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 1.28);
+      tl.fromTo("#f12-cur", { x: CX0 }, { x: CX1, duration: 0.45, ease: "power3.out", immediateRender: false }, 1.28);
+      tl.fromTo("#f12-cur", { y: CY0 }, { y: CY1, duration: 0.45, ease: "power4.out", immediateRender: false }, 1.28);
+      tl.fromTo("#f12-cur-blur", { filter: "blur(3px)" }, { filter: "blur(0px)", duration: 0.32, ease: "power1.in", immediateRender: false }, 1.28);
 
-        /* ================= Scene 2 (1.78 à 4.38) : P22, le clic ================= */
-        // 1.73 : le curseur touche le bouton ; 1.78 : clic direct, curseur et bouton pressés ensemble
-        tl.fromTo("#f12-cur-in", { scale: 1 }, at({ scale: 0.85, duration: 0.06, ease: "power2.in" }), 1.78);
-        tl.fromTo("#f12-cur-in", { scale: 0.85 }, at({ scale: 1, duration: 0.12, ease: "power2.out" }), 1.84);
-        tl.fromTo("#f12-btn", { scale: 1 }, at({ scale: 0.96, duration: 0.06, ease: "power2.in" }), 1.78);
-        // état pressé en 3 tons : jaune pâle, blanc, jaune
-        tl.fromTo("#f12-tone-pale", { opacity: 0 }, at({ opacity: 1, duration: 0.03, ease: "none" }), 1.78);
-        tl.fromTo("#f12-tone-press", { opacity: 0 }, at({ opacity: 1, duration: 0.02, ease: "none" }), 1.8);
-        tl.fromTo("#f12-tone-white", { opacity: 0 }, at({ opacity: 1, duration: 0.05, ease: "power1.out" }), 1.81);
-        tl.fromTo("#f12-tone-white", { opacity: 1 }, at({ opacity: 0, duration: 0.1, ease: "power2.out" }), 1.93);
-        tl.fromTo("#f12-tone-pale", { opacity: 1 }, at({ opacity: 0, duration: 0.1, ease: "power2.out" }), 1.98);
-        // les ondes jaunes s'ouvrent depuis le bouton (2 anneaux décalés de 0,08 s)
-        tl.fromTo("#f12-ring1", { opacity: 0 }, at({ opacity: 1, duration: 0.05, ease: "none" }), 1.79);
-        tl.fromTo("#f12-ring1", { scale: 0.69 }, at({ scale: 0.99, duration: 0.9, ease: "expo.out" }), 1.79);
-        tl.fromTo("#f12-ring1", { scale: 0.99 }, at({ scale: 1.06, duration: D - 2.69, ease: "none" }), 2.69);
-        tl.fromTo("#f12-ring2", { opacity: 0 }, at({ opacity: 1, duration: 0.05, ease: "none" }), 1.87);
-        tl.fromTo("#f12-ring2", { scale: 0.86 }, at({ scale: 0.98, duration: 0.75, ease: "expo.out" }), 1.87);
-        tl.fromTo("#f12-ring2", { scale: 0.98 }, at({ scale: 1.03, duration: 0.68, ease: "none" }), 2.62);
+      /* ================= Scene 2 (1.78 à 4.38) : P22, le clic ================= */
+      // 1.73 : le curseur touche le bouton ; 1.78 : clic direct, curseur (×0,85) et bouton (×0,96) pressés ensemble
+      tl.fromTo("#f12-cur-in", { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.in", immediateRender: false }, 1.78);
+      tl.fromTo("#f12-cur-in", { scale: 0.85 }, { scale: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.84);
+      tl.fromTo("#f12-btn", { scale: 1 }, { scale: 0.96, duration: 0.06, ease: "power2.in", immediateRender: false }, 1.78);
+      // état pressé en 3 tons : jaune pâle, blanc, puis le jaune enfoncé
+      tl.fromTo("#f12-tone-pale", { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, 1.78);
+      tl.fromTo("#f12-tone-press", { opacity: 0 }, { opacity: 1, duration: 0.02, ease: "none", immediateRender: false }, 1.8);
+      tl.fromTo("#f12-tone-white", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out", immediateRender: false }, 1.81);
+      tl.fromTo("#f12-tone-white", { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power2.out", immediateRender: false }, 1.93);
+      tl.fromTo("#f12-tone-pale", { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power2.out", immediateRender: false }, 1.98);
+      // les ondes jaunes s'ouvrent depuis le bouton (2 anneaux, décalés de 0,08 s)
+      tl.fromTo("#f12-ring1", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", immediateRender: false }, 1.79);
+      tl.fromTo("#f12-ring1", { scale: 0.69 }, { scale: 0.99, duration: 0.9, ease: "expo.out", immediateRender: false }, 1.79);
+      tl.fromTo("#f12-ring1", { scale: 0.99 }, { scale: 1.06, duration: D - 2.69, ease: "none", immediateRender: false }, 2.69);
+      tl.fromTo("#f12-ring2", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", immediateRender: false }, 1.87);
+      tl.fromTo("#f12-ring2", { scale: 0.86 }, { scale: 0.98, duration: 0.75, ease: "expo.out", immediateRender: false }, 1.87);
+      tl.fromTo("#f12-ring2", { scale: 0.98 }, { scale: 1.03, duration: 0.68, ease: "none", immediateRender: false }, 2.62);
 
-        // 1.88 : le sous-titre sort (opacité 1 → 0, flou 0 → 6 px, 0,14 s)
-        tl.fromTo(["#f12-hl", "#f12-w3", "#f12-w4"], { opacity: 1, filter: "blur(0px)" }, at({ opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }), 1.88);
+      // 1.88 : le sous-titre sort (opacité 1 → 0, flou 0 → 6 px, 0,14 s)
+      tl.fromTo(["#f12-hl", "#f12-w3", "#f12-w4"], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.88);
 
-        // 2.28 : la seconde onde s'efface
-        tl.fromTo("#f12-ring2", { opacity: 1 }, at({ opacity: 0, duration: 1.0, ease: "none" }), 2.28);
+      // 2.28 : la seconde onde s'efface
+      tl.fromTo("#f12-ring2", { opacity: 1 }, { opacity: 0, duration: 1.0, ease: "none", immediateRender: false }, 2.28);
 
-        // 2.88 : la graduation « 2026 » passe sous le bouton et s'allume en jaune
-        tl.fromTo(["#f12-lit-tick", "#f12-lit-year"], { opacity: 0 }, at({ opacity: 1, duration: 0.12, ease: "power2.out" }), 2.88);
+      // 2.88 : la graduation « 2026 » passe sous le bouton et s'allume en jaune
+      tl.fromTo(["#f12-lit-tick", "#f12-lit-year"], { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 2.88);
 
-        // 3.18 : la première onde s'éteint en continuant de s'ouvrir
-        tl.fromTo("#f12-ring1", { opacity: 1 }, at({ opacity: 0, duration: 0.6, ease: "power1.in" }), 3.18);
+      // 3.18 : la première onde s'éteint en continuant de s'ouvrir
+      tl.fromTo("#f12-ring1", { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power1.in", immediateRender: false }, 3.18);
 
-        // 3.48 : le bouton revient à son jaune plein, le curseur s'écarte de 12 px
-        tl.fromTo("#f12-tone-press", { opacity: 1 }, at({ opacity: 0, duration: 0.3, ease: "power2.out" }), 3.48);
-        tl.fromTo("#f12-btn", { scale: 0.96 }, at({ scale: 1, duration: 0.3, ease: "power3.out" }), 3.48);
-        tl.fromTo("#f12-cur", { x: CX1, y: CY1 }, at({ x: CX1 + 8, y: CY1 + 9, duration: 0.35, ease: "power3.out" }), 3.48);
+      // 3.48 : le bouton revient à son jaune plein, le curseur s'écarte de 12 px
+      tl.fromTo("#f12-tone-press", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, 3.48);
+      tl.fromTo("#f12-btn", { scale: 0.96 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.48);
+      tl.fromTo("#f12-cur", { x: CX1, y: CY1 }, { x: CX1 + 8, y: CY1 + 9, duration: 0.35, ease: "power3.out", immediateRender: false }, 3.48);
 
-        // 3.88 à 4.38 : iris noir centré sur le bouton (son centre à l'écran suit la caméra)
-        tl.fromTo(
-          "#f12-iris",
-          { clipPath: "circle(1185px at 941.2px 434.2px)" },
-          at({ clipPath: "circle(0px at 936.4px 433.5px)", duration: 0.48, ease: "power2.inOut" }),
-          3.88
-        );
+      // 3.88 à 4.38 : iris noir centré sur le bouton (son centre à l'écran suit la dérive : 941,2 → 936,4)
+      tl.fromTo("#f12-iris", { clipPath: "circle(1185px at 941.2px 434.2px)" }, { clipPath: "circle(0px at 936.4px 433.5px)", duration: 0.48, ease: "power2.inOut", immediateRender: false }, 3.88);
 
-        window.__timelines = window.__timelines || {};
-        window.__timelines[FID] = tl;
-      })();
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
   </script>
 </template>

@@ -238,7 +238,7 @@
         </div>
       </div>
 
-      <div id="f09-fg">
+      <div id="f09-fg" data-layout-allow-overflow>
         <svg id="f09-defs" width="0" height="0" aria-hidden="true">
           <filter id="f09-streak" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
             <feGaussianBlur id="f09-streakblur" in="SourceGraphic" stdDeviation="0 0" />
@@ -313,7 +313,7 @@
       CAM.fromTo(cam, { scale: 1.007 }, { scale: 0.6, duration: 0.21, ease: "power2.in", immediateRender: NO }, 3.12);
       CAM.fromTo(win, { filter: "blur(0px)" }, { filter: "blur(20px)", duration: 0.21, ease: "power2.in", immediateRender: NO }, 3.12);
       /* dérive de fond : jamais d'arrêt */
-      CAM.fromTo(drift, { x: 0, y: 0 }, { x: -10, y: -6, duration: T, ease: "none" }, 0);
+      CAM.fromTo(drift, { x: 0, y: 0 }, { x: -4, y: -8, duration: T, ease: "none" }, 0);
       CAM.fromTo(dots, { x: 0 }, { x: -24, duration: T, ease: "none" }, 0);
       tl.add(CAM, 0);
 
@@ -381,8 +381,8 @@
       /* =====================================================================================
          SOUS-TITRE : chaque mot sur son horodatage (1 image avant), gris (35 %) puis encre pleine ; sortie 0,14 s
          ===================================================================================== */
-      function word(id, cue) {
-        var el = byId(id), t = cue - 0.033;
+      function word(id, cue, lead) {
+        var el = byId(id), t = cue - (lead === undefined ? 0.033 : lead);
         tl.fromTo(el, { opacity: 0, y: 8, filter: "blur(6px)" },
           { opacity: 0.35, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: NO }, t);
         tl.fromTo(el, { opacity: 0.35 }, { opacity: 1, duration: 0.2, ease: "power1.inOut", immediateRender: NO }, t + 0.14);
@@ -399,8 +399,8 @@
       word("f09-s1c", 0.78);
       /* 1.01 : le surligneur se trace depuis la gauche (0,16 s power3.out), 2 images avant « technique » */
       tl.fromTo(hlbg, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: NO }, 1.01);
-      word("f09-s1d", 1.03);
-      word("f09-s1e", 1.03);
+      word("f09-s1d", 1.03, 0.01); /* le mot arrive juste après le surligneur (1.01) */
+      word("f09-s1e", 1.03, 0.01);
       out(["f09-s1a", "f09-s1b", "f09-s1c", "f09-s1hl", "f09-s1e"], 1.44);
 
       /* phrase 2 */

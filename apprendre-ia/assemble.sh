@@ -178,9 +178,16 @@ if iris_at is not None:
         tl.to("#fxiris-ring", {{ opacity: 0, duration: 0.15 }}, {t(0.70)});
 '''
 anchor = re.search(r"(?m)^[ \t]*tl\.to\(\{\}, \{ duration: [0-9.]+ \}, 0\);", s)
-if not anchor:
-    raise SystemExit("assemble: full-span anchor tl.to({}, { duration: N }, 0); not found in index.html")
-s = s[:anchor.start()] + tl + s[anchor.start():]
+if anchor:
+    s = s[:anchor.start()] + tl + s[anchor.start():]
+else:
+    # all cuts: the transition injector wrote no block, so add one with the orchestrator tweens and the full-span anchor
+    main = 'window.__timelines["main"] = gsap.timeline({ paused: true });'
+    if main not in s:
+        raise SystemExit("assemble: main timeline declaration not found in index.html")
+    block = (main + '\n      (function () { var tl = window.__timelines["main"];\n' + tl +
+             f'        tl.to({{}}, {{ duration: {total} }}, 0); // full-span anchor\n      }})();')
+    s = s.replace(main, block, 1)
 open(p, "w", encoding="utf-8").write(s)
 print("orchestrator layer patched:", ", ".join(k for k, v in (("audio", env.get("AUDIO")), ("flash", leak_at is not None),
       ("iris", iris_at is not None), ("paper bed", "paperbed" in s)) if v) or "nothing")

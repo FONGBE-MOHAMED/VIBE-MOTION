@@ -157,13 +157,12 @@
     #f11-ground { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #f5f2ea; }
     #f11-stage, #f11-subs, #f11-fx { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
     #f11-subs, #f11-fx { pointer-events: none; }
-    #f11-drift, #f11-cam, #f11-world, #f11-bg, #f11-fg, #f11-set, #f11-tiles { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f11-drift, #f11-cam, #f11-world, #f11-bg, #f11-fg, #f11-line, #f11-set, #f11-tiles { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
     #f11-drift, #f11-cam { transform-origin: 960px 540px; }
     #f11-world, #f11-bg { transform-origin: 0 0; }
 
     /* rien de ce qui naît après la couture n'est visible par défaut */
-    #f11-set { opacity: 0; }
-    #f11-dots { opacity: 0; }
+    #f11-line, #f11-set { opacity: 0; }
     #f11-ai { opacity: 0; }
     #f11-veil { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #c9ccd2; opacity: 0; }
     #f11-postit { opacity: 0; }
@@ -194,10 +193,14 @@
             <div id="f11-bg">
               <div class="g-light"><div id="f11-dots" class="dots"></div><div id="f11-halo" class="halo" style="left:210.0px;top:-70.0px;width:1500px;height:1000px"></div></div>
 
-              <div id="f11-set">
+              <!-- la frise (filet de 2 px, jamais flouté : aucun objet flou de plus de 1800 px) -->
+              <div id="f11-line">
                 <div class="frise light" style="top:770px"></div>
                 <div class="tick light" style="left:959px;top:772px"></div>
                 <div class="year light" style="left:960px;top:804px">2026</div>
+              </div>
+              <!-- le portable et son ombre de contact (flou de mise au point) -->
+              <div id="f11-set">
                 <div class="contact light" style="left:580.0px;top:759px;width:760px"></div>
                 <div class="laptop light" style="left:360px;top:30px;transform:scale(0.98);transform-origin:50% 100%">
                   <div class="laptop-lid"><div class="laptop-screen">
@@ -249,7 +252,7 @@
       function toArr(list) { return Array.prototype.slice.call(list); }
 
       var drift = byId("f11-drift"), cam = byId("f11-cam"), world = byId("f11-world"), bg = byId("f11-bg");
-      var set = byId("f11-set"), tiles = byId("f11-tiles"), dots = byId("f11-dots"), halo = byId("f11-halo");
+      var line = byId("f11-line"), set = byId("f11-set"), tiles = byId("f11-tiles"), halo = byId("f11-halo");
       var ai = byId("f11-ai"), veil = byId("f11-veil"), caret = byId("f11-caret");
       var postit = byId("f11-postit"), curl = byId("f11-curl"), pen = byId("f11-pen");
       var strikeSvg = byId("f11-strike"), strikePath = byId("f11-strike-path");
@@ -325,11 +328,13 @@
         cam.style.transform = "scale(" + s.toFixed(5) + ")";
         bg.style.transform = "translate(" + ((1 - k) * tx).toFixed(3) + "px," + ((1 - k) * ty).toFixed(3) + "px) scale(" + k.toFixed(5) + ")";
 
-        blur(set, (P.land + P.dof) / sb);
-        blur(tiles, P.tile / (sb * (gsap.getProperty(tiles, "scale") || 1)));
+        // au-delà de ×14 le cadre n'est plus que du jaune uni : flous et ombre portée n'y changent rien, on les coupe
+        var flat = s > 14;
+        blur(set, flat ? 0 : (P.land + P.dof) / sb);
+        blur(tiles, gsap.getProperty(tiles, "opacity") > 0.004 ? P.tile / (sb * (gsap.getProperty(tiles, "scale") || 1)) : 0);
         var ps = gsap.getProperty(postit, "scale") || 1;
-        blur(postit, (P.pib + P.fgb) / (s * ps));
-        postit.style.boxShadow = s > 9 ? "none" : "";
+        blur(postit, flat ? 0 : (P.pib + P.fgb) / (s * ps));
+        postit.style.boxShadow = flat ? "none" : "";
 
         // le feutre : sa pointe suit la tête du trait pendant qu'il barre « Pas »
         var h = head(P.draw);
@@ -348,15 +353,16 @@
       var tl = gsap.timeline({ paused: true, defaults: { lazy: false }, onUpdate: render });
 
       /* ===================== piste caméra ===================== */
-      // dérive : la caméra longe la frise vers la droite (-10 px/s), puis Scene 2 pousse de 1,5 %/s
+      // dérive : la caméra longe la frise vers la droite (-10 px/s) en Scene 1 ; poussée de 1,5 %/s sur tout le plan
       tl.fromTo(drift, { x: 0 }, { x: -16, duration: 1.62, ease: "none" }, 0);
-      tl.fromTo(drift, { scale: 1 }, { scale: 1 + 0.015 * (D - 1.62), duration: D - 1.62, ease: "none", immediateRender: false }, 1.62);
+      tl.fromTo(drift, { scale: 1 }, { scale: 1 + 0.015 * D, duration: D, ease: "none" }, 0);
       // 0.00 → 0.22 atterrissage : le recul de la séquence 10 se pose (×1,1 → ×1, flou 12 → 0)
       tl.fromTo(P, { s: 1.1 }, { s: 1, duration: 0.22, ease: "power3.out" }, 0);
       tl.fromTo(P, { land: 12 }, { land: 0, duration: 0.24, ease: "power2.out" }, 0);
-      // 1.32 → 1.62 poussée ×1 → ×2,1 sur le post-it (expo.inOut) ; le fond, plus loin, pousse moins (×1,33)
+      // 1.32 → 1.62 poussée ×1 → ×2,1 sur le post-it (expo.inOut ; ×2,05 ici, ×2,1 avec la dérive, ×2,15 à 3.12) ;
+      // le fond, plus loin, pousse moins (×1,32) : le post-it se détache de l'écran
       tl.fromTo(P, { s: 1, tx: 960, ty: 540, ax: 960, ay: 540 },
-        { s: 2.1, tx: PC.x, ty: PC.y, ax: 1003, ay: 531, duration: 0.3, ease: "expo.inOut", immediateRender: false }, 1.32);
+        { s: 2.05, tx: PC.x, ty: PC.y, ax: 1003, ay: 531, duration: 0.3, ease: "expo.inOut", immediateRender: false }, 1.32);
       // filé léger du sujet au milieu de la poussée, net à l'arrivée
       tl.fromTo(P, { fgb: 0 }, { fgb: 3, duration: 0.15, ease: "power1.in", immediateRender: false }, 1.32);
       tl.fromTo(P, { fgb: 3 }, { fgb: 0, duration: 0.15, ease: "power2.out", immediateRender: false }, 1.47);
@@ -365,14 +371,17 @@
       tl.fromTo(P, { fgb: 0 }, { fgb: 6, duration: D - 3.27, ease: "power2.in", immediateRender: false }, 3.27);
 
       /* ===================== Scene 1 (0.00 à 1.62) : « L’intelligence artificielle ? » ===================== */
-      // 0.00 → 0.22 les tuiles rentrent dans l'écran (elles continuent de rétrécir, floues, et s'y fondent)
-      tl.fromTo(tiles, { scale: 0.854, y: 11.7 }, { scale: 0.55, y: -79, duration: 0.24, ease: "sine.out" }, 0);
+      // 0.00 → 0.22 les tuiles rentrent dans l'écran (elles continuent de rétrécir, floues, et s'y fondent).
+      // Image de départ = dernière image de la séquence 10 : le groupe à ×0,6 à l'écran (x 480 à 1440, y 324 à 708),
+      // flou 12 px ; avec la caméra à ×1,1 (fond ×1,0304) : échelle propre 0,6 / 1,0304, centre monde y 516,7.
+      // Le recul continue sans jamais regrossir (expo.out : la vitesse de la fin du recul, puis l'atterrissage).
+      var T0 = 0.6 / (1 + 0.1 * PAR);
+      tl.fromTo(tiles, { scale: T0, y: 540 - 24 / (1 + 0.1 * PAR) - 460 }, { scale: 0.38, y: -79, duration: 0.24, ease: "expo.out" }, 0);
       tl.fromTo(tiles, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power1.in", immediateRender: false }, 0.06);
       tl.fromTo(P, { tile: 12 }, { tile: 8, duration: 0.22, ease: "none" }, 0);
       // le portable clair posé sur la frise, « 2026 » dessous (la rime de P3), sort du flou
-      tl.fromTo(set, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out", immediateRender: false }, 0.04);
+      tl.fromTo([line, set], { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out", immediateRender: false }, 0.04);
       tl.fromTo(ai, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power1.out", immediateRender: false }, 0.1);
-      tl.fromTo(dots, { opacity: 0.25 }, { opacity: 1, duration: 0.24, ease: "power2.out" }, 0);
       tl.fromTo(halo, { scaleX: 1.267, scaleY: 0.9, y: 20 }, { scaleX: 1, scaleY: 1, y: 0, duration: 0.24, ease: "power2.out" }, 0);
 
       // 0.22 le surligneur se trace (0,16 s power3.out), juste avant « L’intelligence »
@@ -393,12 +402,13 @@
       // vie : le caret cligne une fois, le coin du post-it se soulève puis retombe
       tl.fromTo(caret, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none", immediateRender: false }, 0.62);
       tl.fromTo(caret, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, 1.02);
-      tl.fromTo(curl, { scale: 1 }, { scale: 1.14, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 0.98);
-      tl.fromTo(curl, { scale: 1.14 }, { scale: 1, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 1.28);
+      tl.fromTo(curl, { scale: 1 }, { scale: 1.16, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 0.86);
+      tl.fromTo(curl, { scale: 1.16 }, { scale: 1, duration: 0.3, ease: "sine.inOut", immediateRender: false }, 1.16);
 
       // 1.32 → 1.62 mise au point sur le post-it : l'écran s'éteint en gris, recule, flou 0 → 6 px, atténué à 55 %
       tl.fromTo(P, { dof: 0 }, { dof: 6, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
       tl.fromTo(set, { opacity: 1 }, { opacity: 0.55, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
+      tl.fromTo(line, { opacity: 1 }, { opacity: 0.3, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
       tl.fromTo(veil, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.inOut", immediateRender: false }, 1.32);
 
       /* ===================== Scene 2 (1.62 à 3.54) : « Cette fois… c’est pour toi. » ===================== */

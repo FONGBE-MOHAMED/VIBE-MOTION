@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0d0f14;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="45.8"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="paperbed" class="clip" data-start="24.75" data-duration="16.67" data-track-index="12" style="position:absolute;inset:0;background:#f5f2ea"></div>
+
+      <div
+        id="el-01-annees"
+        class="scene"
+        data-composition-id="01-annees"
+        data-composition-src="compositions/frames/01-annees.html"
+        data-start="0"
+        data-duration="6.37"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-ia"
+        class="scene"
+        data-composition-id="02-ia"
+        data-composition-src="compositions/frames/02-ia.html"
+        data-start="6.37"
+        data-duration="5.03"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-monde"
+        class="scene"
+        data-composition-id="03-monde"
+        data-composition-src="compositions/frames/03-monde.html"
+        data-start="11.4"
+        data-duration="3.45"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-soiree"
+        class="scene"
+        data-composition-id="04-soiree"
+        data-composition-src="compositions/frames/04-soiree.html"
+        data-start="14.850000000000001"
+        data-duration="3.65"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-cafe"
+        class="scene"
+        data-composition-id="05-cafe"
+        data-composition-src="compositions/frames/05-cafe.html"
+        data-start="18.5"
+        data-duration="4.4"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-pivot"
+        class="scene"
+        data-composition-id="06-pivot"
+        data-composition-src="compositions/frames/06-pivot.html"
+        data-start="22.9"
+        data-duration="1.9"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-aujourdhui"
+        class="scene"
+        data-composition-id="07-aujourdhui"
+        data-composition-src="compositions/frames/07-aujourdhui.html"
+        data-start="24.799999999999997"
+        data-duration="3.42"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-08-mots"
+        class="scene"
+        data-composition-id="08-mots"
+        data-composition-src="compositions/frames/08-mots.html"
+        data-start="28.22"
+        data-duration="2.91"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-09-technique"
+        class="scene"
+        data-composition-id="09-technique"
+        data-composition-src="compositions/frames/09-technique.html"
+        data-start="31.13"
+        data-duration="3.33"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-10-recuperes"
+        class="scene"
+        data-composition-id="10-recuperes"
+        data-composition-src="compositions/frames/10-recuperes.html"
+        data-start="34.46"
+        data-duration="3.42"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-11-pour-toi"
+        class="scene"
+        data-composition-id="11-pour-toi"
+        data-composition-src="compositions/frames/11-pour-toi.html"
+        data-start="37.88"
+        data-duration="3.54"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-12-fin"
+        class="scene"
+        data-composition-id="12-fin"
+        data-composition-src="compositions/frames/12-fin.html"
+        data-start="41.42"
+        data-duration="4.38"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="45.8" data-track-index="11" src="assets/audio/mix.wav" data-volume="1"></audio>
+      <div id="fxleak" class="clip" data-start="24.55" data-duration="0.9" data-track-index="30" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:60">
+        <div id="fxleak-sweep" style="position:absolute;left:0;top:-200px;width:1400px;height:1480px;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse at 50% 50%,rgba(255,241,179,0.85) 0%,rgba(255,224,102,0.5) 35%,rgba(247,208,56,0) 70%)"></div>
+        <div id="fxleak-core" style="position:absolute;left:960px;top:210px;width:600px;height:600px;margin:-300px 0 0 -300px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(251,250,247,1) 0%,#f5f2ea 30%,rgba(255,238,167,0.9) 50%,rgba(247,208,56,0.5) 64%,rgba(247,208,56,0) 76%)"></div>
+        <div id="fxleak-streak" style="position:absolute;left:-240px;top:207px;width:2400px;height:6px;border-radius:3px;opacity:0;background:linear-gradient(90deg,rgba(255,246,208,0),rgba(255,251,232,1) 50%,rgba(255,246,208,0));box-shadow:0 0 34px 12px rgba(255,233,138,0.7)"></div>
+        <div id="fxleak-flash" style="position:absolute;inset:0;opacity:0;background:#f5f2ea"></div>
+      </div>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      (function () { var tl = window.__timelines["main"];
+        // orchestrator layer (motion-design skill): light flash and iris
+        tl.fromTo("#fxleak-core", { scale: 0.02, opacity: 0 }, { scale: 4.6, opacity: 1, duration: 0.22, ease: "expo.in", immediateRender: false }, 24.58);
+        tl.fromTo("#fxleak-streak", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.16, ease: "power3.in", immediateRender: false }, 24.6);
+        tl.fromTo("#fxleak-sweep", { x: 1100, opacity: 0 }, { x: -700, opacity: 1, duration: 0.5, ease: "power2.inOut", immediateRender: false }, 24.58);
+        tl.fromTo("#fxleak-flash", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.in", immediateRender: false }, 24.7);
+        tl.to("#fxleak-flash", { opacity: 0, duration: 0.5, ease: "power2.out" }, 24.85);
+        tl.to(["#fxleak-core", "#fxleak-streak", "#fxleak-sweep"], { opacity: 0, duration: 0.4, ease: "power2.out" }, 24.82);
+        tl.to({}, { duration: 45.8 }, 0); // full-span anchor
+      })();
+    </script>
+  </body>
+</html>

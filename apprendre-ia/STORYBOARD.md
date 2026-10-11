@@ -52,7 +52,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Sur la frise du bureau de nuit, l'écran cathodique de 2000 propose « Créer votre site internet ? » et un post-it « Pas pour moi » s'y colle ; whip vers 2010, le smartphone invite à « Rejoindre le réseau » et le même post-it s'y colle
 - duration: 6.37s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-annees.html
 - voiceover: "Deux mille. Un site internet ? Pas pour moi. Deux mille dix. Les réseaux sociaux ? Pas pour moi."
 - type: hook
@@ -90,7 +90,7 @@ Scene 2 (2.98 à 6.37 s) : P02, 2010
 - scene: Le whip se pose sur le portable de 2026 : l'assistant IA attend « Écris ta demande… » ; cran dans le champ : il tape « Pas pour » et l'IA complète en gris « moi. » ; il se fige
 - duration: 5.03s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/02-ia.html
 - voiceover: "Deux mille vingt-six. L’intelligence artificielle ?"
 - type: hook
@@ -128,7 +128,7 @@ Scene 2 (2.81 à 5.03 s) : P04, le gag (muet)
 - scene: Recul : les trois bureaux sur la frise, trois post-its ; la caméra longe la frise vers la droite pendant que les portables des autres, écrans allumés, filent devant et disparaissent ; le nôtre reste seul avec son post-it
 - duration: 3.45s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/03-monde.html
 - voiceover: "Le problème ? Le monde, lui, n’a pas attendu."
 - type: problem
@@ -166,7 +166,7 @@ Scene 2 (1.20 à 3.45 s) : P06, Le monde n'a pas attendu
 - scene: L'horloge murale à gauche, les applis à droite : la présentation vide (Diapo 1 / 20) pendant que l'horloge file jusqu'à 22:47 ; whip, la boîte de réception (87 non lus) pendant qu'elle file jusqu'à 12:00
 - duration: 3.65s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/04-soiree.html
 - voiceover: "Ta présentation te prend une soirée. Tes mails, ta matinée."
 - type: pain_point
@@ -204,7 +204,7 @@ Scene 2 (2.10 à 3.65 s) : P08, Ta matinée
 - scene: Le tableur de la compta pendant que l'horloge marque DIM. ; recul : les trois tâches à gauche (« Toi »), les mêmes cochées à droite (« D'autres »), la tasse de café fumante devant
 - duration: 4.40s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/05-cafe.html
 - voiceover: "Ta compta, ton dimanche. Pour d’autres, c’est réglé avant le café."
 - type: pain_point
@@ -242,7 +242,7 @@ Scene 2 (1.90 à 4.40 s) : P10, Avant le café
 - scene: Coupe au noir : « Pas cette fois. » centré ; le post-it se décolle et tombe dans le noir ; à sa place, un point de lumière s'embrase
 - duration: 1.90s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/06-pivot.html
 - voiceover: "Pas cette fois."
 - type: problem
@@ -270,7 +270,7 @@ Scene 1 (0.00 à 1.90 s) : P11, Pas cette fois.
 - scene: Le flash ouvre le papier : le portable clair se pose, l'assistant IA répond ; sa réponse se partage en trois cartes, une par verbe : le document s'écrit, les 12 mails se résument en 3 points, le total se calcule
 - duration: 3.42s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/07-aujourdhui.html
 - voiceover: "Aujourd’hui, l’IA rédige, résume, calcule."
 - type: product_intro
@@ -308,7 +308,7 @@ Scene 2 (1.40 à 3.42 s) : P13, rédige, résume, calcule
 - scene: Le même champ que le gag, sur le papier : une demande en français se tape ; envoi ; dix diapos arrivent de la caméra et se rangent
 - duration: 2.91s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/08-mots.html
 - voiceover: "Tu lui expliques avec tes mots... elle fait le travail."
 - type: benefit_highlight
@@ -346,7 +346,7 @@ Scene 2 (1.58 à 2.91 s) : P15, Elle fait le travail
 - scene: Une carte de code se pose devant la demande en français, bascule et tombe hors champ ; recul : la conversation, trois bulles, on apprend à lui parler
 - duration: 3.33s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/09-technique.html
 - voiceover: "Pas besoin d’être technique : il faut juste apprendre à lui parler."
 - type: benefit_highlight
@@ -384,7 +384,7 @@ Scene 2 (1.57 à 3.33 s) : P17, Apprendre à lui parler
 - scene: Trois tuiles côte à côte, les horloges de la douleur : chacune tourne à rebours sur son mot (soirée, matinée, dimanche), un secteur jaune dessine le temps rendu, « Libre »
 - duration: 3.42s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/10-recuperes.html
 - voiceover: "Et tu récupères ta soirée, ta matinée, ton dimanche."
 - type: benefit_highlight
@@ -412,7 +412,7 @@ Scene 1 (0.00 à 3.42 s) : P18, Tu récupères
 - scene: Le portable sur la frise du papier, « 2026 » : le post-it revient et se colle (la rime) ; gros plan : un feutre barre « Pas », il reste « pour moi » ; poussée dans le jaune
 - duration: 3.54s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/11-pour-toi.html
 - voiceover: "L’intelligence artificielle ? Cette fois... c’est pour toi."
 - type: benefit_highlight
@@ -450,7 +450,7 @@ Scene 2 (1.62 à 3.54 s) : P20, C'est pour toi
 - scene: Le jaune se replie en bouton « APPRENDRE L'IA » sur le bureau de nuit, la frise du début passe derrière ; un curseur arrive et clique directement ; onde jaune, tenue vivante, iris
 - duration: 4.38s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/12-fin.html
 - voiceover: "Apprends l’IA dès aujourd’hui."
 - type: cta

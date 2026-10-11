@@ -347,18 +347,21 @@
       word("w3", 1.93);
       word("w4", 2.68);
       // avant la couture, le sous-titre sort (opacité 1 → 0, flou 0 → 6 px, 0,14 s), mot par mot pour ne flouter aucun grand calque
-      tl.fromTo([$("w0"), $("hlw"), $("w2"), $("w3"), $("w4")], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 3.18);
+      tl.fromTo([$("w0"), $("hlw"), $("w2"), $("w3"), $("w4")], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 3.16);
 
       /* ---------- Scene 2 (1.40 à 3.42) : P13, « rédige, résume, calcule » ---------- */
       // 1.40 la bulle se partage en trois cartes qui se posent côte à côte ; le portable s'efface derrière elles
       tl.fromTo($("bubble"), { opacity: 1 }, { opacity: 0, duration: 0.03, ease: "none", immediateRender: false }, 1.40);
       tl.fromTo($("lapx"), { opacity: 1, scale: 1, filter: "blur(0px)" }, { opacity: 0, scale: 0.96, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.40);
+      // 1.40 à 1.44 la bulle se fend en trois morceaux qui s'écartent ; 1.44 à 1.62 chacun se pose dans sa case (expo.out)
       CARDS.forEach(function (c, i) {
-        var at = 1.40 + i * 0.015;
-        var px = BX + (i - 1) * (PIECE + 8);
-        tl.fromTo($(c.id), { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, at);
-        tl.fromTo($(c.id), { x: px - c.cx, y: BY - CARD_CY, scaleX: PIECE / 500, scaleY: BH / 600, filter: "blur(3px)" },
-          { x: 0, y: 0, scaleX: 1, scaleY: 1, filter: "blur(0px)", duration: 0.20, ease: "expo.out", immediateRender: false }, at);
+        var px = BX + (i - 1) * (PIECE + 8), sx = PIECE / 500, sy = BH / 600;
+        var qx = BX + (i - 1) * (PIECE + 8) * 1.32, qy = BY - 6;
+        tl.fromTo($(c.id), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 1.40);
+        tl.fromTo($(c.id), { x: px - c.cx, y: BY - CARD_CY, scaleX: sx, scaleY: sy, filter: "blur(0px)" },
+          { x: qx - c.cx, y: qy - CARD_CY, scaleX: sx * 1.12, scaleY: sy * 1.5, filter: "blur(1.5px)", duration: 0.04, ease: "power2.out", immediateRender: false }, 1.40);
+        tl.fromTo($(c.id), { x: qx - c.cx, y: qy - CARD_CY, scaleX: sx * 1.12, scaleY: sy * 1.5, filter: "blur(1.5px)" },
+          { x: 0, y: 0, scaleX: 1, scaleY: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, 1.44 + i * 0.012);
       });
       tl.fromTo($("k1"), { opacity: 0 }, { opacity: 1, duration: 0.10, ease: "power2.out", immediateRender: false }, 1.46);
       tl.fromTo($("k2"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.50);

@@ -334,10 +334,12 @@
           { s: s1, wx: 960 - cx1, wy: 540 - cy1, duration: 0.1, ease: "expo.inOut", immediateRender: false }, tc);
         st = { s: s1, cx: cx1, cy: cy1 };
       });
-      /* ===== 3.24 à 3.42 : recul (power2.in), les tuiles rétrécissent au centre (×0,6 à l'écran), flou 0 → 12 px ===== */
+      /* ===== 3.24 à 3.42 : recul (power2.in), les tuiles rétrécissent au centre (×0,6 à l'écran), flou 0 → 12 px ;
+         il atteint ×0,6 et 12 px à 3.40, la dernière image rendue (handoff_out) ===== */
+      var SD_AT_LAST = 1 + 0.02 * 3.40;
       tl.fromTo(CAM, { s: st.s, wx: 960 - st.cx, wy: 540 - st.cy },
-        { s: 0.6 / SD_END, wx: 0, wy: 0, duration: 0.18, ease: "power2.in", immediateRender: false }, 3.24);
-      tl.fromTo(tilesBox, { filter: "blur(0px)" }, { filter: "blur(12px)", duration: 0.18, ease: "power2.in", immediateRender: false }, 3.24);
+        { s: 0.6 / SD_AT_LAST, wx: 0, wy: 0, duration: 0.16, ease: "power2.in", immediateRender: false }, 3.24);
+      tl.fromTo(tilesBox, { filter: "blur(0px)" }, { filter: "blur(12px)", duration: 0.16, ease: "power2.in", immediateRender: false }, 3.24);
 
       /* ===== la tuile active se soulève (sujet), les deux autres restent posées (milieu) ===== */
       function lift(k, t) {

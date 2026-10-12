@@ -1,116 +1,88 @@
 ---
-version: 2
-name: "{{BRAND}}: launch frame"
+version: 1
+name: "Yango Côte d'Ivoire · « On dit combien ? » · charte"
 description: >
-  Video-first frame spec for the {{BRAND}} launch motion design, built on ../patterns/PATTERNS.md. {{METAPHOR_IN_ONE_SENTENCE}}.
-  Two worlds: the PROBLEM lives on a warm near-black stage, the SOLUTION on a light ground; the end card returns to the
-  dark stage. One accent only, {{ACCENT_NAME}}, kept for what matters: the key-word box of each subtitle and 3 or 4
-  peak strokes. The sentence of the voice is a subtitle at the bottom center that arrives word by word.
-  Complete film written this way: examples/ligne-du-temps-v8/frame.md.
-  Template of the motion-design skill: replace every {{...}} placeholder (grep -n "{{" frame.md must print nothing).
-  Reference values in the comments are those of the Entrepreneurs 2.0 example films (terracotta on warm black and paper).
+  Charte du film « On dit combien ? » (60,00 s, 1920×1080, 30 i/s), sur la voix assets/audio/voix-montage.wav.
+  Direction « Au bord du goudron » : une rue d'Abidjan en illustration plate (carrefour Riviera 2, le goudron, le
+  trottoir, le panneau, les palmiers, les tours du Plateau au loin) que la caméra longe du matin au soir. Le problème
+  vit dans la rue, avec le taxi orange et la discussion du prix ; le pivot est sur le noir ; la solution vit dans le
+  téléphone (fond clair, rouge Yango) ; la rime ramène au même carrefour, où la voiture attend déjà ; la carte de fin
+  est rouge Yango. Objets-ponts : la main levée, l'étiquette de prix (le gag), la bulle de la discussion, le téléphone.
+  PROVISOIRE : le rouge, le mot-symbole « Yango » et les écrans de l'application sont des substituts génériques, à
+  remplacer par le logo, les couleurs et des captures récentes fournis par la marque.
 unit: 1920×1080
-principle: readable without sound · one thing to look at at a time · one accent, one highlight mechanism · the voice cues every reveal
+principle: "lisible sans le son · une seule chose à regarder · un accent rouge, un seul mécanisme de mise en valeur · la voix déclenche chaque révélation"
+reference: "styleframes/_kit.css et tools/gen_sf.py (rue, personnages, taxi, voiture, téléphone, carte, étiquette, bulle, sous-titre) : source unique du dessin, que chaque séquence recopie"
 
 colors:
-  canvas: "{{CANVAS}}"                # dark world (problem + end card), ref "#0d0b0a"
-  canvas-2: "{{CANVAS_2}}"            # ref "#141010"
-  paper: "{{PAPER}}"                  # light world (solution) full-bleed ground, ref "#f6f1e9"
-  paper-2: "{{PAPER_2}}"              # secondary light surface, ref "#efe7dc"
-  card-light: "{{CARD_LIGHT}}"        # cards on the light world, ref "#fffdf9"
-  ink: "{{INK}}"                      # text on dark, ref "#f5efe7"
-  ink-soft: "{{INK_SOFT}}"            # ref "#cdbfb2"
-  ink-mute: "{{INK_MUTE}}"            # ref "#9b9289"
-  ink-dark: "{{INK_DARK}}"            # text on light, ref "#1a1612"
-  ink-dark-soft: "{{INK_DARK_SOFT}}"  # ref "#5a5348"
-  hairline-light: "{{HAIRLINE}}"      # ref "#e2d9cc"
-  accent: "{{ACCENT}}"                # THE brand accent, ref "#c25b28"
-  accent-light: "{{ACCENT_LIGHT}}"    # ref "#d4703f"
-  accent-deep: "{{ACCENT_DEEP}}"      # ref "#a84d22"
-  accent-glow: "{{ACCENT_GLOW}}"      # ref "#e08a5c"
+  canvas: "#0d0e12"            # le noir du pivot
+  sky-dawn: "#f7d9a8"          # matin (7 h), dégradé vers #fdf0dc
+  sky-noon: "#fff3da"          # midi, lumière dure
+  sky-dusk: "#2b2742"          # soir, dégradé vers #e3784c à l'horizon
+  goudron: "#3a3b42"           # la route, pointillés #f2efe6
+  trottoir: "#d8c3a0"
+  paper: "#f6f5f2"             # monde de la solution (le téléphone), fond clair
+  card-light: "#ffffff"
+  ink: "#17181c"               # texte sur le clair
+  ink-soft: "#55565c"
+  ink-on-dark: "#f4f2ee"
+  accent: "#ff3b30"            # rouge Yango PROVISOIRE : boîte du mot clé, traits de pic, éléments de l'appli, carte de fin
+  accent-deep: "#d92b21"
+  accent-glow: "#ff8a80"
+  taxi: "#f28c28"              # le taxi orange d'Abidjan (objet du monde, pas un accent)
+  skin-1: "#6b3f26"
+  skin-2: "#8a5a3b"
+  skin-3: "#4a2a19"
 
-# Local woff2 files only, never a network @import (fetch commands: references/method.md, step 2).
-# Default trio of the method (all SIL Open Font License): swap only if the brand has its own fonts.
 fonts:
   Instrument Sans: { files: ["assets/fonts/InstrumentSans-400.woff2 (400)", "assets/fonts/InstrumentSans-500.woff2 (500)", "assets/fonts/InstrumentSans-600.woff2 (600)", "assets/fonts/InstrumentSans-700.woff2 (700)"] }
   Space Mono: { files: ["assets/fonts/SpaceMono-400.woff2 (400)", "assets/fonts/SpaceMono-700.woff2 (700)"] }
   Big Shoulders: { files: ["assets/fonts/BigShoulders-800.woff2 (800)"] }
 
 typography:
-  subtitle:   { fontFamily: "Instrument Sans", px: 62, weight: 600, lineHeight: 74, tracking: "-0.015em", note: "the sentence of the voice at the BOTTOM CENTER (top at y 896, inside the band y 890 to 980 that carries nothing else), 60 to 64 px, 45 characters at most per chunk (a longer sentence splits into chunks that replace each other), word by word on its timestamps; a light shadow detaches it from the ground; ink on the light world, ink on dark on the dark world. Never at the top left" }
-  type:       { fontFamily: "Instrument Sans", px: 84, weight: 600, lineHeight: 1.12, tracking: "-0.025em", note: "ONLY the 2 or 3 typographic moments named in the storyboard (the diagnosis, the pivot): the sentence IS the image, centered, never bigger than 84 px, no subtitle at the bottom meanwhile" }
-  numeral-jumbo: { fontFamily: "Instrument Sans", px: 300, weight: 600, lineHeight: 0.9, tracking: "-0.02em", tabularNums: true }
-  ui:         { fontFamily: "Instrument Sans", px: 28, weight: 500, lineHeight: 1.3 }
-  title:      { fontFamily: "Instrument Sans", px: 44, weight: 600, lineHeight: 1.1, tracking: "-0.02em" }
-  code:       { fontFamily: "Space Mono", px: 26, weight: 400, lineHeight: 1.5, note: "only if the film shows code; keywords in accent-light" }
-  price:      { fontFamily: "Space Mono", px: 30, weight: 700, tabularNums: true }
-  micro:      { fontFamily: "Space Mono", px: 18, weight: 400, tracking: "0.2em", upper: true }
-  wordmark:   { fontFamily: "Big Shoulders", px: 64, weight: 800, upper: true, note: "{{WORDMARK_RULE}}, e.g. 'BRAND' in ink + ' 2.0' in accent-light" }
-  cta:        { fontFamily: "Big Shoulders", px: 34, weight: 800, upper: true }
+  subtitle:  { fontFamily: "Instrument Sans", px: 62, weight: 600, lineHeight: 74, tracking: "-0.015em", note: "la phrase de la voix EN BAS AU CENTRE (haut à y 896, bande y 890 à 980 libre de tout autre élément), 45 caractères au plus par morceau, mot par mot ; encre #17181c avec halo clair sur les scènes claires, #f4f2ee avec ombre sur les scènes sombres" }
+  type:      { fontFamily: "Instrument Sans", px: 84, weight: 600, note: "UN seul moment typographique : le pivot « Et si on arrêtait de discuter ? »" }
+  bubble:    { fontFamily: "Instrument Sans", px: 44, weight: 700, note: "bulles de dialogue (« Plateau ? », « 3 000 », « Yopougon ? Non ! »)" }
+  price:     { fontFamily: "Space Mono", px: 40, weight: 700, tabularNums: true, note: "l'étiquette de prix « 3 000 F » et le prix de l'appli" }
+  ui:        { fontFamily: "Instrument Sans", px: 26, weight: 500 }
+  sign:      { fontFamily: "Instrument Sans", px: 40, weight: 700, note: "panneaux de rue (« Riviera 2 », « Yopougon »), blanc sur vert #1f6b4a" }
+  wordmark:  { fontFamily: "Instrument Sans", px: 150, weight: 700, note: "« Yango » PROVISOIRE, blanc sur rouge, en attendant le logo officiel" }
+  cta:       { fontFamily: "Instrument Sans", px: 40, weight: 700, note: "bouton « Télécharger l’application », rouge sur blanc" }
 
 components:
-  ground-dark:
-    background: "solid canvas + 1-2 soft radial accent halos (14-28% opacity, blur 100px+) behind the focal element + static film grain 4-6%. Painted as a full-duration class=\"clip\" layer, never on #root."
-  ground-light:
-    background: "solid paper + one very soft warm radial (accent at 6-10%) behind the focal element + grain 3%. Text is ink-dark. Full-duration class=\"clip\" layer."
-  word-by-word:
-    rule: "Each word of the subtitle appears ON its voice timestamp, grey (ink at 35 %): fromTo {opacity:0, y:8, filter:blur(6px)} → {opacity:1, y:0, blur(0)} in 0.14 s, immediateRender:false, then it turns to full ink in 0.2 s. Never the whole sentence at once. Before a seam the subtitle leaves: opacity 1 → 0 and blur 0 → 6 px in 0.14 s."
-  key-word-box (THE highlight mechanism, one per sentence):
-    look: "a small rectangle in the accent color, sharp corners (radius 3px), overflowing the word by 0.14em on each side; the word turns to the paper color inside. Never a black box."
-    motion: "the box traces from the left (scaleX 0 → 1, transform-origin left, 0.16 s power3.out), 0 to 2 frames before the word is spoken; the word changes color as the box passes (0.1 s)."
-    rule: "ONE box per sentence, on the word the storyboard names as [boîte : …]. No other colored text anywhere."
-  peak-stroke (the 3 or 4 peaks of the film):
-    look: "a thin accent stroke (4 px, round caps) or a tapered brush stroke (round attack, thin exit, slight rising curve) under THE key word only, never under the whole sentence."
-    motion: "draws from the left (scaleX 0 → 1, 0.3 to 0.5 s power2.out) while the word is spoken."
-    rule: "named [trait : …] in the storyboard. Never a big box, never a giant word, never a line of the decor crossing the sentence."
-  letters-converge (only if a typographic moment needs it):
-    motion: "enters with its letters converging + opacity 0→1 + blur 12px→0 over 0.5 s expo.out; may sit behind a card or object (z-order) for depth. NEVER tween letterSpacing (it snaps to device pixels under seek capture and the lint blocks it): keep letter-spacing -0.05em static, split the word into inline-block letters and tween each letter's x from (i - (n-1)/2) × 0.4em to 0. A counting number keeps only scale + blur."
-  glass-card-dark:
-    background: "linear-gradient(160deg, rgba(40,33,28,.92), rgba(24,20,17,.9) 45%, rgba(20,16,14,.9) 80%, rgba(30,24,20,.92)); 1px rgba(245,239,231,.10) border; inset 0 1px 0 rgba(255,255,255,.14); shadow 0 50px 120px rgba(0,0,0,.7); radius 14px (retint to canvas)"
-  card-light:
-    background: "card-light, 1px hairline-light border, radius 14px, shadow 0 30px 80px rgba(60,40,20,.14), 0 2px 6px rgba(60,40,20,.08)"
-  counter:
-    description: "numeral-jumbo number that rolls to its value (tabular digits, grows slightly with the value), with a micro unit label under it. Every number on screen rolls, none is simply posed."
-  tool-tiles:
-    description: "Real tool logos from assets/icons/*.svg (Simple Icons, CC0): inline SVG path in an 88px white rounded tile (radius 20px, soft shadow), filled with the tool's own brand color ({{TOOL_COLORS}}, e.g. Gmail #EA4335, Stripe #635BFF). Brand colors are the ONLY exception to the one-accent rule, only inside tool tiles."
-  persona:
-    description: "{{PERSONA}}: a flat vector character in inline SVG, head + shoulders, simple hair, NO detailed face (two small dot eyes max), ~340px tall, friendly and simple, not childish. The same drawing in every frame where it appears."
-  pain-pills:
-    description: "Small dark pills (Space Mono 20px, white text on a dark warm grey, radius 999px) that pop around the persona one by one (≈0.12 s apart), slight deterministic rotation from the index, each with a tiny ✕ in accent."
-  chat-input:
-    description: "Large card with micro label '{{CHAT_LABEL}}', prompt typed char by char behind an accent caret, square accent send button with a white up-arrow. card-light on the light world."
-  caret:
-    description: "the text caret: a 4px × 58px accent-light bar, blinks as finite on/off steps (0.5 s period, NEVER a repeat:-1 loop)."
-  product-mock:
-    description: "{{PRODUCT_MOCK}}: the product or the user's own tool as it looks TODAY, from a recent screenshot the user gives (never drawn from memory: that is last year's interface), placed as an image or rebuilt in HTML; the whole device, small and uncluttered, only the elements that tell the story. It sits where it makes sense: a change request on a site is an annotation linked to the selected element, not a bubble dropped on the page. Accent elements only for the thing the voice points at."
-  cursor:
-    description: "White macOS arrow with dark outline + drop shadow; it arrives in ONE curved move (0.4 to 0.5 s power3.out) and clicks directly: press (scale .85, 0.06 s) + accent ripple ring that expands and fades. Never a hesitation."
-  light-point:
-    description: "a white-hot point (radial #fff3ea → accent-glow → transparent) used where the orchestrator's light flash starts."
-  end-card:
-    description: "dark stage, wordmark assembled letter by letter, one-line promise in type size with its peak stroke, ONE CTA button '{{CTA_LABEL}}' (paper fill, accent-deep Big Shoulders text, soft accent glow), mono URL '{{URL}}' in small, a cursor that arrives and clicks the button directly, then 2 to 3 s of living hold (drift, a texture that moves) before the iris or the black."
+  street:
+    look: "illustration plate, sans contours : ciel en dégradé selon l'heure, tours du Plateau en silhouette au loin (bleu-gris à 35 %), palmiers, trottoir #d8c3a0 en y 720 à 790, bordure claire, goudron #3a3b42 de y 790 à 1080 avec pointillés ; le panneau vert « Riviera 2 » sur poteau. La caméra longe la rue de gauche à droite."
+  person:
+    look: "personnage plat : tête ronde (peau brune, cheveux courts), PAS de visage détaillé (deux petits yeux au plus), corps en formes arrondies ; le héros porte chemise blanche, cravate rouge brique, pantalon sombre, chaussures noires (puis claquettes au gag). Le MÊME dessin dans tout le film. Passagers de la solution : une maman (pagne), un jeune employé (sac à dos), un commerçant (boubou)."
+  taxi:
+    look: "taxi orange #f28c28 vu de profil, vitres teintées, enseigne « TAXI » sur le toit, chauffeur en buste derrière la vitre (casquette) ; arrive flou et étiré (filé), freine avec une petite plongée du capot."
+  yango-car:
+    look: "berline blanche vue de profil, liseré rouge (PROVISOIRE, sans logo), même gabarit que le taxi ; elle remplace le taxi dans la solution et la rime."
+  price-tag:
+    look: "étiquette blanche arrondie, œillet et ficelle, prix en Space Mono 700 « 3 000 F » ; flotte au-dessus de la tête du héros, change de prix au gag (3 000 → 2 500 → 1 500), revient FIGÉE en solution."
+  bubble:
+    look: "bulle blanche à queue, ombre douce ; les prix de la discussion rebondissent d'une bulle à l'autre."
+  phone:
+    look: "téléphone d'aujourd'hui, bords fins noirs, écran 390 × 844 ; appli GÉNÉRIQUE PROVISOIRE : carte claire (routes grises, eau bleu pâle), champ « Où allez-vous ? », fiche de prix, voiture sur la carte, fiche du chauffeur (nom, voiture, plaque). Accent rouge seulement pour l'action."
+  word-by-word: { rule: "chaque mot apparaît sur son horodatage, gris puis plein, flou → net en 0,14 s, immediateRender:false" }
+  key-word-box: { look: "rectangle rouge #ff3b30, angles nets (3 px), déborde de 0,14 em ; le mot passe en blanc dedans", motion: "se trace depuis la gauche en 0,16 s power3.out" }
+  peak-stroke: { look: "trait de pinceau effilé rouge sous LE mot clé", motion: "se dessine en 0,4 s power2.out" }
+  cursor: { description: "un doigt-repère (cercle blanc à contour sombre) qui arrive d'un seul mouvement et tape directement : onde rouge" }
+  end-card: { description: "fond rouge plein, « Yango » blanc qui s'assemble, bouton blanc « Télécharger l’application », tap, tenue vivante (la petite voiture blanche longe une route en filet), puis iris" }
 
 negative:
-  - "No second highlight mechanism: the key-word box is the ONLY way a word of a subtitle is emphasized, the peak stroke marks the 3 or 4 peaks (no colored text, no glow text)."
-  - "No big sentence: the subtitle is 60 to 64 px, a typographic moment 84 px at most; no giant word, no big box. Nothing but the subtitle in the band y 890 to 980; never a subtitle at the top left."
-  - "One thing to look at at a time: the camera isolates the subject of the sentence. Side-by-side layouts keep equal left and right margins."
-  - "No camera back-and-forth on the decor (a clear zoom in one direction is welcome). No cursor hesitation."
-  - "No decor without meaning (grey bars 'to fill', abstract symbols, counters that say nothing); no line of the decor crossing a sentence."
-  - "No hue other than the accent, except real brand colors inside tool tiles."
-  - "No Inter, Space Grotesk, Geist, system-ui. No emoji. No icons in round pills."
-  - "No bouncy/elastic/back.out eases. No breathing loops, no slow push on every scene, no repeat:-1."
-  - "No visible text that is not listed in the frame's Scene lines (component labels above are allowed)."
-  - "Never tween letterSpacing."
+  - "Un seul mécanisme de mise en valeur (boîte rouge) et 3 ou 4 traits de pic ; pas de texte coloré, pas de mot géant."
+  - "Rien dans la bande du sous-titre (y 890 à 980) ; le goudron y passe mais sans objet ni texte."
+  - "Aucun logo réel tant que la marque ne l'a pas fourni ; aucune autre marque (pas de logos de stores)."
+  - "Pas de caricature : personnages simples, dignes, variés ; le chauffeur de taxi n'est pas ridiculisé (il hésite, il repart)."
+  - "Pas de prix réel présenté comme un tarif Yango : les montants à l'écran sont des exemples à faire valider."
+  - "Jamais d'aller-retour de caméra ; pas de repeat:-1 ; jamais de tween de letterSpacing."
 ---
 
-# {{BRAND}}: frame spec
+# « On dit combien ? » : charte
 
-The film has two worlds. **The problem** plays on the warm black stage: {{PROBLEM_WORLD_IN_TWO_SENTENCES}}. A single
-**pivot** ({{PIVOT}}, a word alone or a caret in the dark) freezes everything, then light floods the screen and we land
-on **the solution**, on the light ground: {{SOLUTION_WORLD_IN_TWO_SENTENCES}}. The iris from {{IRIS_OBJECT}} takes us
-back to the dark stage for the **end card**.
-
-Everything the viewer reads is Instrument Sans: the sentence of the voice as a subtitle at the bottom center, word by
-word, with exactly one key word per sentence in a small accent box that traces itself first. A thin accent stroke
-under the key word marks the 3 or 4 peaks.
-Numbers, labels and code are Space Mono; the wordmark and the CTA are Big Shoulders.
+La rue d'Abidjan est le lieu du film : le carrefour Riviera 2 au petit matin, la chaleur de midi, le soir au bord du
+goudron. Le héros y lève la main, le taxi orange s'y arrête, la discussion du prix s'y joue chaque jour. Au pivot, tout
+s'éteint : « Et si on arrêtait de discuter ? ». La lumière revient dans le téléphone, sur fond clair et rouge Yango :
+la destination, le prix affiché, la voiture qui vient, le chauffeur et sa plaque. Puis, en rime, le même carrefour au
+même moment, mais la voiture est déjà là. La carte de fin est rouge.

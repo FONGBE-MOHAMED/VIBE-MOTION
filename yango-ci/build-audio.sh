@@ -13,9 +13,9 @@ cd "$(dirname "$0")"
 
 # ---- settings (all paths relative to this project folder) ----------------------------------------------------------
 RAW="${RAW:-assets/audio/voix.mp3}"                # raw voice exported from ElevenLabs
-CUTS="${CUTS:-}"                                   # "cut:silence" pairs in raw seconds, e.g. "14.00:0.8 34.75:0.4" (empty = no cut)
-TAIL="${TAIL:-4.0}"                                # silence added after the voice (end card hold)
-TOTAL="${TOTAL:-45.0}"                             # final duration in seconds = STORYBOARD duration = TOTAL in assemble.sh
+CUTS="${CUTS:-10.07:2.0 25.11:1.1 42.65:0.6 47.25:0.4}"                                # "cut:silence" pairs in raw seconds, e.g. "14.00:0.8 34.75:0.4" (empty = no cut)
+TAIL="${TAIL:-5.14}"                                # silence added after the voice (end card hold)
+TOTAL="${TOTAL:-60.0}"                             # final duration in seconds = STORYBOARD duration = TOTAL in assemble.sh
 MUSIC="${MUSIC-assets/audio/music.mp3}"            # CC0 track (set MUSIC="" for no music)
 MUSIC_START="${MUSIC_START:-0}"                    # where to start in the track (skip a quiet intro, see pitfalls.md)
 MUSIC_VOLUME="${MUSIC_VOLUME:-0.12}"               # 0.10 to 0.15 under a voice
@@ -109,3 +109,10 @@ graph.append("".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=
 subprocess.run(args + ["-filter_complex", ";".join(graph), "-map", "[out]", "-t", f"{total:.3f}", env["MIX_OUT"]], check=True)
 print(f"mix: {env['MIX_OUT']} ({total:.2f} s, music {'on' if music else 'off'}, {len(events)} sound effect(s))")
 EOF
+
+# 3. Loudness of the delivery mix: -16 LUFS, true peak -1.5 dBTP (two-pass loudnorm, linear).
+J=$(ffmpeg -hide_banner -i "$MIX_OUT" -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null - 2>&1 | sed -n '/^{/,/^}/p')
+set -- $(echo "$J" | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['input_i'],d['input_tp'],d['input_lra'],d['input_thresh'],d['target_offset'])")
+ffmpeg -v error -y -i "$MIX_OUT" -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=$1:measured_TP=$2:measured_LRA=$3:measured_thresh=$4:offset=$5:linear=true,aresample=44100" \
+  -ar 44100 "${MIX_OUT%.wav}-norm.wav" && mv "${MIX_OUT%.wav}-norm.wav" "$MIX_OUT"
+echo "mix normalized: $MIX_OUT (-16 LUFS, -1.5 dBTP)"

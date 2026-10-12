@@ -132,7 +132,7 @@ Scene 2 (0.80 à 3.60 s) : P04, De la tête aux pieds
 - type: problem
 - blueprint: kinetic-type-beats (Adapt)
 - focal: l'étiquette de prix au-dessus de la tête
-- rules: spring-pop-entrance, motion-blur-streak
+- rules: motion-blur-streak
 - world: light
 - handoff_in: à 0.00 : recul en cours (power2.in, flou 10 px) depuis les chaussures du héros vers le plan moyen ; le cadre de la vitre sort par les bords ; sous-titre sorti ; ciel du matin
 - handoff_out: à 3.15 : la rue se replie en une vignette (échelle ×1 → ×0,22, power2.in, flou 8 px) qui file vers la place « LUNDI », à gauche du cadre : le héros seul dedans, de nouveau en costume, main levée ; le taxi sorti par la droite ; sous-titre sorti

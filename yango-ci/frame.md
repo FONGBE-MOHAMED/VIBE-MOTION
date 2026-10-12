@@ -12,7 +12,7 @@ description: >
   remplacer par le logo, les couleurs et des captures récentes fournis par la marque.
 unit: 1920×1080
 principle: "lisible sans le son · une seule chose à regarder · un accent rouge, un seul mécanisme de mise en valeur · la voix déclenche chaque révélation"
-reference: "styleframes/_kit.css et tools/gen_sf.py (rue, personnages, taxi, voiture, téléphone, carte, étiquette, bulle, sous-titre) : source unique du dessin, que chaque séquence recopie"
+reference: "reference/rue.html (EXÉCUTABLE : le CSS et la fonction rueKit, à copier mot pour mot dans chaque séquence ; la rue, le héros, le taxi, la voiture blanche, l étiquette, la bulle, le sous-titre, le téléphone). Images de style : styleframes/P01.html à P27.html, une par plan."
 
 colors:
   canvas: "#0d0e12"            # le noir du pivot

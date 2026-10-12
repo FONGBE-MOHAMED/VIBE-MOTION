@@ -13,35 +13,35 @@ cd "$(dirname "$0")"
 export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_SKIP_SKILLS=1 HYPERFRAMES_NO_UPDATE_CHECK=1
 
 # ---- settings (times in seconds on the final timeline, see STORYBOARD.md) ------------------------------------------
-FIRST_FRAME="01-hook"      # id of the first frame (basename of its src, without .html)
-END_CARD="09-fin"          # id of the end card frame (the iris opens it)
-TOTAL="45.0"               # final duration = STORYBOARD duration = TOTAL in build-audio.sh
+FIRST_FRAME="01-riviera"      # id of the first frame (basename of its src, without .html)
+END_CARD="14-fin"          # id of the end card frame (the iris opens it)
+TOTAL="60.0"               # final duration = STORYBOARD duration = TOTAL in build-audio.sh
 AUDIO="assets/audio/${MIX:-mix.wav}"   # mix from build-audio.sh or build-music-options.py (MIX=mix-M2.wav bash assemble.sh); empty = silent
 
 # Light flash, dark world -> light world (empty LEAK_AT = no flash). The flash covers the screen from
 # LEAK_AT+0.15 to LEAK_AT+0.30: put the cut between the last dark frame and the first light frame at LEAK_AT+0.25.
-LEAK_AT="14.25"
+LEAK_AT="27.95"
 LEAK_X="960"               # flash center in px (the object the light comes from, e.g. a caret or a word)
 LEAK_Y="540"
 
 # Iris, light world -> dark end card (empty IRIS_AT = no iris). The end card must start at IRIS_AT+0.05 with
 # transition_in: cut. The frame under the iris is kept mounted until IRIS_AT+0.80: its own internal clips must
 # last that long too, or the iris opens on black (see references/pitfalls.md).
-IRIS_AT="36.1"
-IRIS_X="1400"              # iris center in px (the object the iris grows from)
-IRIS_Y="450"
-IRIS_FROM=""               # id of the frame under the iris (empty = the frame just before END_CARD)
+IRIS_AT="51.10"
+IRIS_X="1180"              # iris center in px (the object the iris grows from)
+IRIS_Y="700"
+IRIS_FROM="13-rime"               # id of the frame under the iris (empty = the frame just before END_CARD)
 
 # Paper bed under the light world, so a crossfade between two light frames never shows the dark root.
 # Default span: LEAK_AT+0.20 to IRIS_AT+0.80. Empty PAPER = no bed.
-PAPER="#f6f1e9"
+PAPER="#f6f5f2"
 BED_START=""               # optional override
-BED_END=""                 # optional override
+BED_END="46.05"            # end of the light world (frame 12 whips back to the street)
 
 # Colors of the flash and the iris ring: copy accent, accent-light and accent-glow from frame.md.
-ACCENT="#c25b28"
-ACCENT_LIGHT="#d4703f"
-ACCENT_GLOW="#e08a5c"
+ACCENT="#ff3b30"
+ACCENT_LIGHT="#ff8a80"
+ACCENT_GLOW="#ff8a80"
 
 RUN_LINT="${RUN_LINT:-1}"  # RUN_LINT=0 skips the lint
 # ---------------------------------------------------------------------------------------------------------------------
@@ -178,13 +178,31 @@ if iris_at is not None:
         tl.to("#fxiris-ring", {{ opacity: 0, duration: 0.15 }}, {t(0.70)});
 '''
 anchor = re.search(r"(?m)^[ \t]*tl\.to\(\{\}, \{ duration: [0-9.]+ \}, 0\);", s)
-if not anchor:
-    raise SystemExit("assemble: full-span anchor tl.to({}, { duration: N }, 0); not found in index.html")
-s = s[:anchor.start()] + tl + s[anchor.start():]
+if anchor:
+    s = s[:anchor.start()] + tl + s[anchor.start():]
+else:
+    # all cuts: the transition injector wrote no block, so add one with the orchestrator tweens and the full-span anchor
+    main = 'window.__timelines["main"] = gsap.timeline({ paused: true });'
+    if main not in s:
+        raise SystemExit("assemble: main timeline declaration not found in index.html")
+    block = (main + '\n      (function () { var tl = window.__timelines["main"];\n' + tl +
+             f'        tl.to({{}}, {{ duration: {total} }}, 0); // full-span anchor\n      }})();')
+    s = s.replace(main, block, 1)
 open(p, "w", encoding="utf-8").write(s)
 print("orchestrator layer patched:", ", ".join(k for k, v in (("audio", env.get("AUDIO")), ("flash", leak_at is not None),
       ("iris", iris_at is not None), ("paper bed", "paperbed" in s)) if v) or "nothing")
 EOF
+
+# GSAP from the project (cdn.jsdelivr.net is not reachable in this environment): assets/js/gsap.min.js, npm gsap@3.14.2
+python3 - <<'EOF2'
+import re
+p = "index.html"
+s = open(p, encoding="utf-8").read()
+s2 = re.sub(r'<script src="https://cdn\.jsdelivr\.net/npm/gsap@3\.14\.2/dist/gsap\.min\.js"[^>]*></script>', '<script src="assets/js/gsap.min.js"></script>', s)
+if s2 != s:
+    open(p, "w", encoding="utf-8").write(s2)
+    print("gsap: index.html now loads assets/js/gsap.min.js")
+EOF2
 
 if [ "$RUN_LINT" = "1" ]; then
   npx hyperframes lint 2>&1 | grep -E "✗|error\(s\)|warning\(s\)" || echo "lint: no error reported"

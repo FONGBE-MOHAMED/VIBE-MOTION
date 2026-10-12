@@ -75,7 +75,7 @@ FRAMES = [
   focal="la bulle « Plateau ? », puis le héros scanné de la tête aux pieds",
   handoff_out="recul en cours (power2.in, flou 10 px) depuis les chaussures du héros vers le plan moyen ; le cadre de la vitre sort par les bords ; sous-titre sorti ; ciel du matin"),
  dict(n=3, title="Trois mille, le gag", slug="gag", start=9.05, end=12.20, type="problem", world="light",
-  blueprint="kinetic-type-beats", rules="spring-pop-entrance, motion-blur-streak",
+  blueprint="kinetic-type-beats", rules="motion-blur-streak",
   scene="« Trois mille. » : une étiquette de prix tombe au-dessus de la tête du héros ; gag muet : il retire sa cravate (2 500 F), enfile des claquettes (1 500 F) ; le chauffeur hésite et repart",
   voice="« Trois mille. »",
   focal="l'étiquette de prix au-dessus de la tête",

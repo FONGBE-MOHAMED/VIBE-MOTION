@@ -1,0 +1,441 @@
+<template>
+  <!-- 11-chauffeur (3.77 s, global 37.20 à 40.97) : « Tu vois ton chauffeur arriver sur la carte, avec son nom et sa plaque. »
+       Monde clair : le téléphone de gen_sf.py (phone(745, 98) : left 745, top -10, ×0,82, centre monde (960, 432)), sa carte
+       (mapsvg, trajet rouge, ton point en (250, 520) écran), la fiche P18 « Votre voiture arrive » qui devient « Arrive dans
+       3 min » (P19), puis la fiche DRIVER (Koffi, « Berline blanche · 4,9 ★ », « 1234 AB 01 ») et la carte de plaque de P20.
+       Caméra (piste à part, #f11-drift > #f11-cam > #f11-world) :
+       0.00 handoff_in : cran en cours vers la voiture (×1,10 autour de la voiture, flou 4 px) → se pose à 0.16 (×1,13, net) ;
+       dérive linéaire ×1 → ×1,02 sur toute la séquence ; 1.95 à 2.05 cran vers le bas de l'écran (×1,18, flou 6 px au milieu) ;
+       3.60 à 3.77 recul power2.in (flou 0 → 10 px) : le téléphone rétrécit vers le centre de la carte du milieu de la
+       séquence 12 (boîte 520 × 620 en left 700, top 170, centre (960, 480)) : à 3.77, téléphone centré en (960, 480),
+       haut 660 px (×0,747 du téléphone nu), flou 10 px ; sous-titre sorti ; fond clair.
+       La petite voiture suit le trajet rouge : mi-trajet à 0.00, (204, 410) à 1.70 (P19), (229, 468) à 3.50 (P20).
+       Bloc CSS « RUE YANGO v1 » et fonction rueKit copiés mot pour mot de reference/rue.html (« ../assets/ » → « assets/ »). -->
+  <style>
+/* ===================== RUE YANGO v1 : CSS (début du bloc à copier) ===================== */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+.rk-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; }
+.rk-drift, .rk-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+.rk-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.rk-scene { position: absolute; left: 0; top: 0; display: block; overflow: visible; }
+.rk-actor { position: absolute; }
+.rk-actor > svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.rk-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.rk-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 58%, rgba(0,0,0,.28) 100%); }
+.rk-light { position: absolute; left: -40px; top: -40px; width: 2000px; height: 1160px; background: #f6f5f2; }
+.rk-light-halo { position: absolute; width: 1600px; height: 1040px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,59,48,.10), rgba(255,59,48,0)); }
+.rk-light-dots { position: absolute; left: -40px; top: -40px; width: 2000px; height: 1160px; background-image: radial-gradient(rgba(23,24,28,.06) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+/* sous-titre : en bas au centre, haut à y 896, mot par mot */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f4f2ee; text-shadow: 0 2px 18px rgba(10,10,14,.95), 0 0 3px rgba(10,10,14,.8); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(246,245,242,.95), 0 0 2px rgba(246,245,242,.9); }
+.sub.onred { color: #ffffff; text-shadow: 0 2px 14px rgba(120,10,0,.5); }
+.sub .w { display: inline-block; opacity: 0; }
+.rk-hl { position: relative; display: inline-block; isolation: isolate; color: #fff; text-shadow: none; }
+.rk-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #ff3b30; border-radius: 3px; z-index: -1; transform-origin: 0 50%; transform: scaleX(0); }
+.sub.onred .rk-hl { color: #ff3b30; }
+.sub.onred .rk-hlbg { background: #fff; }
+.rk-pk { position: relative; display: inline-block; }
+.rk-pk > svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; transform-origin: 0 50%; transform: scaleX(0); }
+.sub.onred .rk-pk > svg path { fill: #fff; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f4f2ee; white-space: nowrap; }
+/* bulles */
+.bubble { position: absolute; padding: 22px 34px; border-radius: 30px; background: #fff; color: #17181c; font: 700 44px/1 "Instrument Sans";
+  box-shadow: 0 18px 40px rgba(20,15,10,.25); white-space: nowrap; }
+.bubble::after { content: ""; position: absolute; width: 34px; height: 34px; background: #fff; bottom: -12px; transform: rotate(45deg); border-radius: 4px; }
+.bubble.tl::after { left: 40px; } .bubble.tr::after { right: 40px; }
+.bubble.mono { font: 700 44px/1 "Space Mono", monospace; }
+/* téléphone et appli (GÉNÉRIQUE, PROVISOIRE) */
+.phone { position: absolute; width: 430px; height: 884px; border-radius: 64px; background: #111216; box-shadow: 0 50px 110px rgba(30,20,10,.28), inset 0 0 0 3px #2c2e35; }
+.phone-screen { position: absolute; left: 20px; top: 20px; width: 390px; height: 844px; border-radius: 46px; overflow: hidden; background: #eef0f2; }
+.phone-island { position: absolute; left: 155px; top: 14px; width: 120px; height: 34px; border-radius: 20px; background: #000; z-index: 5; }
+.app-search { position: absolute; left: 18px; right: 18px; top: 70px; height: 70px; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.10);
+  display: flex; align-items: center; gap: 14px; padding: 0 20px; font: 600 24px/1 "Instrument Sans"; color: #17181c; }
+.app-dot { width: 14px; height: 14px; border-radius: 50%; background: #ff3b30; flex: none; }
+.app-sheet { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 28px 28px 0 0; background: #fff; box-shadow: 0 -10px 30px rgba(0,0,0,.08); padding: 26px 24px 30px; }
+.app-btn { height: 74px; border-radius: 18px; background: #ff3b30; color: #fff; font: 700 26px/74px "Instrument Sans"; text-align: center; }
+.app-price { font: 700 40px/1 "Space Mono", monospace; color: #17181c; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: #8d8a84; }
+.card { position: absolute; border-radius: 22px; background: #fff; box-shadow: 0 30px 70px rgba(30,20,10,.16), 0 2px 6px rgba(30,20,10,.08); }
+.plate { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 3px solid #17181c; font: 700 26px/1 "Space Mono", monospace; letter-spacing: .06em; background: #fff; }
+.cta-btn { position: absolute; height: 120px; border-radius: 60px; background: #fff; color: #ff3b30; font: 700 44px/120px "Instrument Sans"; text-align: center; box-shadow: 0 30px 60px rgba(120,10,0,.35); }
+/* ===================== RUE YANGO v1 : fin du CSS ===================== */
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; }
+    #f11-ground, #f11-main { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    .f11-bb, .f11-bb * { box-sizing: border-box; }
+    #f11-mcar, #f11-halo { will-change: transform; }
+    #f11-sheetD, #f11-av, #f11-cl, #f11-pl, #f11-mi, #f11-pcard, .f11-ch { opacity: 0; }
+    #f11-s19 { position: absolute; left: 24px; top: 26px; white-space: pre; font: 700 30px/1.2 "Instrument Sans"; color: #17181c; }
+    #f11-pl, #f11-av { transform-origin: 50% 50%; }
+    #f11-pcard { transform-origin: 50% 50%; }
+  </style>
+
+  <div id="root" data-composition-id="11-chauffeur" data-width="1920" data-height="1080" data-duration="3.77">
+    <!-- piste 0 : le fond clair du monde de la solution (K.lightGround), fixe -->
+    <div id="f11-ground" class="clip" data-start="0" data-duration="3.77" data-track-index="0"></div>
+    <!-- piste 1 : la scène (caméra, téléphone, carte de plaque), le sous-titre hors caméra, grain et vignette -->
+    <div id="f11-main" class="clip" data-start="0" data-duration="3.77" data-track-index="1"></div>
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+/* ===================== RUE YANGO v1 : JS (début du bloc à copier) ===================== */
+function rueKit(P) {
+  var RED = "#ff3b30", TAXI = "#f28c28", ROAD = "#3a3b42", INK = "#17181c", SKIN = ["#6b3f26", "#8a5a3b", "#4a2a19"];
+  function id(n) { return P + "-" + n; }
+  function u(n) { return "url(#" + id(n) + ")"; }
+  function r2(v) { return Math.round(v * 100) / 100; }
+
+  // dégradés et filtres de la séquence : à poser UNE fois en tête de la racine
+  function defs() {
+    return '<svg width="0" height="0" style="position:absolute;left:0;top:0" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id("dawn") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3c98f"/><stop offset=".55" stop-color="#f9e2bd"/><stop offset="1" stop-color="#fdf0dc"/></linearGradient>' +
+      '<linearGradient id="' + id("noon") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9b8"/><stop offset="1" stop-color="#fff7e6"/></linearGradient>' +
+      '<linearGradient id="' + id("dusk") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f1c33"/><stop offset=".6" stop-color="#4a3554"/><stop offset="1" stop-color="#e3784c"/></linearGradient>' +
+      '<radialGradient id="' + id("sunglow") + '"><stop offset="0" stop-color="#fff6d8"/><stop offset=".35" stop-color="#ffe2a0" stop-opacity=".8"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="' + id("lamp") + '"><stop offset="0" stop-color="#ffd98a" stop-opacity=".75"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="' + id("redglow") + '"><stop offset="0" stop-color="#ff8a80" stop-opacity=".9"/><stop offset=".4" stop-color="#ff3b30" stop-opacity=".35"/><stop offset="1" stop-color="#ff3b30" stop-opacity="0"/></radialGradient>' +
+      '<filter id="' + id("b4") + '"><feGaussianBlur stdDeviation="4"/></filter>' +
+      '<filter id="' + id("b10") + '"><feGaussianBlur stdDeviation="10"/></filter>' +
+      '<filter id="' + id("mx") + '" x="-20%" width="140%"><feGaussianBlur stdDeviation="22 2"/></filter>' +
+      '</defs></svg>';
+  }
+
+  // ---------------------------------------------------------------- décor (une couche SVG fixe)
+  function scene(w, inner, sid) {
+    return '<svg class="rk-scene"' + (sid ? ' id="' + id(sid) + '"' : '') + ' width="' + w + '" height="1080" viewBox="0 0 ' + w + ' 1080">' + inner + '</svg>';
+  }
+  function sky(kind, w) { return '<rect width="' + (w || 1920) + '" height="1080" fill="' + u(kind) + '"/>'; }
+  function sun(x, y, r) { r = r || 70; return '<circle cx="' + x + '" cy="' + y + '" r="' + r * 4 + '" fill="' + u("sunglow") + '"/><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#fff4d0"/>'; }
+  function skyline(y, op, col, seed, w) {
+    y = y == null ? 720 : y; op = op == null ? .32 : op; col = col || "#5d6a8a"; seed = seed || 1; w = w || 1920;
+    var out = "", x = -40, k = seed;
+    while (x < w + 40) {
+      var bw = 70 + (k * 37) % 90, bh = 120 + (k * 53) % 260;
+      out += '<rect x="' + x + '" y="' + (y - bh) + '" width="' + bw + '" height="' + bh + '" fill="' + col + '" opacity="' + op + '"/>';
+      for (var wy = y - bh + 18; wy < y - 10; wy += 26)
+        out += '<rect x="' + (x + 12) + '" y="' + wy + '" width="' + (bw - 24) + '" height="6" fill="#fff" opacity="' + (op * .35).toFixed(2) + '"/>';
+      x += bw + 18 + (k * 11) % 40; k += 1;
+    }
+    return out;
+  }
+  function palm(x, y, s, col, trunk) {
+    s = s || 1; col = col || "#2f6b46"; trunk = trunk || "#7a5a3a";
+    var leaves = [0.25, 0.9, 1.6, 2.25, 2.9, 3.6].map(function (a) {
+      var c = Math.cos(a), sn = Math.sin(a);
+      return '<path d="M0 -330 Q ' + Math.round(120 * c) + ' ' + Math.round(-330 - 90 * sn - 40) + ' ' + Math.round(230 * c) + ' ' + Math.round(-330 + 60 - 120 * sn) +
+        ' Q ' + Math.round(110 * c) + ' ' + Math.round(-330 - 20 * sn) + ' 0 -330 Z" fill="' + col + '"/>';
+    }).join("");
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-10 0 Q 12 -170 -4 -335 L 10 -335 Q 30 -170 14 0 Z" fill="' + trunk + '"/>' + leaves + '</g>';
+  }
+  // o : { w: 1920, walk_y: 720, road_y: 790, dashes: true, night: false }
+  function street(o) {
+    o = o || {}; var w = o.w || 1920, wy = o.walk_y || 720, ry = o.road_y || 790, night = !!o.night;
+    var walk = night ? "#4b4350" : "#c9b28f", road = night ? "#26262e" : ROAD, d = "";
+    if (o.dashes !== false) for (var x = -60; x < w + 60; x += 240)
+      d += '<rect x="' + x + '" y="' + (ry + 62) + '" width="120" height="10" rx="5" fill="#f2efe6" opacity="' + (night ? .45 : .8) + '"/>';
+    return '<rect x="0" y="' + wy + '" width="' + w + '" height="' + (ry - wy) + '" fill="' + walk + '"/>' +
+      '<rect x="0" y="' + (ry - 8) + '" width="' + w + '" height="10" fill="' + (night ? "#6b6070" : "#efe4cf") + '"/>' +
+      '<rect x="0" y="' + ry + '" width="' + w + '" height="' + (1080 - ry) + '" fill="' + road + '"/>' + d;
+  }
+  // panneau vert sur poteau ; sid optionnel pour l'animer (il « se plante » : y depuis -40, scale 1,3 → 1)
+  function sign(x, y, text, s, sid) {
+    s = s || 1; var w = 40 + text.length * 24;
+    return '<g' + (sid ? ' id="' + id(sid) + '"' : '') + '><g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><rect x="-7" y="-420" width="14" height="420" fill="#8b8f98"/>' +
+      '<rect x="' + (-w / 2) + '" y="-470" width="' + w + '" height="90" rx="10" fill="#1f6b4a" stroke="#fff" stroke-width="5"/>' +
+      '<text x="0" y="-410" text-anchor="middle" font-family="Instrument Sans" font-weight="700" font-size="44" fill="#fff">' + text + '</text></g></g>';
+  }
+  function streetlight(x, y, h, on) {
+    h = h || 520; on = on !== false;
+    var glow = on ? '<ellipse cx="' + (x - 70) + '" cy="' + (y - 40) + '" rx="260" ry="90" fill="' + u("lamp") + '"/><path d="M' + (x - 92) + ' ' + (y - h + 30) + ' L ' + (x - 260) + ' ' + y + ' L ' + (x + 80) + ' ' + y + ' Z" fill="#ffd98a" opacity=".12"/>' : "";
+    return glow + '<rect x="' + (x - 6) + '" y="' + (y - h) + '" width="12" height="' + h + '" fill="#2a2a33"/>' +
+      '<path d="M' + x + ' ' + (y - h) + ' Q ' + x + ' ' + (y - h - 30) + ' ' + (x - 90) + ' ' + (y - h - 24) + '" stroke="#2a2a33" stroke-width="10" fill="none"/>' +
+      '<ellipse cx="' + (x - 92) + '" cy="' + (y - h - 16) + '" rx="30" ry="12" fill="' + (on ? "#ffe7a8" : "#555") + '"/>';
+  }
+  // traînées de phares (soir) ; chaque traînée est un <rect> que l'on peut filer en x
+  function headlights(y, n, w) {
+    n = n || 5; var out = "";
+    for (var k = 0; k < n; k++) {
+      var x = 100 + k * 400 + (k * 37) % 120;
+      out += '<rect x="' + x + '" y="' + (y + (k % 2) * 40) + '" width="' + (300 + (k * 61) % 200) + '" height="10" rx="5" fill="#fff2c2" opacity=".55" filter="' + u("b4") + '"/>';
+      out += '<rect x="' + (x + 80) + '" y="' + (y + 70 + (k % 2) * 40) + '" width="' + (200 + (k * 43) % 160) + '" height="8" rx="4" fill="#ff5a4a" opacity=".45" filter="' + u("b4") + '"/>';
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------- acteurs (un bloc HTML chacun)
+  // boîte locale du dessin, en unités du dessin à l'échelle 1 : [x0, y0, x1, y1] ; l'origine (0, 0) = le point d'ancrage
+  var BOX = { person: [-130, -530, 130, 20], car: [-345, -345, 345, 20], tag: [-200, -160, 200, 45] };
+  function actor(kind, aid, x, y, s, inner, extra) {
+    var b = BOX[kind], w = (b[2] - b[0]) * s, h = (b[3] - b[1]) * s, ox = -b[0] * s, oy = -b[1] * s;
+    if (kind === "tag") oy = (-150 - b[1]) * s;   // l'étiquette pivote au haut de sa ficelle
+    var ay = kind === "tag" ? y - 150 * s : y;
+    return '<div id="' + id(aid) + '" class="rk-actor" style="left:' + r2(x - ox) + 'px;top:' + r2(ay - oy) + 'px;width:' + r2(w) + 'px;height:' + r2(h) +
+      'px;transform-origin:' + r2(ox) + 'px ' + r2(oy) + 'px;' + (extra || "") + '"><svg viewBox="' + b[0] + ' ' + b[1] + ' ' + (b[2] - b[0]) + ' ' + (b[3] - b[1]) + '">' + inner + '</svg></div>';
+  }
+  // Le héros et les passants. (x, y) = entre les pieds. o : { skin: 0|1|2, shirt, trousers, tie (couleur ou null),
+  //   handUp, feet: "shoes"|"flip", bag: null|"case"|"back", lean (degrés), hair, dress (couleur du pagne), flip, eyes }
+  // Sous-parties : #<id>-arm (bras droit, pivot à l'épaule : K.spin de 0 à -158 pour lever la main),
+  //   #<id>-tie (la cravate), #<id>-shoes et #<id>-flips (chaussures / claquettes, échanger par opacity),
+  //   #<id>-head (tête), #<id>-eyes, #<id>-body (tout le personnage, pour le pencher).
+  function person(aid, x, y, s, o) {
+    o = o || {}; s = s || 1;
+    var sk = SKIN[o.skin || 0], shirt = o.shirt || "#f4f2ee", tr = o.trousers || "#2a2d3a", hair = o.hair || "#1a1410";
+    var tie = o.tie === undefined ? "#b8432f" : o.tie, flipFeet = o.feet === "flip";
+    var legs = !o.dress ? '<rect x="-40" y="-200" width="34" height="200" rx="12" fill="' + tr + '"/><rect x="6" y="-200" width="34" height="200" rx="12" fill="' + tr + '"/>'
+      : '<path d="M-70 -230 L 70 -230 L 88 -10 L -88 -10 Z" fill="' + o.dress + '"/><rect x="-34" y="-12" width="22" height="12" fill="' + sk + '"/><rect x="12" y="-12" width="22" height="12" fill="' + sk + '"/>';
+    var shoes = '<g id="' + id(aid + "-shoes") + '" opacity="' + (flipFeet ? 0 : 1) + '"><ellipse cx="-24" cy="-4" rx="30" ry="12" fill="#111"/><ellipse cx="24" cy="-4" rx="30" ry="12" fill="#111"/></g>';
+    var flips = '<g id="' + id(aid + "-flips") + '" opacity="' + (flipFeet ? 1 : 0) + '"><ellipse cx="-24" cy="-6" rx="24" ry="10" fill="' + sk + '"/><ellipse cx="24" cy="-6" rx="24" ry="10" fill="' + sk + '"/>' +
+      '<rect x="-52" y="-2" width="56" height="7" rx="3" fill="#2f8de4"/><rect x="-4" y="-2" width="56" height="7" rx="3" fill="#2f8de4"/>' +
+      '<path d="M-36 -8 L -24 -14 L -12 -8" stroke="#2f8de4" stroke-width="5" fill="none"/><path d="M12 -8 L 24 -14 L 36 -8" stroke="#2f8de4" stroke-width="5" fill="none"/></g>';
+    var torso = '<rect x="-68" y="-390" width="136" height="205" rx="46" fill="' + shirt + '"/>';
+    var tieS = tie ? '<path id="' + id(aid + "-tie") + '" d="M-9 -372 L 9 -372 L 14 -260 L 0 -240 L -14 -260 Z" fill="' + tie + '"/>' : "";
+    var armL = '<rect x="-92" y="-376" width="32" height="170" rx="16" fill="' + shirt + '"/><circle cx="-76" cy="-200" r="17" fill="' + sk + '"/>';
+    var armR = '<g transform="translate(76 -362)"><g id="' + id(aid + "-arm") + '" transform="rotate(' + (o.handUp ? -158 : 0) + ')"><rect x="-16" y="-14" width="32" height="170" rx="16" fill="' + shirt + '"/><circle cx="0" cy="162" r="17" fill="' + sk + '"/></g></g>';
+    var bag = o.bag === "case" ? '<rect x="-112" y="-206" width="76" height="58" rx="8" fill="#5a3a22"/><rect x="-88" y="-216" width="28" height="12" rx="5" fill="none" stroke="#5a3a22" stroke-width="5"/>'
+      : o.bag === "back" ? '<rect x="-96" y="-380" width="40" height="150" rx="16" fill="#2f6bd4"/>' : "";
+    var neck = '<rect x="-14" y="-412" width="28" height="30" fill="' + sk + '"/>';
+    var eyes = o.eyes === false ? "" : '<g id="' + id(aid + "-eyes") + '"><circle cx="-16" cy="-456" r="5" fill="#1a1410"/><circle cx="16" cy="-456" r="5" fill="#1a1410"/></g>';
+    var head = '<g id="' + id(aid + "-head") + '"><circle cx="0" cy="-458" r="50" fill="' + sk + '"/><path d="M-50 -470 Q -48 -520 0 -514 Q 48 -520 50 -470 Q 40 -496 0 -494 Q -40 -496 -50 -470 Z" fill="' + hair + '"/>' + eyes + '</g>';
+    var inner = '<g id="' + id(aid + "-body") + '"><g transform="scale(' + (o.flip ? -1 : 1) + ' 1) rotate(' + (o.lean || 0) + ')">' + bag + legs + shoes + flips + armL + torso + tieS + armR + neck + head + '</g></g>';
+    return actor("person", aid, x, y, s, inner, o.style);
+  }
+  // Le taxi orange (taxi: true) ou la voiture blanche Yango (color "#f7f7f7", taxi: false, stripe: true).
+  // (x, y) = le sol sous le milieu de la voiture. o : { color, taxi, driver, flip, stripe, door (portière ouverte), night }
+  // Sous-parties : #<id>-body (la caisse : y +6 puis 0 pour le coup de frein), #<id>-drv (le chauffeur),
+  //   #<id>-door (la portière ouverte, opacity), #<id>-w1 et #<id>-w2 (les roues).
+  // Filé : animer le bloc #<id> en x avec filter "blur(8px)" et scaleX 1,05 ; ou poser o.blur pour le flou directionnel.
+  function car(aid, x, y, s, o) {
+    o = o || {}; s = s || 1;
+    var color = o.color || TAXI, taxi = o.taxi !== false, win = o.night ? "#151a24" : "#253042";
+    var drv = o.driver === false ? "" : '<g id="' + id(aid + "-drv") + '"><circle cx="-60" cy="-230" r="30" fill="#4a2a19"/><path d="M-92 -240 Q -60 -282 -28 -240 Z" fill="#20263a"/><rect x="-96" y="-206" width="72" height="20" rx="8" fill="#3c4a63"/></g>';
+    var roof = taxi ? '<rect x="-60" y="-326" width="110" height="34" rx="8" fill="#fff6e0" stroke="#17181c" stroke-width="3"/><text x="-5" y="-301" text-anchor="middle" font-family="Instrument Sans" font-weight="700" font-size="22" fill="#17181c">TAXI</text>' : "";
+    var stripe = o.stripe ? '<rect x="-300" y="-118" width="600" height="14" fill="' + RED + '"/>' : "";
+    var door = '<g id="' + id(aid + "-door") + '" opacity="' + (o.door ? 1 : 0) + '"><path d="M-30 -186 L 130 -186 L 130 -70 L -30 -70 Z" fill="#000" opacity=".25"/><path d="M130 -186 L 230 -230 L 230 -110 L 130 -70 Z" fill="' + color + '" stroke="#00000022" stroke-width="2"/></g>';
+    var body = '<g id="' + id(aid + "-body") + '"><path d="M-310 -70 Q -318 -150 -270 -178 L -170 -196 L -110 -286 Q -96 -300 -70 -300 L 150 -300 Q 180 -300 200 -280 L 260 -196 L 300 -186 Q 330 -176 326 -120 L 322 -70 Z" fill="' + color + '"/>' +
+      '<path d="M-160 -196 L -104 -278 L 30 -278 L 30 -196 Z" fill="' + win + '"/><path d="M48 -196 L 48 -278 L 146 -278 Q 162 -278 176 -262 L 228 -196 Z" fill="' + win + '"/>' +
+      drv + stripe + '<rect x="-318" y="-92" width="30" height="16" rx="6" fill="#fff3c4"/><rect x="300" y="-96" width="24" height="18" rx="6" fill="#c33"/>' + roof + door + '</g>';
+    var wheel = function (n, cx) { return '<g id="' + id(aid + "-w" + n) + '"><circle cx="' + cx + '" cy="-62" r="58" fill="#15161a"/><circle cx="' + cx + '" cy="-62" r="26" fill="#9aa0aa"/></g>'; };
+    var inner = '<g transform="scale(' + (o.flip ? -1 : 1) + ' 1)"' + (o.blur ? ' filter="' + u("mx") + '"' : "") + '><ellipse cx="0" cy="-2" rx="330" ry="14" fill="#000" opacity=".25"/>' + body + wheel(1, -185) + wheel(2, 190) + '</g>';
+    return actor("car", aid, x, y, s, inner, o.style);
+  }
+  // L'étiquette de prix : (x, y) = le haut de la ficelle ; le bloc pivote là (se balancer : rotation ±6°).
+  // Le prix est #<id>-txt (changer son texte d'un coup, sous un petit flou ou un roulement de chiffres).
+  function tag(aid, x, y, text, s, o) {
+    o = o || {}; s = s || 1;
+    var inner = '<g transform="rotate(' + (o.rot == null ? -6 : o.rot) + ' 0 -150)"><path d="M0 -150 L 0 -80" stroke="#8a7a60" stroke-width="3"/>' +
+      '<rect x="-185" y="-80" width="370" height="110" rx="22" fill="#fff" stroke="#17181c" stroke-width="5"/><circle cx="-155" cy="-25" r="11" fill="none" stroke="#17181c" stroke-width="5"/>' +
+      '<text id="' + id(aid + "-txt") + '" x="22" y="-6" text-anchor="middle" font-family="Space Mono" font-weight="700" font-size="50" fill="#17181c">' + text + '</text></g>';
+    return actor("tag", aid, x, y + 150 * s, s, inner, o.style);
+  }
+  // Rotation d'une sous-partie SVG autour de son origine (le bras : 0 → -158 = la main levée), par GSAP (svgOrigin
+  // "0 0" = le pivot dessiné). Jamais de onUpdate ni de callback : le moteur cherche les temps (seek) sans événements.
+  function spin(tl, sel, from, to, at, dur, ease) {
+    tl.fromTo(sel, { rotation: from, svgOrigin: "0 0" }, { rotation: to, svgOrigin: "0 0", duration: dur, ease: ease || "expo.out", immediateRender: false }, at);
+  }
+
+  // ---------------------------------------------------------------- texte
+  var BRUSH = '<svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M6 22 C 70 16, 150 13, 230 11 C 300 9, 360 6, 396 3 C 398 6, 396 9, 392 10 C 330 15, 250 19, 170 22 C 110 24, 50 27, 10 28 C 2 28, 1 23, 6 22 Z" fill="#ff3b30"/></svg>';
+  var PUNCT_END = /([  ]?[.,;:!?…»]+)$/, PUNCT_START = /^(«[  ]?)/;
+  // mots : tableau des mots affichés (la ponctuation collée au mot : "Deux.", "« Plateau", "? »")
+  // o : { theme: "dark"|"light"|"onred", box: [i0, i1] (la boîte rouge), stroke: [i0, i1] (le trait de pic), top: 896 }
+  // La ponctuation au bord d'une boîte ou d'un trait reste dehors.
+  function sub(sid, words, o) {
+    o = o || {}; var html = "", n = words.length;
+    function wspan(i, txt) { return '<span class="w" id="' + id(sid + "-w" + i) + '">' + txt + '</span>'; }
+    function group(kind, a, b) {
+      var ws = words.slice(a, b + 1), pre = "", post = "", m, last = ws.length - 1;
+      if ((m = ws[0].match(PUNCT_START))) { pre = m[1]; ws[0] = ws[0].slice(pre.length); }
+      if ((m = ws[last].match(PUNCT_END))) { post = m[1]; ws[last] = ws[last].slice(0, ws[last].length - post.length); }
+      var inner = ws.map(function (t, k) { return wspan(a + k, t + (k < last ? "\u00a0" : "")); }).join("");
+      var deco = kind === "box" ? '<i class="rk-hlbg" id="' + id(sid + "-box") + '"></i>' : BRUSH.replace("<svg ", '<svg id="' + id(sid + "-stroke") + '" ');
+      var g = kind === "box" ? '<span class="rk-hl">' + deco + inner + '</span>' : '<span class="rk-pk">' + inner + deco + '</span>';
+      var before = pre ? '<span class="w" id="' + id(sid + "-w" + a + "p") + '">' + pre + '</span>' : "";
+      var tail = post + (b < n - 1 ? "\u00a0" : "");
+      var after = tail ? '<span class="w" id="' + id(sid + "-w" + b + "q") + '">' + tail + '</span>' : "";
+      return before + g + after;
+    }
+    for (var i = 0; i < n; i++) {
+      var g = o.box && i === o.box[0] ? ["box", o.box] : o.stroke && i === o.stroke[0] ? ["stroke", o.stroke] : null;
+      if (g) { html += group(g[0], g[1][0], g[1][1]); i = g[1][1]; continue; }
+      html += wspan(i, words[i] + (i < n - 1 ? " " : ""));
+    }
+    return '<div class="sub ' + (o.theme || "dark") + '" id="' + id(sid) + '"' + (o.top != null ? ' style="top:' + o.top + 'px"' : '') + '>' + html + '</div>';
+  }
+  // cues : un temps local par mot (même longueur que mots) ; chaque mot paraît 1 image avant son temps,
+  // flou → net en 0,14 s ; la boîte se trace depuis la gauche en 0,16 s au premier mot de la boîte ;
+  // le trait se dessine en 0,4 s au dernier mot du trait.
+  function subIn(tl, sid, cues, o) {
+    o = o || {};
+    var root = document.getElementById(id(sid)); if (!root) return;
+    cues.forEach(function (t, i) {
+      var at = Math.max(0, t - 0.033);
+      var els = [id(sid + "-w" + i), id(sid + "-w" + i + "p"), id(sid + "-w" + i + "q")].map(function (k) { return document.getElementById(k); }).filter(Boolean);
+      tl.fromTo(els, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: .14, ease: "power3.out", immediateRender: false }, at);
+    });
+    if (o.box) tl.fromTo("#" + id(sid + "-box"), { scaleX: 0 }, { scaleX: 1, duration: .16, ease: "power3.out", immediateRender: false }, Math.max(0, cues[o.box[0]] - 0.033));
+    if (o.stroke) tl.fromTo("#" + id(sid + "-stroke"), { scaleX: 0 }, { scaleX: 1, duration: .4, ease: "power2.out", immediateRender: false }, cues[o.stroke[1]] + 0.05);
+  }
+  function subOut(tl, sid, at, dur) {
+    tl.to("#" + id(sid), { opacity: 0, y: -10, duration: dur || .18, ease: "power2.in" }, at);
+  }
+  // bulle de dialogue (HTML) ; o : { tail: "tl"|"tr", mono, style }
+  function bubble(bid, x, y, text, o) {
+    o = o || {};
+    return '<div class="bubble ' + (o.tail || "tl") + (o.mono ? " mono" : "") + '" id="' + id(bid) + '" style="left:' + x + 'px;top:' + y + 'px;' + (o.style || "") + '">' + text + '</div>';
+  }
+  // fond clair du monde de la solution (le téléphone) : halo rouge centré en (hx, hy), trame de points
+  function lightGround(hx, hy) {
+    hx = hx == null ? 960 : hx; hy = hy == null ? 470 : hy;
+    return '<div class="rk-light"></div><div class="rk-light-halo" style="left:' + (hx - 800) + 'px;top:' + (hy - 520) + 'px"></div><div class="rk-light-dots"></div>';
+  }
+  return { RED: RED, TAXI: TAXI, ROAD: ROAD, INK: INK, SKIN: SKIN, id: id, url: u, defs: defs, scene: scene, sky: sky, sun: sun,
+    skyline: skyline, palm: palm, street: street, sign: sign, streetlight: streetlight, headlights: headlights,
+    person: person, car: car, tag: tag, spin: spin, sub: sub, subIn: subIn, subOut: subOut, bubble: bubble, lightGround: lightGround };
+}
+/* ===================== RUE YANGO v1 : fin du JS ===================== */
+
+    (function () {
+      var FID = "11-chauffeur", DUR = 3.77;
+      window.__timelines = window.__timelines || {};
+      var K = rueKit("f11");
+      var RED = K.RED;
+      function r2(v) { return Math.round(v * 100) / 100; }
+
+      /* ---------- le trajet rouge (coordonnées de l'écran du téléphone, 390 × 844) : table de longueur d'arc ---------- */
+      var PTS = [], LEN = [0], N = 200, i, t;
+      for (i = 0; i <= N; i++) { t = i / N; PTS.push([170 - 15 * t, 140 + 160 * t]); }
+      for (i = 1; i <= N; i++) { t = i / N; var qa = (1 - t) * (1 - t), qb = 2 * (1 - t) * t, qc = t * t; PTS.push([qa * 155 + qb * 150 + qc * 200, qa * 300 + qb * 360 + qc * 400]); }
+      for (i = 1; i <= N; i++) { t = i / N; PTS.push([200 + 50 * t, 400 + 120 * t]); }
+      for (i = 1; i < PTS.length; i++) LEN.push(LEN[i - 1] + Math.hypot(PTS[i][0] - PTS[i - 1][0], PTS[i][1] - PTS[i - 1][1]));
+      var LT = LEN[LEN.length - 1], LQ = LEN[2 * N];
+      function along(a) {
+        var lo = 0, hi = LEN.length - 1;
+        while (hi - lo > 1) { var m = (lo + hi) >> 1; if (LEN[m] < a) lo = m; else hi = m; }
+        var f = (a - LEN[lo]) / ((LEN[hi] - LEN[lo]) || 1);
+        return { x: PTS[lo][0] + (PTS[hi][0] - PTS[lo][0]) * f, y: PTS[lo][1] + (PTS[hi][1] - PTS[lo][1]) * f };
+      }
+      // écran du téléphone → monde (phone(745, 98) : left 745, top -10, 430 × 884, ×0,82 autour de son centre (960, 432))
+      function w(sx, sy) { return { x: 960 + (20 + sx - 215) * 0.82, y: 432 + (20 + sy - 442) * 0.82 }; }
+
+      // progression de la voiture (longueur d'arc) : Hermite monotone sur 4 clés, élan de la séquence 10 au départ
+      var KT = [0, 1.70, 3.50, DUR], KA = [LT / 2, LQ + 11.18, LQ + 74.2, LQ + 79];
+      var dl = [], mt = [];
+      for (i = 0; i < 3; i++) dl.push((KA[i + 1] - KA[i]) / (KT[i + 1] - KT[i]));
+      mt = [100, 2 / (1 / dl[0] + 1 / dl[1]), 2 / (1 / dl[1] + 1 / dl[2]), 14];
+      function arcAt(tt) {
+        var k = tt >= KT[2] ? 2 : tt >= KT[1] ? 1 : 0, h = KT[k + 1] - KT[k], s = (tt - KT[k]) / h;
+        var s2 = s * s, s3 = s2 * s;
+        return (2 * s3 - 3 * s2 + 1) * KA[k] + (s3 - 2 * s2 + s) * h * mt[k] + (-2 * s3 + 3 * s2) * KA[k + 1] + (s3 - s2) * h * mt[k + 1];
+      }
+      var STEP = 1 / 15, TS = [];
+      for (i = 0; i * STEP < DUR - 0.01; i++) TS.push(r2(i * STEP * 1000) / 1000);
+      TS.push(DUR);
+      var CP = TS.map(function (tt) { var p = along(arcAt(tt)); return { x: r2(p.x), y: r2(p.y) }; });
+      var car0 = CP[0], car0W = w(car0.x, car0.y);
+
+      /* ---------- le téléphone et l'appli (gen_sf.py : phone(), mapsvg(), la fiche P18 / P19, DRIVER), ids préfixés ---------- */
+      var roads = [["M-20 300 L 420 260", 16], ["M120 -20 L 170 880", 14], ["M-20 620 Q 200 560 420 640", 16], ["M300 -20 L 260 880", 10], ["M-20 450 L 420 470", 10]]
+        .map(function (r) { return '<path d="' + r[0] + '" stroke="#ffffff" stroke-width="' + r[1] + '" fill="none" stroke-linecap="round"/>'; }).join("");
+      var MAP = '<svg width="390" height="844" viewBox="0 0 390 844" style="position:absolute;left:0;top:0"><rect width="390" height="844" fill="#eceff2"/>' +
+        '<path d="M-20 720 Q 140 690 420 760 L 420 880 L -20 880 Z" fill="#cfe3f2"/>' +
+        '<rect x="190" y="320" width="60" height="110" rx="14" fill="#d9ecd6"/><rect x="20" y="480" width="80" height="90" rx="14" fill="#d9ecd6"/>' + roads +
+        '<path d="M170 140 L 155 300 Q 150 360 200 400 L 250 520" stroke="' + RED + '" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<circle id="f11-halo" cx="250" cy="520" r="34" fill="' + RED + '" opacity=".18"/><circle cx="250" cy="520" r="14" fill="' + RED + '" stroke="#fff" stroke-width="5"/>' +
+        '<g id="f11-mcar" transform="translate(' + car0.x + ' ' + car0.y + ')"><g transform="rotate(80)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="#fff" stroke="#17181c" stroke-width="3"/>' +
+        '<rect x="-10" y="-13" width="6" height="26" fill="' + RED + '"/></g></g></svg>';
+      var PRINT = "Arrive dans 3 min".split("").map(function (ch, k) { return '<span class="f11-ch" id="f11-c' + k + '">' + ch + '</span>'; }).join("");
+      var SHEET_A = '<div class="app-sheet" id="f11-sheetA" style="height:220px" data-layout-allow-overlap>' +
+        '<div id="f11-s18"><div style="font:700 30px/1.2 Instrument Sans;color:#17181c">Votre voiture arrive</div><div class="micro" style="margin-top:12px">vers Riviera 2</div></div>' +
+        '<div id="f11-s19">' + PRINT + '</div></div>';
+      var NAME = "Koffi".split("").map(function (ch, k) { return '<span class="f11-ch" id="f11-n' + k + '">' + ch + '</span>'; }).join("");
+      var SHEET_D = '<div class="app-sheet" id="f11-sheetD" style="height:300px" data-layout-allow-overlap><div style="display:flex;gap:18px;align-items:center;margin-bottom:20px">' +
+        '<div id="f11-av" style="width:84px;height:84px;border-radius:50%;background:#8a5a3b;position:relative;overflow:hidden"><div style="position:absolute;left:12px;top:-6px;width:60px;height:34px;border-radius:30px 30px 6px 6px;background:#1a1410"></div></div>' +
+        '<div><div style="font:700 32px/1.1 Instrument Sans;color:#17181c">' + NAME + '</div><div id="f11-cl" style="font:500 22px/1.4 Instrument Sans;color:#55565c">Berline blanche · 4,9 ★</div></div></div>' +
+        '<span class="plate" id="f11-pl">1234 AB 01</span><div class="micro" id="f11-mi" style="margin-top:18px">Arrive dans 3 min</div></div>';
+      var PHONE = '<div class="phone f11-bb" id="f11-phone" style="left:745px;top:-10px;transform:rotate(0deg) scale(0.82);transform-origin:50% 50%;" data-layout-allow-overlap>' +
+        '<div class="phone-screen">' + MAP + SHEET_A + SHEET_D + '</div><div class="phone-island"></div></div>';
+      var PCARD = '<div class="card f11-bb" id="f11-pcard" style="left:1250px;top:560px;width:330px;height:130px;padding:24px;display:flex;align-items:center;gap:16px" data-layout-allow-overlap>' +
+        '<span class="plate" style="font-size:34px">1234 AB 01</span></div>';
+
+      document.getElementById("f11-ground").innerHTML = K.defs() + K.lightGround(960, 470);
+      document.getElementById("f11-main").innerHTML =
+        '<div class="rk-stage" id="f11-stage"><div class="rk-drift" id="f11-drift"><div class="rk-cam" id="f11-cam"><div class="rk-world" id="f11-world">' +
+        PHONE + PCARD + '</div></div></div>' +
+        K.sub("s1", ["Tu", "vois", "ton", "chauffeur", "arriver", "sur", "la", "carte,"], { theme: "light", box: [5, 7] }) +
+        K.sub("s2", ["avec", "son", "nom", "et", "sa", "plaque."], { theme: "light", box: [1, 5] }) +
+        '<div class="rk-grain"></div><div class="rk-vignette"></div></div>';
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- piste caméra ---------- */
+      gsap.set(["#f11-drift", "#f11-cam"], { transformOrigin: "960px 540px" });
+      gsap.set("#f11-world", { transformOrigin: "0px 0px" });
+      function SD(tt) { return 1 + 0.02 * tt / DUR; }                       // dérive : ×1 → ×1,02, linéaire
+      // état caméra : le point W du monde paraît en P à l'échelle totale S (dérive comprise, au temps tt)
+      function cam(S, W, P, tt) { return { s: S / SD(tt), x: (P.x - 960) / S - W.x + 960, y: (P.y - 540) / S - W.y + 540 }; }
+      var A = cam(1.10, car0W, car0W, 0);                                         // handoff_in : ×1,1 vers la voiture
+      var B = cam(1.13, { x: 960, y: 794.4 }, { x: 960, y: 874 }, 0.16);          // le cran se pose : bas du téléphone en y 874
+      var C = cam(1.18, { x: 960, y: 69.6 }, { x: 960, y: 8 }, 2.05);             // cran vers le bas de l'écran : haut en y 8
+      var F = cam(660 / 724.9, { x: 960, y: 432 }, { x: 960, y: 480 }, DUR);     // recul : 660 px de haut, centré en (960, 480)
+
+      tl.fromTo("#f11-drift", { scale: 1 }, { scale: SD(DUR), duration: DUR, ease: "none" }, 0);
+      // 0.00 à 0.16 : le cran de la séquence 10 se pose (flou 4 → 0)
+      tl.fromTo("#f11-cam", { scale: A.s, filter: "blur(4px)" }, { scale: B.s, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 0);
+      tl.fromTo("#f11-world", { x: A.x, y: A.y }, { x: B.x, y: B.y, duration: 0.16, ease: "expo.out" }, 0);
+      // 1.95 à 2.05 : cran vers le bas de l'écran (la fiche du chauffeur va monter)
+      tl.fromTo("#f11-cam", { scale: B.s }, { scale: C.s, duration: 0.1, ease: "expo.inOut", immediateRender: false }, 1.95);
+      tl.fromTo("#f11-world", { x: B.x, y: B.y }, { x: C.x, y: C.y, duration: 0.1, ease: "expo.inOut", immediateRender: false }, 1.95);
+      tl.fromTo("#f11-cam", { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 0.05, ease: "none", immediateRender: false }, 1.95);
+      tl.fromTo("#f11-cam", { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.05, ease: "none", immediateRender: false }, 2.00);
+      // 3.60 à 3.77 : recul power2.in, flou 0 → 10 px : le téléphone rétrécit vers la carte du milieu (séquence 12)
+      tl.fromTo("#f11-cam", { scale: C.s, filter: "blur(0px)" }, { scale: F.s, filter: "blur(10px)", duration: DUR - 3.60, ease: "power2.in", immediateRender: false }, 3.60);
+      tl.fromTo("#f11-world", { x: C.x, y: C.y }, { x: F.x, y: F.y, duration: DUR - 3.60, ease: "power2.in", immediateRender: false }, 3.60);
+
+      /* ---------- la petite voiture sur la carte : elle continue vers ton point ---------- */
+      for (i = 0; i < CP.length - 1; i++) {
+        tl.fromTo("#f11-mcar", { x: CP[i].x, y: CP[i].y }, { x: CP[i + 1].x, y: CP[i + 1].y, duration: r2((TS[i + 1] - TS[i]) * 1000) / 1000, ease: "none", immediateRender: i === 0 }, TS[i]);
+      }
+      // 1.85 « à deux rues » : ton point respire une fois
+      gsap.set("#f11-halo", { svgOrigin: "250 520" });
+      tl.fromTo("#f11-halo", { scale: 1 }, { scale: 1.35, duration: 0.22, ease: "power2.out", immediateRender: false }, 1.85);
+      tl.fromTo("#f11-halo", { scale: 1.35 }, { scale: 1, duration: 0.4, ease: "sine.inOut", immediateRender: false }, 2.07);
+
+      /* ---------- Scène 1 : la fiche « Votre voiture arrive » devient « Arrive dans 3 min » (P19) ---------- */
+      tl.fromTo("#f11-s18", { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -8, filter: "blur(4px)", duration: 0.1, ease: "power2.in", immediateRender: false }, 0.9);
+      tl.fromTo("#f11-sheetA", { y: 0 }, { y: 20, duration: 0.25, ease: "expo.out", immediateRender: false }, 0.95);
+      for (i = 0; i < 17; i++) tl.fromTo("#f11-c" + i, { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, 0.98 + i * 0.02);
+
+      /* ---------- Scène 2 : la fiche du chauffeur monte, Koffi s'imprime, la plaque sort de l'écran ---------- */
+      tl.fromTo("#f11-sheetD", { y: 320, opacity: 1 }, { y: 0, opacity: 1, duration: 0.36, ease: "expo.out", immediateRender: false }, 2.12);
+      tl.fromTo("#f11-av", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.2);
+      for (i = 0; i < 5; i++) tl.fromTo("#f11-n" + i, { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, 2.41 + i * 0.035);
+      tl.fromTo("#f11-cl", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out", immediateRender: false }, 2.66);
+      tl.fromTo("#f11-pl", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.9);
+      tl.fromTo("#f11-mi", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, 3.14);
+      // 3.43 « plaque » : la carte de plaque jaillit de la fiche vers la droite (×0,6 → ×1, rotation 0 → 3°)
+      var PL = w(148, 718), PCX = 1250 + 165, PCY = 560 + 65;
+      tl.fromTo("#f11-pcard", { x: r2(PL.x - PCX), y: r2(PL.y - PCY), scale: 0.6, rotation: 0, filter: "blur(6px)" },
+        { x: 0, y: 0, scale: 1, rotation: 3, filter: "blur(0px)", duration: 0.16, ease: "expo.out", immediateRender: false }, 3.4);
+      tl.fromTo("#f11-pcard", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", immediateRender: false }, 3.4);
+      // 3.56 : sous le recul, la carte de plaque rentre vers le centre et s'efface (sortie plus rapide que l'entrée)
+      tl.fromTo("#f11-pcard", { x: 0, scale: 1, opacity: 1, filter: "blur(0px)" }, { x: -90, scale: 0.8, opacity: 0, filter: "blur(8px)", duration: 0.13, ease: "power2.in", immediateRender: false }, 3.56);
+
+      /* ---------- sous-titres (kit) ---------- */
+      K.subIn(tl, "s1", [0.22, 0.39, 0.51, 0.73, 1.03, 1.46, 1.61, 1.89], { box: [5, 7] });
+      K.subOut(tl, "s1", 1.98, 0.12);
+      K.subIn(tl, "s2", [2.14, 2.44, 2.61, 2.92, 3.21, 3.43], { box: [1, 5] });
+      K.subOut(tl, "s2", 3.58, 0.12);
+
+      tl.set({}, {}, DUR);
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

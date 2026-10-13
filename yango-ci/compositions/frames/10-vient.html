@@ -1,0 +1,431 @@
+<template>
+<style>
+/* ===================== RUE YANGO v1 : CSS (début du bloc à copier) ===================== */
+@font-face { font-family: "Instrument Sans"; font-weight: 400; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 500; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 600; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-weight: 700; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); }
+.rk-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; }
+.rk-drift, .rk-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+.rk-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.rk-scene { position: absolute; left: 0; top: 0; display: block; overflow: visible; }
+.rk-actor { position: absolute; }
+.rk-actor > svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.rk-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.rk-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 58%, rgba(0,0,0,.28) 100%); }
+.rk-light { position: absolute; left: -40px; top: -40px; width: 2000px; height: 1160px; background: #f6f5f2; }
+.rk-light-halo { position: absolute; width: 1600px; height: 1040px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,59,48,.10), rgba(255,59,48,0)); }
+.rk-light-dots { position: absolute; left: -40px; top: -40px; width: 2000px; height: 1160px; background-image: radial-gradient(rgba(23,24,28,.06) 1.3px, transparent 1.8px); background-size: 36px 36px; }
+/* sous-titre : en bas au centre, haut à y 896, mot par mot */
+.sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+  letter-spacing: -.015em; white-space: nowrap; }
+.sub.dark { color: #f4f2ee; text-shadow: 0 2px 18px rgba(10,10,14,.95), 0 0 3px rgba(10,10,14,.8); }
+.sub.light { color: #17181c; text-shadow: 0 2px 16px rgba(246,245,242,.95), 0 0 2px rgba(246,245,242,.9); }
+.sub.onred { color: #ffffff; text-shadow: 0 2px 14px rgba(120,10,0,.5); }
+.sub .w { display: inline-block; opacity: 0; }
+.rk-hl { position: relative; display: inline-block; isolation: isolate; color: #fff; text-shadow: none; }
+.rk-hlbg { position: absolute; left: -.14em; right: -.14em; top: .07em; bottom: .02em; background: #ff3b30; border-radius: 3px; z-index: -1; transform-origin: 0 50%; transform: scaleX(0); }
+.sub.onred .rk-hl { color: #ff3b30; }
+.sub.onred .rk-hlbg { background: #fff; }
+.rk-pk { position: relative; display: inline-block; }
+.rk-pk > svg { position: absolute; left: -2%; width: 104%; bottom: -.2em; height: .3em; overflow: visible; transform-origin: 0 50%; transform: scaleX(0); }
+.sub.onred .rk-pk > svg path { fill: #fff; }
+.type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans"; letter-spacing: -.025em; color: #f4f2ee; white-space: nowrap; }
+/* bulles */
+.bubble { position: absolute; padding: 22px 34px; border-radius: 30px; background: #fff; color: #17181c; font: 700 44px/1 "Instrument Sans";
+  box-shadow: 0 18px 40px rgba(20,15,10,.25); white-space: nowrap; }
+.bubble::after { content: ""; position: absolute; width: 34px; height: 34px; background: #fff; bottom: -12px; transform: rotate(45deg); border-radius: 4px; }
+.bubble.tl::after { left: 40px; } .bubble.tr::after { right: 40px; }
+.bubble.mono { font: 700 44px/1 "Space Mono", monospace; }
+/* téléphone et appli (GÉNÉRIQUE, PROVISOIRE) */
+.phone { position: absolute; width: 430px; height: 884px; border-radius: 64px; background: #111216; box-shadow: 0 50px 110px rgba(30,20,10,.28), inset 0 0 0 3px #2c2e35; }
+.phone-screen { position: absolute; left: 20px; top: 20px; width: 390px; height: 844px; border-radius: 46px; overflow: hidden; background: #eef0f2; }
+.phone-island { position: absolute; left: 155px; top: 14px; width: 120px; height: 34px; border-radius: 20px; background: #000; z-index: 5; }
+.app-search { position: absolute; left: 18px; right: 18px; top: 70px; height: 70px; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.10);
+  display: flex; align-items: center; gap: 14px; padding: 0 20px; font: 600 24px/1 "Instrument Sans"; color: #17181c; }
+.app-dot { width: 14px; height: 14px; border-radius: 50%; background: #ff3b30; flex: none; }
+.app-sheet { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 28px 28px 0 0; background: #fff; box-shadow: 0 -10px 30px rgba(0,0,0,.08); padding: 26px 24px 30px; }
+.app-btn { height: 74px; border-radius: 18px; background: #ff3b30; color: #fff; font: 700 26px/74px "Instrument Sans"; text-align: center; }
+.app-price { font: 700 40px/1 "Space Mono", monospace; color: #17181c; }
+.micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: #8d8a84; }
+.card { position: absolute; border-radius: 22px; background: #fff; box-shadow: 0 30px 70px rgba(30,20,10,.16), 0 2px 6px rgba(30,20,10,.08); }
+.plate { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 3px solid #17181c; font: 700 26px/1 "Space Mono", monospace; letter-spacing: .06em; background: #fff; }
+.cta-btn { position: absolute; height: 120px; border-radius: 60px; background: #fff; color: #ff3b30; font: 700 44px/120px "Instrument Sans"; text-align: center; box-shadow: 0 30px 60px rgba(120,10,0,.35); }
+/* ===================== RUE YANGO v1 : fin du CSS ===================== */
+/* ===================== 10-vient (préfixe f10) ===================== */
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+.f10-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f10-defs { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+/* la petite voiture de la carte : un point (0, 0) = son centre, pivot de sa rotation */
+#f10-car { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0; opacity: 0; z-index: 2; }
+#f10-car > svg { position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; overflow: visible; display: block; }
+/* la fiche « Votre voiture arrive » : sous l'écran au départ */
+#f10-sheet { opacity: 0; z-index: 3; }
+#f10-sheet-t, #f10-sheet-m { opacity: 0; }
+</style>
+<div id="root" data-composition-id="10-vient" data-width="1920" data-height="1080" data-duration="2.35">
+  <!-- dégradés et filtres préfixés du kit (K.defs) -->
+  <div id="f10-defs"></div>
+  <!-- sol clair du monde de la solution (K.lightGround) -->
+  <div id="f10-ground" class="clip f10-layer" data-start="0" data-duration="2.35" data-track-index="0"></div>
+  <!-- caméra : dérive > cran > monde ; le téléphone de P18 et sa carte -->
+  <div id="f10-stage" class="clip rk-stage" data-start="0" data-duration="2.35" data-track-index="1" data-layout-allow-overlap>
+    <div class="rk-drift" id="f10-drift"><div class="rk-cam" id="f10-cam"><div class="rk-world" id="f10-world"></div></div></div>
+  </div>
+  <!-- le sous-titre, hors caméra -->
+  <div id="f10-subl" class="clip f10-layer" data-start="0" data-duration="2.35" data-track-index="2" data-layout-allow-overlap></div>
+  <!-- grain et vignette -->
+  <div id="f10-fx" class="clip f10-layer" data-start="0" data-duration="2.35" data-track-index="3" data-layout-allow-overlap><div class="rk-grain"></div><div class="rk-vignette"></div></div>
+</div>
+<script src="assets/js/gsap.min.js"></script>
+<script>
+/* ===================== RUE YANGO v1 : JS (début du bloc à copier) ===================== */
+function rueKit(P) {
+  var RED = "#ff3b30", TAXI = "#f28c28", ROAD = "#3a3b42", INK = "#17181c", SKIN = ["#6b3f26", "#8a5a3b", "#4a2a19"];
+  function id(n) { return P + "-" + n; }
+  function u(n) { return "url(#" + id(n) + ")"; }
+  function r2(v) { return Math.round(v * 100) / 100; }
+
+  // dégradés et filtres de la séquence : à poser UNE fois en tête de la racine
+  function defs() {
+    return '<svg width="0" height="0" style="position:absolute;left:0;top:0" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id("dawn") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3c98f"/><stop offset=".55" stop-color="#f9e2bd"/><stop offset="1" stop-color="#fdf0dc"/></linearGradient>' +
+      '<linearGradient id="' + id("noon") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9b8"/><stop offset="1" stop-color="#fff7e6"/></linearGradient>' +
+      '<linearGradient id="' + id("dusk") + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f1c33"/><stop offset=".6" stop-color="#4a3554"/><stop offset="1" stop-color="#e3784c"/></linearGradient>' +
+      '<radialGradient id="' + id("sunglow") + '"><stop offset="0" stop-color="#fff6d8"/><stop offset=".35" stop-color="#ffe2a0" stop-opacity=".8"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="' + id("lamp") + '"><stop offset="0" stop-color="#ffd98a" stop-opacity=".75"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="' + id("redglow") + '"><stop offset="0" stop-color="#ff8a80" stop-opacity=".9"/><stop offset=".4" stop-color="#ff3b30" stop-opacity=".35"/><stop offset="1" stop-color="#ff3b30" stop-opacity="0"/></radialGradient>' +
+      '<filter id="' + id("b4") + '"><feGaussianBlur stdDeviation="4"/></filter>' +
+      '<filter id="' + id("b10") + '"><feGaussianBlur stdDeviation="10"/></filter>' +
+      '<filter id="' + id("mx") + '" x="-20%" width="140%"><feGaussianBlur stdDeviation="22 2"/></filter>' +
+      '</defs></svg>';
+  }
+
+  // ---------------------------------------------------------------- décor (une couche SVG fixe)
+  function scene(w, inner, sid) {
+    return '<svg class="rk-scene"' + (sid ? ' id="' + id(sid) + '"' : '') + ' width="' + w + '" height="1080" viewBox="0 0 ' + w + ' 1080">' + inner + '</svg>';
+  }
+  function sky(kind, w) { return '<rect width="' + (w || 1920) + '" height="1080" fill="' + u(kind) + '"/>'; }
+  function sun(x, y, r) { r = r || 70; return '<circle cx="' + x + '" cy="' + y + '" r="' + r * 4 + '" fill="' + u("sunglow") + '"/><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#fff4d0"/>'; }
+  function skyline(y, op, col, seed, w) {
+    y = y == null ? 720 : y; op = op == null ? .32 : op; col = col || "#5d6a8a"; seed = seed || 1; w = w || 1920;
+    var out = "", x = -40, k = seed;
+    while (x < w + 40) {
+      var bw = 70 + (k * 37) % 90, bh = 120 + (k * 53) % 260;
+      out += '<rect x="' + x + '" y="' + (y - bh) + '" width="' + bw + '" height="' + bh + '" fill="' + col + '" opacity="' + op + '"/>';
+      for (var wy = y - bh + 18; wy < y - 10; wy += 26)
+        out += '<rect x="' + (x + 12) + '" y="' + wy + '" width="' + (bw - 24) + '" height="6" fill="#fff" opacity="' + (op * .35).toFixed(2) + '"/>';
+      x += bw + 18 + (k * 11) % 40; k += 1;
+    }
+    return out;
+  }
+  function palm(x, y, s, col, trunk) {
+    s = s || 1; col = col || "#2f6b46"; trunk = trunk || "#7a5a3a";
+    var leaves = [0.25, 0.9, 1.6, 2.25, 2.9, 3.6].map(function (a) {
+      var c = Math.cos(a), sn = Math.sin(a);
+      return '<path d="M0 -330 Q ' + Math.round(120 * c) + ' ' + Math.round(-330 - 90 * sn - 40) + ' ' + Math.round(230 * c) + ' ' + Math.round(-330 + 60 - 120 * sn) +
+        ' Q ' + Math.round(110 * c) + ' ' + Math.round(-330 - 20 * sn) + ' 0 -330 Z" fill="' + col + '"/>';
+    }).join("");
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-10 0 Q 12 -170 -4 -335 L 10 -335 Q 30 -170 14 0 Z" fill="' + trunk + '"/>' + leaves + '</g>';
+  }
+  // o : { w: 1920, walk_y: 720, road_y: 790, dashes: true, night: false }
+  function street(o) {
+    o = o || {}; var w = o.w || 1920, wy = o.walk_y || 720, ry = o.road_y || 790, night = !!o.night;
+    var walk = night ? "#4b4350" : "#c9b28f", road = night ? "#26262e" : ROAD, d = "";
+    if (o.dashes !== false) for (var x = -60; x < w + 60; x += 240)
+      d += '<rect x="' + x + '" y="' + (ry + 62) + '" width="120" height="10" rx="5" fill="#f2efe6" opacity="' + (night ? .45 : .8) + '"/>';
+    return '<rect x="0" y="' + wy + '" width="' + w + '" height="' + (ry - wy) + '" fill="' + walk + '"/>' +
+      '<rect x="0" y="' + (ry - 8) + '" width="' + w + '" height="10" fill="' + (night ? "#6b6070" : "#efe4cf") + '"/>' +
+      '<rect x="0" y="' + ry + '" width="' + w + '" height="' + (1080 - ry) + '" fill="' + road + '"/>' + d;
+  }
+  // panneau vert sur poteau ; sid optionnel pour l'animer (il « se plante » : y depuis -40, scale 1,3 → 1)
+  function sign(x, y, text, s, sid) {
+    s = s || 1; var w = 40 + text.length * 24;
+    return '<g' + (sid ? ' id="' + id(sid) + '"' : '') + '><g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><rect x="-7" y="-420" width="14" height="420" fill="#8b8f98"/>' +
+      '<rect x="' + (-w / 2) + '" y="-470" width="' + w + '" height="90" rx="10" fill="#1f6b4a" stroke="#fff" stroke-width="5"/>' +
+      '<text x="0" y="-410" text-anchor="middle" font-family="Instrument Sans" font-weight="700" font-size="44" fill="#fff">' + text + '</text></g></g>';
+  }
+  function streetlight(x, y, h, on) {
+    h = h || 520; on = on !== false;
+    var glow = on ? '<ellipse cx="' + (x - 70) + '" cy="' + (y - 40) + '" rx="260" ry="90" fill="' + u("lamp") + '"/><path d="M' + (x - 92) + ' ' + (y - h + 30) + ' L ' + (x - 260) + ' ' + y + ' L ' + (x + 80) + ' ' + y + ' Z" fill="#ffd98a" opacity=".12"/>' : "";
+    return glow + '<rect x="' + (x - 6) + '" y="' + (y - h) + '" width="12" height="' + h + '" fill="#2a2a33"/>' +
+      '<path d="M' + x + ' ' + (y - h) + ' Q ' + x + ' ' + (y - h - 30) + ' ' + (x - 90) + ' ' + (y - h - 24) + '" stroke="#2a2a33" stroke-width="10" fill="none"/>' +
+      '<ellipse cx="' + (x - 92) + '" cy="' + (y - h - 16) + '" rx="30" ry="12" fill="' + (on ? "#ffe7a8" : "#555") + '"/>';
+  }
+  // traînées de phares (soir) ; chaque traînée est un <rect> que l'on peut filer en x
+  function headlights(y, n, w) {
+    n = n || 5; var out = "";
+    for (var k = 0; k < n; k++) {
+      var x = 100 + k * 400 + (k * 37) % 120;
+      out += '<rect x="' + x + '" y="' + (y + (k % 2) * 40) + '" width="' + (300 + (k * 61) % 200) + '" height="10" rx="5" fill="#fff2c2" opacity=".55" filter="' + u("b4") + '"/>';
+      out += '<rect x="' + (x + 80) + '" y="' + (y + 70 + (k % 2) * 40) + '" width="' + (200 + (k * 43) % 160) + '" height="8" rx="4" fill="#ff5a4a" opacity=".45" filter="' + u("b4") + '"/>';
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------- acteurs (un bloc HTML chacun)
+  // boîte locale du dessin, en unités du dessin à l'échelle 1 : [x0, y0, x1, y1] ; l'origine (0, 0) = le point d'ancrage
+  var BOX = { person: [-130, -530, 130, 20], car: [-345, -345, 345, 20], tag: [-200, -160, 200, 45] };
+  function actor(kind, aid, x, y, s, inner, extra) {
+    var b = BOX[kind], w = (b[2] - b[0]) * s, h = (b[3] - b[1]) * s, ox = -b[0] * s, oy = -b[1] * s;
+    if (kind === "tag") oy = (-150 - b[1]) * s;   // l'étiquette pivote au haut de sa ficelle
+    var ay = kind === "tag" ? y - 150 * s : y;
+    return '<div id="' + id(aid) + '" class="rk-actor" style="left:' + r2(x - ox) + 'px;top:' + r2(ay - oy) + 'px;width:' + r2(w) + 'px;height:' + r2(h) +
+      'px;transform-origin:' + r2(ox) + 'px ' + r2(oy) + 'px;' + (extra || "") + '"><svg viewBox="' + b[0] + ' ' + b[1] + ' ' + (b[2] - b[0]) + ' ' + (b[3] - b[1]) + '">' + inner + '</svg></div>';
+  }
+  // Le héros et les passants. (x, y) = entre les pieds. o : { skin: 0|1|2, shirt, trousers, tie (couleur ou null),
+  //   handUp, feet: "shoes"|"flip", bag: null|"case"|"back", lean (degrés), hair, dress (couleur du pagne), flip, eyes }
+  // Sous-parties : #<id>-arm (bras droit, pivot à l'épaule : K.spin de 0 à -158 pour lever la main),
+  //   #<id>-tie (la cravate), #<id>-shoes et #<id>-flips (chaussures / claquettes, échanger par opacity),
+  //   #<id>-head (tête), #<id>-eyes, #<id>-body (tout le personnage, pour le pencher).
+  function person(aid, x, y, s, o) {
+    o = o || {}; s = s || 1;
+    var sk = SKIN[o.skin || 0], shirt = o.shirt || "#f4f2ee", tr = o.trousers || "#2a2d3a", hair = o.hair || "#1a1410";
+    var tie = o.tie === undefined ? "#b8432f" : o.tie, flipFeet = o.feet === "flip";
+    var legs = !o.dress ? '<rect x="-40" y="-200" width="34" height="200" rx="12" fill="' + tr + '"/><rect x="6" y="-200" width="34" height="200" rx="12" fill="' + tr + '"/>'
+      : '<path d="M-70 -230 L 70 -230 L 88 -10 L -88 -10 Z" fill="' + o.dress + '"/><rect x="-34" y="-12" width="22" height="12" fill="' + sk + '"/><rect x="12" y="-12" width="22" height="12" fill="' + sk + '"/>';
+    var shoes = '<g id="' + id(aid + "-shoes") + '" opacity="' + (flipFeet ? 0 : 1) + '"><ellipse cx="-24" cy="-4" rx="30" ry="12" fill="#111"/><ellipse cx="24" cy="-4" rx="30" ry="12" fill="#111"/></g>';
+    var flips = '<g id="' + id(aid + "-flips") + '" opacity="' + (flipFeet ? 1 : 0) + '"><ellipse cx="-24" cy="-6" rx="24" ry="10" fill="' + sk + '"/><ellipse cx="24" cy="-6" rx="24" ry="10" fill="' + sk + '"/>' +
+      '<rect x="-52" y="-2" width="56" height="7" rx="3" fill="#2f8de4"/><rect x="-4" y="-2" width="56" height="7" rx="3" fill="#2f8de4"/>' +
+      '<path d="M-36 -8 L -24 -14 L -12 -8" stroke="#2f8de4" stroke-width="5" fill="none"/><path d="M12 -8 L 24 -14 L 36 -8" stroke="#2f8de4" stroke-width="5" fill="none"/></g>';
+    var torso = '<rect x="-68" y="-390" width="136" height="205" rx="46" fill="' + shirt + '"/>';
+    var tieS = tie ? '<path id="' + id(aid + "-tie") + '" d="M-9 -372 L 9 -372 L 14 -260 L 0 -240 L -14 -260 Z" fill="' + tie + '"/>' : "";
+    var armL = '<rect x="-92" y="-376" width="32" height="170" rx="16" fill="' + shirt + '"/><circle cx="-76" cy="-200" r="17" fill="' + sk + '"/>';
+    var armR = '<g transform="translate(76 -362)"><g id="' + id(aid + "-arm") + '" transform="rotate(' + (o.handUp ? -158 : 0) + ')"><rect x="-16" y="-14" width="32" height="170" rx="16" fill="' + shirt + '"/><circle cx="0" cy="162" r="17" fill="' + sk + '"/></g></g>';
+    var bag = o.bag === "case" ? '<rect x="-112" y="-206" width="76" height="58" rx="8" fill="#5a3a22"/><rect x="-88" y="-216" width="28" height="12" rx="5" fill="none" stroke="#5a3a22" stroke-width="5"/>'
+      : o.bag === "back" ? '<rect x="-96" y="-380" width="40" height="150" rx="16" fill="#2f6bd4"/>' : "";
+    var neck = '<rect x="-14" y="-412" width="28" height="30" fill="' + sk + '"/>';
+    var eyes = o.eyes === false ? "" : '<g id="' + id(aid + "-eyes") + '"><circle cx="-16" cy="-456" r="5" fill="#1a1410"/><circle cx="16" cy="-456" r="5" fill="#1a1410"/></g>';
+    var head = '<g id="' + id(aid + "-head") + '"><circle cx="0" cy="-458" r="50" fill="' + sk + '"/><path d="M-50 -470 Q -48 -520 0 -514 Q 48 -520 50 -470 Q 40 -496 0 -494 Q -40 -496 -50 -470 Z" fill="' + hair + '"/>' + eyes + '</g>';
+    var inner = '<g id="' + id(aid + "-body") + '"><g transform="scale(' + (o.flip ? -1 : 1) + ' 1) rotate(' + (o.lean || 0) + ')">' + bag + legs + shoes + flips + armL + torso + tieS + armR + neck + head + '</g></g>';
+    return actor("person", aid, x, y, s, inner, o.style);
+  }
+  // Le taxi orange (taxi: true) ou la voiture blanche Yango (color "#f7f7f7", taxi: false, stripe: true).
+  // (x, y) = le sol sous le milieu de la voiture. o : { color, taxi, driver, flip, stripe, door (portière ouverte), night }
+  // Sous-parties : #<id>-body (la caisse : y +6 puis 0 pour le coup de frein), #<id>-drv (le chauffeur),
+  //   #<id>-door (la portière ouverte, opacity), #<id>-w1 et #<id>-w2 (les roues).
+  // Filé : animer le bloc #<id> en x avec filter "blur(8px)" et scaleX 1,05 ; ou poser o.blur pour le flou directionnel.
+  function car(aid, x, y, s, o) {
+    o = o || {}; s = s || 1;
+    var color = o.color || TAXI, taxi = o.taxi !== false, win = o.night ? "#151a24" : "#253042";
+    var drv = o.driver === false ? "" : '<g id="' + id(aid + "-drv") + '"><circle cx="-60" cy="-230" r="30" fill="#4a2a19"/><path d="M-92 -240 Q -60 -282 -28 -240 Z" fill="#20263a"/><rect x="-96" y="-206" width="72" height="20" rx="8" fill="#3c4a63"/></g>';
+    var roof = taxi ? '<rect x="-60" y="-326" width="110" height="34" rx="8" fill="#fff6e0" stroke="#17181c" stroke-width="3"/><text x="-5" y="-301" text-anchor="middle" font-family="Instrument Sans" font-weight="700" font-size="22" fill="#17181c">TAXI</text>' : "";
+    var stripe = o.stripe ? '<rect x="-300" y="-118" width="600" height="14" fill="' + RED + '"/>' : "";
+    var door = '<g id="' + id(aid + "-door") + '" opacity="' + (o.door ? 1 : 0) + '"><path d="M-30 -186 L 130 -186 L 130 -70 L -30 -70 Z" fill="#000" opacity=".25"/><path d="M130 -186 L 230 -230 L 230 -110 L 130 -70 Z" fill="' + color + '" stroke="#00000022" stroke-width="2"/></g>';
+    var body = '<g id="' + id(aid + "-body") + '"><path d="M-310 -70 Q -318 -150 -270 -178 L -170 -196 L -110 -286 Q -96 -300 -70 -300 L 150 -300 Q 180 -300 200 -280 L 260 -196 L 300 -186 Q 330 -176 326 -120 L 322 -70 Z" fill="' + color + '"/>' +
+      '<path d="M-160 -196 L -104 -278 L 30 -278 L 30 -196 Z" fill="' + win + '"/><path d="M48 -196 L 48 -278 L 146 -278 Q 162 -278 176 -262 L 228 -196 Z" fill="' + win + '"/>' +
+      drv + stripe + '<rect x="-318" y="-92" width="30" height="16" rx="6" fill="#fff3c4"/><rect x="300" y="-96" width="24" height="18" rx="6" fill="#c33"/>' + roof + door + '</g>';
+    var wheel = function (n, cx) { return '<g id="' + id(aid + "-w" + n) + '"><circle cx="' + cx + '" cy="-62" r="58" fill="#15161a"/><circle cx="' + cx + '" cy="-62" r="26" fill="#9aa0aa"/></g>'; };
+    var inner = '<g transform="scale(' + (o.flip ? -1 : 1) + ' 1)"' + (o.blur ? ' filter="' + u("mx") + '"' : "") + '><ellipse cx="0" cy="-2" rx="330" ry="14" fill="#000" opacity=".25"/>' + body + wheel(1, -185) + wheel(2, 190) + '</g>';
+    return actor("car", aid, x, y, s, inner, o.style);
+  }
+  // L'étiquette de prix : (x, y) = le haut de la ficelle ; le bloc pivote là (se balancer : rotation ±6°).
+  // Le prix est #<id>-txt (changer son texte d'un coup, sous un petit flou ou un roulement de chiffres).
+  function tag(aid, x, y, text, s, o) {
+    o = o || {}; s = s || 1;
+    var inner = '<g transform="rotate(' + (o.rot == null ? -6 : o.rot) + ' 0 -150)"><path d="M0 -150 L 0 -80" stroke="#8a7a60" stroke-width="3"/>' +
+      '<rect x="-185" y="-80" width="370" height="110" rx="22" fill="#fff" stroke="#17181c" stroke-width="5"/><circle cx="-155" cy="-25" r="11" fill="none" stroke="#17181c" stroke-width="5"/>' +
+      '<text id="' + id(aid + "-txt") + '" x="22" y="-6" text-anchor="middle" font-family="Space Mono" font-weight="700" font-size="50" fill="#17181c">' + text + '</text></g>';
+    return actor("tag", aid, x, y + 150 * s, s, inner, o.style);
+  }
+  // Rotation d'une sous-partie SVG autour de son origine (le bras : 0 → -158 = la main levée), par GSAP (svgOrigin
+  // "0 0" = le pivot dessiné). Jamais de onUpdate ni de callback : le moteur cherche les temps (seek) sans événements.
+  function spin(tl, sel, from, to, at, dur, ease) {
+    tl.fromTo(sel, { rotation: from, svgOrigin: "0 0" }, { rotation: to, svgOrigin: "0 0", duration: dur, ease: ease || "expo.out", immediateRender: false }, at);
+  }
+
+  // ---------------------------------------------------------------- texte
+  var BRUSH = '<svg viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M6 22 C 70 16, 150 13, 230 11 C 300 9, 360 6, 396 3 C 398 6, 396 9, 392 10 C 330 15, 250 19, 170 22 C 110 24, 50 27, 10 28 C 2 28, 1 23, 6 22 Z" fill="#ff3b30"/></svg>';
+  var PUNCT_END = /([  ]?[.,;:!?…»]+)$/, PUNCT_START = /^(«[  ]?)/;
+  // mots : tableau des mots affichés (la ponctuation collée au mot : "Deux.", "« Plateau", "? »")
+  // o : { theme: "dark"|"light"|"onred", box: [i0, i1] (la boîte rouge), stroke: [i0, i1] (le trait de pic), top: 896 }
+  // La ponctuation au bord d'une boîte ou d'un trait reste dehors.
+  function sub(sid, words, o) {
+    o = o || {}; var html = "", n = words.length;
+    function wspan(i, txt) { return '<span class="w" id="' + id(sid + "-w" + i) + '">' + txt + '</span>'; }
+    function group(kind, a, b) {
+      var ws = words.slice(a, b + 1), pre = "", post = "", m, last = ws.length - 1;
+      if ((m = ws[0].match(PUNCT_START))) { pre = m[1]; ws[0] = ws[0].slice(pre.length); }
+      if ((m = ws[last].match(PUNCT_END))) { post = m[1]; ws[last] = ws[last].slice(0, ws[last].length - post.length); }
+      var inner = ws.map(function (t, k) { return wspan(a + k, t + (k < last ? "\u00a0" : "")); }).join("");
+      var deco = kind === "box" ? '<i class="rk-hlbg" id="' + id(sid + "-box") + '"></i>' : BRUSH.replace("<svg ", '<svg id="' + id(sid + "-stroke") + '" ');
+      var g = kind === "box" ? '<span class="rk-hl">' + deco + inner + '</span>' : '<span class="rk-pk">' + inner + deco + '</span>';
+      var before = pre ? '<span class="w" id="' + id(sid + "-w" + a + "p") + '">' + pre + '</span>' : "";
+      var tail = post + (b < n - 1 ? "\u00a0" : "");
+      var after = tail ? '<span class="w" id="' + id(sid + "-w" + b + "q") + '">' + tail + '</span>' : "";
+      return before + g + after;
+    }
+    for (var i = 0; i < n; i++) {
+      var g = o.box && i === o.box[0] ? ["box", o.box] : o.stroke && i === o.stroke[0] ? ["stroke", o.stroke] : null;
+      if (g) { html += group(g[0], g[1][0], g[1][1]); i = g[1][1]; continue; }
+      html += wspan(i, words[i] + (i < n - 1 ? " " : ""));
+    }
+    return '<div class="sub ' + (o.theme || "dark") + '" id="' + id(sid) + '"' + (o.top != null ? ' style="top:' + o.top + 'px"' : '') + '>' + html + '</div>';
+  }
+  // cues : un temps local par mot (même longueur que mots) ; chaque mot paraît 1 image avant son temps,
+  // flou → net en 0,14 s ; la boîte se trace depuis la gauche en 0,16 s au premier mot de la boîte ;
+  // le trait se dessine en 0,4 s au dernier mot du trait.
+  function subIn(tl, sid, cues, o) {
+    o = o || {};
+    var root = document.getElementById(id(sid)); if (!root) return;
+    cues.forEach(function (t, i) {
+      var at = Math.max(0, t - 0.033);
+      var els = [id(sid + "-w" + i), id(sid + "-w" + i + "p"), id(sid + "-w" + i + "q")].map(function (k) { return document.getElementById(k); }).filter(Boolean);
+      tl.fromTo(els, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: .14, ease: "power3.out", immediateRender: false }, at);
+    });
+    if (o.box) tl.fromTo("#" + id(sid + "-box"), { scaleX: 0 }, { scaleX: 1, duration: .16, ease: "power3.out", immediateRender: false }, Math.max(0, cues[o.box[0]] - 0.033));
+    if (o.stroke) tl.fromTo("#" + id(sid + "-stroke"), { scaleX: 0 }, { scaleX: 1, duration: .4, ease: "power2.out", immediateRender: false }, cues[o.stroke[1]] + 0.05);
+  }
+  function subOut(tl, sid, at, dur) {
+    tl.to("#" + id(sid), { opacity: 0, y: -10, duration: dur || .18, ease: "power2.in" }, at);
+  }
+  // bulle de dialogue (HTML) ; o : { tail: "tl"|"tr", mono, style }
+  function bubble(bid, x, y, text, o) {
+    o = o || {};
+    return '<div class="bubble ' + (o.tail || "tl") + (o.mono ? " mono" : "") + '" id="' + id(bid) + '" style="left:' + x + 'px;top:' + y + 'px;' + (o.style || "") + '">' + text + '</div>';
+  }
+  // fond clair du monde de la solution (le téléphone) : halo rouge centré en (hx, hy), trame de points
+  function lightGround(hx, hy) {
+    hx = hx == null ? 960 : hx; hy = hy == null ? 470 : hy;
+    return '<div class="rk-light"></div><div class="rk-light-halo" style="left:' + (hx - 800) + 'px;top:' + (hy - 520) + 'px"></div><div class="rk-light-dots"></div>';
+  }
+  return { RED: RED, TAXI: TAXI, ROAD: ROAD, INK: INK, SKIN: SKIN, id: id, url: u, defs: defs, scene: scene, sky: sky, sun: sun,
+    skyline: skyline, palm: palm, street: street, sign: sign, streetlight: streetlight, headlights: headlights,
+    person: person, car: car, tag: tag, spin: spin, sub: sub, subIn: subIn, subOut: subOut, bubble: bubble, lightGround: lightGround };
+}
+/* ===================== RUE YANGO v1 : fin du JS ===================== */
+
+/* ===================== 10-vient : la voiture vient à toi (P18) ===================== */
+(function () {
+  var FID = "10-vient", DUR = 2.35;
+  var K = rueKit("f10");
+  function el(n) { return document.getElementById(K.id(n)); }
+
+  /* ---- 1. le DOM, construit d'un seul passage ---------------------------------------------------------------- */
+  // carte de P18 : gen_sf.mapsvg(route=True, pin=(250, 520)) ; la voiture (car_at) en sort et devient un acteur animé
+  var PIN = [250, 520];
+  var ROUTE_D = "M170 140 L 155 300 Q 150 360 200 400 L " + PIN[0] + " " + PIN[1];
+  var RING_C = Math.round(2 * Math.PI * 34 * 100) / 100;                 // longueur mesurée du cercle de l'onde
+  var roads = [["M-20 300 L 420 260", 16], ["M120 -20 L 170 880", 14], ["M-20 620 Q 200 560 420 640", 16], ["M300 -20 L 260 880", 10], ["M-20 450 L 420 470", 10]]
+    .map(function (r) { return '<path d="' + r[0] + '" stroke="#ffffff" stroke-width="' + r[1] + '" fill="none" stroke-linecap="round"/>'; }).join("");
+  var water = '<path d="M-20 720 Q 140 690 420 760 L 420 880 L -20 880 Z" fill="#cfe3f2"/>';
+  var parks = '<rect x="190" y="320" width="60" height="110" rx="14" fill="#d9ecd6"/><rect x="20" y="480" width="80" height="90" rx="14" fill="#d9ecd6"/>';
+  var route = '<path id="f10-route" d="' + ROUTE_D + '" stroke="#ff3b30" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+  var ring = '<g id="f10-ring" style="opacity:0" data-layout-allow-overlap><circle id="f10-ring-c" cx="' + PIN[0] + '" cy="' + PIN[1] + '" r="34" fill="none" stroke="#ff3b30" stroke-width="4" stroke-linecap="round"' +
+    ' stroke-dasharray="' + RING_C + '" stroke-dashoffset="' + RING_C + '" transform="rotate(-90 ' + PIN[0] + ' ' + PIN[1] + ')"/></g>';
+  var pin = '<circle id="f10-pin-halo" cx="' + PIN[0] + '" cy="' + PIN[1] + '" r="34" fill="#ff3b30" opacity=".18"/>' + ring +
+    '<circle id="f10-pin" cx="' + PIN[0] + '" cy="' + PIN[1] + '" r="14" fill="#ff3b30" stroke="#fff" stroke-width="5"/>';
+  var mapsvg = '<svg width="390" height="844" viewBox="0 0 390 844" style="position:absolute;left:0;top:0"><rect width="390" height="844" fill="#eceff2"/>' +
+    water + parks + roads + route + pin + '</svg>';
+  // la petite voiture blanche de la carte (même dessin que mapsvg car_at), centrée sur son point d'ancrage
+  var car = '<div id="f10-car" data-layout-allow-overlap><svg viewBox="-30 -30 60 60"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="#fff" stroke="#17181c" stroke-width="3"/>' +
+    '<rect x="-10" y="-13" width="6" height="26" fill="#ff3b30"/></svg></div>';
+  // la fiche de P18
+  var sheet = '<div class="app-sheet" id="f10-sheet" style="height:220px" data-layout-allow-overlap><div id="f10-sheet-t" style="font:700 30px/1.2 Instrument Sans;color:#17181c">Votre voiture arrive</div>' +
+    '<div class="micro" id="f10-sheet-m" style="margin-top:12px">vers Riviera 2</div></div>';
+  // le téléphone de P18 : phone(745, 98) = left 745, top -10, échelle 0,82 (jamais animé en transform)
+  var phone = '<div class="phone" id="f10-phone" data-layout-allow-overlap style="left:745px;top:-10px;transform:rotate(0deg) scale(0.82);transform-origin:50% 50%;">' +
+    '<div class="phone-screen">' + mapsvg + car + sheet + '</div><div class="phone-island"></div></div>';
+
+  el("defs").innerHTML = K.defs();
+  el("ground").innerHTML = K.lightGround(960, 470);
+  el("world").innerHTML = phone;
+  var WORDS = ["Une", "voiture", "vient", "te", "chercher", "là", "où", "tu", "es."];
+  var CUES = [0.21, 0.39, 0.71, 0.89, 1.07, 1.40, 1.58, 1.76, 1.94];
+  el("subl").innerHTML = K.sub("sub", WORDS, { theme: "light", box: [5, 8] });
+
+  /* ---- 2. le trajet rouge, géométrie exacte (segment, courbe, segment) échantillonnée finement ------------------ */
+  var PTS = [[170, 140]], i, k;
+  for (k = 1; k <= 16; k++) PTS.push([170 - 15 * k / 16, 140 + 160 * k / 16]);
+  for (k = 1; k <= 160; k++) {
+    var u = k / 160, a0 = (1 - u) * (1 - u), a1 = 2 * u * (1 - u), a2 = u * u;
+    PTS.push([a0 * 155 + a1 * 150 + a2 * 200, a0 * 300 + a1 * 360 + a2 * 400]);
+  }
+  for (k = 1; k <= 16; k++) PTS.push([200 + 50 * k / 16, 400 + 120 * k / 16]);
+  var CUM = [0];
+  for (i = 1; i < PTS.length; i++) CUM.push(CUM[i - 1] + Math.hypot(PTS[i][0] - PTS[i - 1][0], PTS[i][1] - PTS[i - 1][1]));
+  var LEN = CUM[CUM.length - 1];
+  function r3(v) { return Math.round(v * 1000) / 1000; }
+  // point du trajet à l'abscisse curviligne s : position (px de l'écran du téléphone = unités de la carte) et cap (degrés)
+  function at(s) {
+    s = Math.max(0, Math.min(LEN, s));
+    var j = 0;
+    while (j < PTS.length - 2 && CUM[j + 1] < s) j++;
+    var f = (s - CUM[j]) / ((CUM[j + 1] - CUM[j]) || 1), p = PTS[j], q = PTS[j + 1];
+    // cap lissé : moyenne des directions du sous-segment et de ses voisins
+    var jp = Math.max(0, j - 1), jn = Math.min(PTS.length - 2, j + 1);
+    var dx = PTS[jn + 1][0] - PTS[jp][0], dy = PTS[jn + 1][1] - PTS[jp][1];
+    return { x: r3(p[0] + (q[0] - p[0]) * f), y: r3(p[1] + (q[1] - p[1]) * f), a: r3(Math.atan2(dy, dx) * 180 / Math.PI) };
+  }
+
+  /* ---- 3. la voiture : apparaît en haut du trajet (0,21), part (0,45, whoosh), avance linéaire dès « vient » (0,71),
+           à mi-trajet exactement à la fin du plan (handoff_out) ------------------------------------------------- */
+  var T_GO = 0.45, T_CRUISE = 0.71, S_END = LEN / 2;
+  var RAMP = T_CRUISE - T_GO, V = S_END / (RAMP / 2 + (DUR - T_CRUISE));
+  function sAt(t) {
+    if (t <= T_GO) return 0;
+    if (t < T_CRUISE) return V * (t - T_GO) * (t - T_GO) / (2 * RAMP);
+    return V * (RAMP / 2 + t - T_CRUISE);
+  }
+
+  /* ---- 4. caméra : la dérive suit la voiture (vers elle, jamais d'aller-retour) ; cran ×1,1 vers elle en cours au raccord */
+  var PH = { cx: 960, cy: 432, s: 0.82, ox: 195, oy: 422 };      // centre du téléphone à l'écran ; carte (x, y) -> écran
+  function scr(p) { return { x: PH.cx + (p.x - PH.ox) * PH.s, y: PH.cy + (p.y - PH.oy) * PH.s }; }
+  var DR = { x: 4, y: 16, s: 1.035 };                             // dérive : ≈ 1,5 %/s + 7 px/s vers la voiture
+  var ZF = 1.1, TOWARD = 0.31, BLUR_END = 4;                      // cran : ×1,1, flou 4 px au raccord
+  var CE = scr(at(S_END));
+  var W = { x: TOWARD * (960 - CE.x), y: TOWARD * (540 - CE.y) };
+  var PHONE_BOTTOM = PH.cy + 442 * PH.s;                          // 794,44 : le bas du téléphone reste au-dessus de la bande du sous-titre
+  W.y = Math.min(W.y, (886 - 540) / ZF + 540 - PHONE_BOTTOM);
+  var WW = { x: r3(W.x - DR.x / ZF), y: r3(W.y - DR.y / ZF) };    // translation du monde (gigognes : #cam échelle, #world translation)
+  var T_N = 2.17, D_N = 2.335 - 2.17;
+
+  /* ---- 5. la timeline ------------------------------------------------------------------------------------------ */
+  var tl = gsap.timeline({ paused: true });
+  var CAR = el("car");
+
+  // caméra (piste à part)
+  tl.fromTo("#f10-drift", { x: 0, y: 0, scale: 1 }, { x: DR.x, y: DR.y, scale: DR.s, duration: DUR, ease: "none" }, 0);
+  tl.fromTo("#f10-cam", { scale: 1 }, { scale: r3(ZF / DR.s), duration: D_N, ease: "power2.in", immediateRender: false }, T_N);
+  tl.fromTo("#f10-world", { x: 0, y: 0 }, { x: WW.x, y: WW.y, duration: D_N, ease: "power2.in", immediateRender: false }, T_N);
+  tl.fromTo("#f10-phone", { filter: "blur(0px)" }, { filter: "blur(" + BLUR_END + "px)", duration: D_N, ease: "power2.in", immediateRender: false }, T_N);
+
+  // la voiture : posée en haut du trajet dès 0, invisible (opacity 0 en CSS) jusqu'à « Une voiture »
+  var P0 = at(0);
+  tl.fromTo(CAR, { x: P0.x, y: P0.y, rotation: P0.a }, { x: P0.x, y: P0.y, rotation: P0.a, duration: T_GO, ease: "none" }, 0);
+  tl.fromTo(CAR, { opacity: 0, scale: 2.2, filter: "blur(4px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out", immediateRender: false }, 0.18);
+  // elle suit le trajet rouge : une clé x / y / rotation par image (30 i/s)
+  var N = Math.round((DUR - T_GO) * 30);
+  for (i = 0; i < N; i++) {
+    var t0 = T_GO + i / 30, t1 = T_GO + (i + 1) / 30, A = at(sAt(t0)), B = at(sAt(t1));
+    tl.fromTo(CAR, { x: A.x, y: A.y, rotation: A.a }, { x: B.x, y: B.y, rotation: B.a, duration: t1 - t0, ease: "none", immediateRender: false }, t0);
+  }
+
+  // « là où tu es » : ton point rouge pulse (le point grossit puis se pose, le halo respire, l'onde se trace puis s'ouvre)
+  tl.fromTo("#f10-pin", { scale: 1, svgOrigin: "250 520" }, { scale: 1.6, svgOrigin: "250 520", duration: 0.08, ease: "power2.out", immediateRender: false }, 1.37);
+  tl.fromTo("#f10-pin", { scale: 1.6, svgOrigin: "250 520" }, { scale: 1, svgOrigin: "250 520", duration: 0.32, ease: "expo.out", immediateRender: false }, 1.45);
+  tl.fromTo("#f10-pin-halo", { scale: 1, svgOrigin: "250 520" }, { scale: 1.45, svgOrigin: "250 520", duration: 0.26, ease: "power2.out", immediateRender: false }, 1.40);
+  tl.fromTo("#f10-pin-halo", { scale: 1.45, svgOrigin: "250 520" }, { scale: 1, svgOrigin: "250 520", duration: 0.5, ease: "power2.inOut", immediateRender: false }, 1.66);
+  tl.fromTo("#f10-ring", { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, 1.37);
+  tl.fromTo("#f10-ring-c", { strokeDashoffset: RING_C }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, 1.37);
+  tl.fromTo("#f10-ring", { scale: 1, svgOrigin: "250 520" }, { scale: 1.7, svgOrigin: "250 520", duration: 0.4, ease: "power1.out", immediateRender: false }, 1.70);
+  tl.fromTo("#f10-ring", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power1.out", immediateRender: false }, 1.70);
+
+  // la fiche « Votre voiture arrive » monte (pop 1,40)
+  tl.fromTo("#f10-sheet", { y: 250, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, ease: "expo.out", immediateRender: false }, 1.33);
+  tl.fromTo("#f10-sheet-t", { y: 14, opacity: 0, filter: "blur(4px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 1.40);
+  tl.fromTo("#f10-sheet-m", { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: "expo.out", immediateRender: false }, 1.50);
+
+  // le sous-titre mot par mot, la boîte rouge sur « là où tu es » (tracée à 1,37), sorti avant le raccord
+  K.subIn(tl, "sub", CUES, { box: [5, 8] });
+  K.subOut(tl, "sub", 2.10, 0.16);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines[FID] = tl;
+})();
+
+</script>
+</template>

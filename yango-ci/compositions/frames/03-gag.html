@@ -524,9 +524,9 @@ function rueKit(P) {
       // 2.85 les trois héros se fondent en un seul, en costume, main levée
       function merge(a, tg, dx0, rot0) {
         at(q(a), { x: dx0, scaleX: 1, filter: "blur(0px)" }, { x: X1 - HX, scaleX: 1.08, filter: "blur(6px)", duration: .12, ease: "power3.in" }, 2.85);
-        at(q(a), { opacity: 1 }, { opacity: 0, duration: .02, ease: "none" }, 2.96);
-        at(q(tg), { x: dx0, rotation: rot0 }, { x: X1 - HX, rotation: 0, duration: .10, ease: "power3.in" }, 2.85);
-        at(q(tg), { opacity: 1 }, { opacity: 0, duration: .02, ease: "none" }, 2.94);
+        at(q(a), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
+        at(q(tg), { x: dx0, rotation: rot0 }, { x: X1 - HX, rotation: 0, duration: .12, ease: "power3.in" }, 2.85);
+        at(q(tg), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
       }
       merge("c2", "tag2", X2 - HX, 9);
       merge("c3", "tag3", X3 - HX, 2);

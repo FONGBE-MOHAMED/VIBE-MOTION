@@ -332,14 +332,15 @@ function rueKit(P) {
       var S0 = 1.32 * 1.02 / HS, SR = 0.82;
       var W0 = camW(S0, 0, HX, HY, 807.2, 748.08);
       var WR = camW(SR, 2.35, TX, 720, 1430, 720);       // après le recul : le taxi à droite, le trottoir en place
-      var X1 = 80;                                       // le héros 1 (même phase de pointillés que la vignette de 04)
-      var X2 = worldX(SR, 2.35, WR.x, 705);              // les deux copies de P06, à 2.35
+      var X1 = worldX(SR, 2.35, WR.x, 345);              // les trois héros de P06, à 2.35
+      var X2 = worldX(SR, 2.35, WR.x, 705);              // (ils se fondent en un seul à la place du milieu, X2)
       var X3 = worldX(SR, 2.35, WR.x, 1060);
+      var DASH = ((X2 - 80) % 240 + 240) % 240;          // pointillés en phase avec la vignette de 04 (héros à 560, pointillés -60 + 240 k)
       // handoff_out = la première image de 04 : la vignette « LUNDI » (310 x 420 à (120, 240)) en vol, x+300, y+24, x1,35,
       // la rue dedans à 0,45 / 1,05 (x1,35), les pieds du héros au point (150, 300) de la carte
       var VS = 1.35, CARD = { x: 120 + 155 + 300 - 155 * VS, y: 240 + 210 + 24 - 210 * VS, w: 310 * VS, h: 420 * VS, r: 22 * VS };
       var SF = 0.45 / HS * VS;
-      var WF = camW(SF, DUR, X1, HY, CARD.x + 150 * VS, CARD.y + 300 * VS);
+      var WF = camW(SF, DUR, X2, HY, CARD.x + 150 * VS, CARD.y + 300 * VS);
 
       // ---------- décor et acteurs (kit rueKit, aucun redessin)
       $("defs").innerHTML = K.defs();
@@ -348,10 +349,11 @@ function rueKit(P) {
       var DW = 3200;
       var decor =
         '<div style="position:absolute;left:-720px;top:0">' +
-          K.scene(DW, '<rect x="0" y="-700" width="' + DW + '" height="704" fill="#f3c98f"/>' + K.sky("dawn", DW) + K.sun(HX + 880 + 720, 330, 60), "back") + '</div>' +
+          K.scene(DW, '<rect x="0" y="-700" width="' + DW + '" height="704" fill="#f3c98f"/>' + K.sky("dawn", DW), "back") + '</div>' +
+        '<div style="position:absolute;left:-720px;top:0">' + K.scene(DW, K.sun(1500 + 720, 330, 60), "sun") + '</div>' +
         '<div style="position:absolute;left:-320px;top:0">' +
           K.scene(2800, K.skyline(720, .30, "#7d7f9a", 1, 2800), "skyline") + '</div>' +
-        '<div style="position:absolute;left:-720px;top:0">' +
+        '<div style="position:absolute;left:' + (DASH - 720).toFixed(2) + 'px;top:0">' +
           K.scene(DW, K.street({ w: DW }) + '<rect x="0" y="1076" width="' + DW + '" height="704" fill="#3a3b42"/>', "street") + '</div>';
 
       var actors =
@@ -429,7 +431,7 @@ function rueKit(P) {
       at(q("shadow"), { opacity: 0 }, { opacity: 1, duration: .15, ease: "power2.in" }, 3.0);
       at(q("lab"), { x: 20 * VS, y: 20 * VS, scale: VS }, { x: CARD.x + 20 * VS, y: CARD.y + 20 * VS, scale: VS, duration: .20, ease: "power2.in" }, 2.95);
       at(q("lab"), { opacity: 0 }, { opacity: 1, duration: .07, ease: "power1.out" }, 3.03);
-      at(q("skyline"), { opacity: 1 }, { opacity: 0, duration: .13, ease: "power1.in" }, 2.95);
+      at([q("skyline"), q("sun")], { opacity: 1 }, { opacity: 0, duration: .13, ease: "power1.in" }, 2.95);   // la vignette de 04 n'a ni tours ni soleil
 
       // le cadre de la vitre sort par les bords (flou), la teinte de la vitre s'efface
       tl.fromTo(q("glass"), { scale: 1.12, y: -18 }, { scale: 1.16, y: -18, duration: .2, ease: "power1.in" }, 0);
@@ -439,7 +441,8 @@ function rueKit(P) {
       at([q("winl"), q("winr")], { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, .21);
 
       // le taxi, au premier plan, entre par la droite en parallaxe pendant que la caméra sort de la vitre (après les 2 images de la jonction)
-      tl.fromTo(q("taxi"), { x: 900, scaleX: 1.06, filter: "blur(12px)" }, { x: 0, scaleX: 1, filter: "blur(0px)", duration: .18, ease: "expo.out" }, .07);
+      tl.fromTo(q("taxi"), { x: 900, scaleX: 1.06, filter: "blur(12px)" }, { x: 900, scaleX: 1.06, filter: "blur(12px)", duration: .07, ease: "none" }, 0);
+      at(q("taxi"), { x: 900, scaleX: 1.06, filter: "blur(12px)" }, { x: 0, scaleX: 1, filter: "blur(0px)", duration: .18, ease: "expo.out" }, .07);
       at(q("taxi-body"), { y: 0 }, { y: 5, duration: .05, ease: "power2.out" }, .17);
       at(q("taxi-body"), { y: 5 }, { y: 0, duration: .1, ease: "power2.inOut" }, .22);
 
@@ -508,7 +511,7 @@ function rueKit(P) {
       at(q("c3-eyes"), { y: 5 }, { y: 0, duration: .12, ease: "power3.out" }, 2.22);
 
       // couche vivante : les étiquettes se balancent doucement
-      swing(q("tag"), 1.55, [0, 2.5, -2, 1.5, 0], .35);
+      swing(q("tag"), 1.55, [0, 2.5, -2, 1.5, 0], .32);
       swing(q("tag2"), 2.0, [9, 11, 8, 9], .28);
       swing(q("tag3"), 2.55, [2, 3.5, 2], .15);
 
@@ -521,15 +524,22 @@ function rueKit(P) {
       at(q("dust"), { opacity: 0, scale: .4, x: 0 }, { opacity: .8, scale: 1.1, x: -20, duration: .14, ease: "power2.out" }, 2.66);
       at(q("dust"), { opacity: .8, scale: 1.1, x: -20 }, { opacity: 0, scale: 1.7, x: -60, duration: .16, ease: "power1.in" }, 2.80);
 
-      // 2.85 les trois héros se fondent en un seul, en costume, main levée
-      function merge(a, tg, dx0, rot0) {
-        at(q(a), { x: dx0, scaleX: 1, filter: "blur(0px)" }, { x: X1 - HX, scaleX: 1.08, filter: "blur(6px)", duration: .12, ease: "power3.in" }, 2.85);
-        at(q(a), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
-        at(q(tg), { x: dx0, rotation: rot0 }, { x: X1 - HX, rotation: 0, duration: .12, ease: "power3.in" }, 2.85);
-        at(q(tg), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
+      // 2.85 les trois héros se fondent en un seul à la place du milieu : le héros en costume (à gauche) et la copie 3 y glissent,
+      // le héros lève la main ; son étiquette s'efface (la vignette « LUNDI » de 04 n'en a pas)
+      function fuse(a, tg, dx0, rot0, keep) {
+        at(q(a), { x: dx0, scaleX: 1, filter: "blur(0px)" }, { x: X2 - HX, scaleX: 1.08, filter: "blur(6px)", duration: .12, ease: "power3.in" }, 2.85);
+        at(q(tg), { x: dx0, rotation: rot0 }, { x: X2 - HX, rotation: 0, duration: .12, ease: "power3.in" }, 2.85);
+        if (keep) {
+          at(q(a), { scaleX: 1.08, filter: "blur(6px)" }, { scaleX: 1, filter: "blur(0px)", duration: .08, ease: "power2.out" }, 2.97);
+        } else {
+          at(q(a), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
+          at(q(tg), { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
+        }
       }
-      merge("c2", "tag2", X2 - HX, 9);
-      merge("c3", "tag3", X3 - HX, 2);
+      fuse("hero", "tag", X1 - HX, 0, true);
+      fuse("c3", "tag3", X3 - HX, 2, false);
+      at([q("c2"), q("tag2")], { opacity: 1 }, { opacity: 0, duration: .01, ease: "none" }, 2.97);
+      at(q("tag2"), { rotation: 9 }, { rotation: 0, duration: .12, ease: "power3.in" }, 2.85);
       K.spin(tl, q("hero-arm"), 0, -158, 2.88, .18);
       at(q("tag"), { scale: 1, opacity: 1 }, { scale: 0, opacity: 0, duration: .1, ease: "power2.in" }, 2.95);
 

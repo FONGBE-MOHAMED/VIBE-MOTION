@@ -321,7 +321,7 @@ function rueKit(P) {
       var CAR_X = 1430, ROAD_Y = 760;                 // la petite voiture à 4.15 (la séquence 15 la reprend en x 1430)
       var CAR_V = 680 / 3.10;                         // sa vitesse dans le monde, la même qu'en séquence 15 (≈ 219 px/s)
       var letters = ["Y", "a", "n", "g", "o"].map(function (c, i) {
-        return '<span class="f14-l" id="f14-l' + i + '">' + c + '</span>';
+        return '<span class="f14-l" id="f14-l' + i + '" data-layout-allow-overlap>' + c + '</span>';
       }).join("");
       byId("f14-stage").innerHTML =
         '<div class="rk-drift" id="f14-drift"><div class="rk-cam" id="f14-cam"><div class="rk-world" id="f14-world">' +

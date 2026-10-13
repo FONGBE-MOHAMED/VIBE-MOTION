@@ -50,7 +50,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Le carrefour Riviera 2 au petit matin, 07:00 : le héros au bord du goudron lève la main, le taxi orange arrive et freine
 - duration: 5.45s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-riviera.html
 - voiceover: "Lundi, sept heures. Carrefour Riviera Deux. Tu lèves la main. Un taxi s’arrête."
 - type: hook
@@ -88,7 +88,7 @@ Scene 2 (3.05 à 5.45 s) : P02, La main, le taxi
 - scene: « Plateau ? » à la vitre, puis le regard du chauffeur qui descend de la tête aux pieds du héros (panoramique vertical)
 - duration: 3.60s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/02-regard.html
 - voiceover: "« Plateau ? » Le chauffeur te regarde... de la tête aux pieds."
 - type: hook
@@ -126,7 +126,7 @@ Scene 2 (0.80 à 3.60 s) : P04, De la tête aux pieds
 - scene: « Trois mille. » : une étiquette de prix tombe au-dessus de la tête du héros ; gag muet : il retire sa cravate (2 500 F), enfile des claquettes (1 500 F) ; le chauffeur hésite et repart
 - duration: 3.15s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/03-gag.html
 - voiceover: "« Trois mille. »"
 - type: problem
@@ -164,7 +164,7 @@ Scene 2 (0.90 à 3.15 s) : P06, Le gag (muet)
 - scene: Cinq vignettes, lundi à vendredi, la même main levée ; cran dans « Vendredi » : la discussion, les prix rebondissent d'une bulle à l'autre, « Encore. »
 - duration: 5.00s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/04-chaque-jour.html
 - voiceover: "Chaque jour, c’est la même histoire. Le matin, tu discutes le prix. Encore."
 - type: pain_point
@@ -202,7 +202,7 @@ Scene 2 (2.10 à 5.00 s) : P08, La discussion
 - scene: Midi, soleil au zénith, chaleur qui tremble ; le taxi s'arrête : « Yopougon ? Non ! », le doigt fait non, le taxi repart sous le panneau Yopougon
 - duration: 3.78s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/05-midi.html
 - voiceover: "À midi, on te répond : « Yopougon ? Je ne vais pas là-bas. »"
 - type: pain_point
@@ -240,7 +240,7 @@ Scene 2 (1.80 à 3.78 s) : P10, « Yopougon ? Non ! »
 - scene: Le soir sous le lampadaire, le téléphone affiche 19:42 ; la main levée, des phares passent sans s'arrêter
 - duration: 4.47s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/06-soir.html
 - voiceover: "Et le soir, tu attends au bord du goudron... sans savoir qui va s’arrêter."
 - type: pain_point
@@ -278,7 +278,7 @@ Scene 2 (2.42 à 4.47 s) : P12, Personne ne s'arrête
 - scene: Coupe au noir : « Et si on arrêtait de discuter ? » ; la dernière bulle de prix se dégonfle ; une lueur rouge naît au centre
 - duration: 2.75s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/07-pivot.html
 - voiceover: "Et si on arrêtait de discuter ?"
 - type: problem
@@ -306,7 +306,7 @@ Scene 1 (0.00 à 2.75 s) : P13, Le pivot
 - scene: Le flash ouvre le fond clair : le téléphone se pose, l'appli s'ouvre (« Où allez-vous ? ») ; « Plateau » se tape, les suggestions apparaissent, le départ « Riviera 2 » se pose à gauche
 - duration: 3.62s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/08-yango.html
 - voiceover: "Avec Yango, tu choisis où tu vas, depuis ton téléphone."
 - type: product_intro
@@ -344,7 +344,7 @@ Scene 2 (1.05 à 3.62 s) : P15, Où tu vas
 - scene: La fiche « Riviera 2 → Plateau » : le prix roule jusqu'à 2 500 F avant la course ; l'étiquette du gag revient à côté du héros, figée
 - duration: 3.03s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/09-prix.html
 - voiceover: "Le prix s’affiche avant la course. Pas de surprise."
 - type: benefit_highlight
@@ -382,7 +382,7 @@ Scene 2 (1.98 à 3.03 s) : P17, Pas de surprise
 - scene: Sur la carte, une petite voiture blanche suit le trajet rouge vers ton point « Riviera 2 » : « Votre voiture arrive »
 - duration: 2.35s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/10-vient.html
 - voiceover: "Une voiture vient te chercher là où tu es."
 - type: benefit_highlight
@@ -410,7 +410,7 @@ Scene 1 (0.00 à 2.35 s) : P18, La voiture vient
 - scene: La voiture approche, « Arrive dans 3 min » ; la fiche du chauffeur monte : Koffi, berline blanche, la plaque 1234 AB 01 qui sort de l'écran
 - duration: 3.77s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/11-chauffeur.html
 - voiceover: "Tu vois ton chauffeur arriver sur la carte, avec son nom et sa plaque."
 - type: benefit_highlight
@@ -448,7 +448,7 @@ Scene 2 (2.05 à 3.77 s) : P20, Son nom, sa plaque
 - scene: Trois cartes côte à côte, une par destination : au marché (une maman), au travail (un jeune employé, sac au dos), au maquis (un commerçant), la voiture blanche devant chacune ; whip vers la rue : la portière se ferme, la voiture part
 - duration: 5.08s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/12-destinations.html
 - voiceover: "Que tu ailles au marché, au travail ou au maquis... tu montes, et tu pars."
 - type: benefit_highlight
@@ -486,7 +486,7 @@ Scene 2 (2.98 à 5.08 s) : P22, Tu montes, tu pars
 - scene: La rime : le même carrefour Riviera 2 à 07:00 ; cette fois la voiture blanche est déjà là, portière ouverte, le héros monte sans lever la main
 - duration: 5.10s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/13-rime.html
 - voiceover: "Lundi, sept heures. Carrefour Riviera Deux. Ta voiture est déjà là."
 - type: benefit_highlight
@@ -524,7 +524,7 @@ Scene 2 (3.45 à 5.10 s) : P24, Déjà là
 - scene: Carte de fin rouge : « Yango » s'assemble lettre par lettre ; le bouton blanc « Télécharger l’application » arrive ; le doigt approche
 - duration: 4.15s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/14-fin.html
 - voiceover: "Yango. Télécharge l’application, et bouge tranquille."
 - type: cta
@@ -562,7 +562,7 @@ Scene 2 (1.20 à 4.15 s) : P26, Télécharge l'application
 - scene: Le doigt tape le bouton directement, onde blanche ; tenue vivante : la petite voiture longe le filet de route ; iris noir sur le bouton
 - duration: 4.70s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/15-tap.html
 - voiceover: ""
 - type: cta

@@ -326,7 +326,7 @@ function rueKit(P) {
         '<circle cx="250" cy="520" r="34" fill="#ff3b30" opacity=".18"/><circle cx="250" cy="520" r="14" fill="#ff3b30" stroke="#fff" stroke-width="5"/></svg>';
 
       // le prix : une colonne de chiffres par chiffre de « 2 500 F » (milliers, centaines, dizaines, unités)
-      function col(n, cells) { return '<span class="f09-dm"><span class="f09-dc" id="' + K.id("d" + n) + '">' + cells.map(function (c) { return '<i>' + (c === "" ? "&nbsp;" : c) + '</i>'; }).join("") + '</span></span>'; }
+      function col(n, cells) { return '<span class="f09-dm"><span class="f09-dc" id="' + K.id("d" + n) + '">' + cells.map(function (c) { return '<i data-layout-allow-overlap>' + (c === "" ? "&nbsp;" : c) + '</i>'; }).join("") + '</span></span>'; }
       function seq(a, b) { var o = []; for (var k = a; k <= b; k++) o.push(String(k % 10)); return o; }
       var COLS = {
         d0: [""].concat(seq(1, 2)),                                  // milliers : → 2
@@ -340,7 +340,7 @@ function rueKit(P) {
       var PRICE = '<div class="app-sheet" id="' + K.id("sheet") + '" style="height:330px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">' +
         '<div><div style="font:700 28px/1.2 Instrument Sans;color:#17181c">Riviera 2 → Plateau</div><div class="micro" style="margin-top:8px">Prix avant la course</div></div></div>' +
         '<div class="app-price" id="' + K.id("price") + '" style="margin-bottom:24px">' + PRICE_NUM + '</div>' +
-        '<div id="' + K.id("btnwrap") + '"><div class="app-btn f09-btn-off">Commander</div><div class="app-btn" id="' + K.id("btn") + '">Commander</div></div></div>';
+        '<div id="' + K.id("btnwrap") + '"><div class="app-btn f09-btn-off" data-layout-allow-overlap>Commander</div><div class="app-btn" id="' + K.id("btn") + '" data-layout-allow-overlap>Commander</div></div></div>';
 
       var PHONE = '<div class="phone" id="' + K.id("phone") + '" data-layout-allow-overlap style="left:745px;top:-10px;transform:rotate(0deg) scale(.82);transform-origin:50% 50%;">' +
         '<div class="phone-screen">' + MAP + PRICE + '</div><div class="phone-island"></div></div>';
@@ -430,8 +430,8 @@ function rueKit(P) {
       // 2.74 : la fiche redescend (la carte se libère) ; 2.78 : le héros et l'étiquette sortent par la droite (power2.in),
       // le téléphone revient net, sa carte en gros plan sur le point rouge « Riviera 2 »
       tl.to("#f09-sheet", { y: 400, duration: 0.22, ease: "power2.in" }, 2.74);
-      tl.to("#f09-hero", { x: 460, filter: "blur(4px)", duration: 0.25, ease: "power2.in" }, 2.78);
-      tl.to("#f09-tag", { x: 430, filter: "blur(4px)", duration: 0.25, ease: "power2.in" }, 2.78);
+      tl.to("#f09-hero", { x: 820, filter: "blur(6px)", duration: 0.22, ease: "power2.in" }, 2.74);
+      tl.to("#f09-tag", { x: 790, filter: "blur(6px)", duration: 0.22, ease: "power2.in" }, 2.74);
       tl.to("#f09-phone", { filter: "blur(0px)", opacity: 1, duration: 0.2, ease: "power2.out" }, 2.78);
 
       // SOUS-TITRES (hors caméra), mot par mot sur les temps de la voix -----------------------------------

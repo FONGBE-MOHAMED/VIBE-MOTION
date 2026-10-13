@@ -351,7 +351,7 @@ function rueKit(P) {
         '<circle id="f11-halo" cx="250" cy="520" r="34" fill="' + RED + '" opacity=".18"/><circle cx="250" cy="520" r="14" fill="' + RED + '" stroke="#fff" stroke-width="5"/>' +
         '<g id="f11-mcar" transform="translate(' + car0.x + ' ' + car0.y + ')"><g transform="rotate(80)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="#fff" stroke="#17181c" stroke-width="3"/>' +
         '<rect x="-10" y="-13" width="6" height="26" fill="' + RED + '"/></g></g></svg>';
-      var PRINT = "Arrive dans 3 min".split("").map(function (ch, k) { return '<span class="f11-ch" id="f11-c' + k + '">' + ch + '</span>'; }).join("");
+      var PRINT = "Arrive dans 3 min".split("").map(function (ch, k) { return '<span class="f11-ch" id="f11-c' + k + '" data-layout-allow-overlap>' + ch + '</span>'; }).join("");
       var SHEET_A = '<div class="app-sheet" id="f11-sheetA" style="height:220px" data-layout-allow-overlap>' +
         '<div id="f11-s18"><div style="font:700 30px/1.2 Instrument Sans;color:#17181c">Votre voiture arrive</div><div class="micro" style="margin-top:12px">vers Riviera 2</div></div>' +
         '<div id="f11-s19">' + PRINT + '</div></div>';
@@ -359,7 +359,7 @@ function rueKit(P) {
       var SHEET_D = '<div class="app-sheet" id="f11-sheetD" style="height:300px" data-layout-allow-overlap><div style="display:flex;gap:18px;align-items:center;margin-bottom:20px">' +
         '<div id="f11-av" style="width:84px;height:84px;border-radius:50%;background:#8a5a3b;position:relative;overflow:hidden"><div style="position:absolute;left:12px;top:-6px;width:60px;height:34px;border-radius:30px 30px 6px 6px;background:#1a1410"></div></div>' +
         '<div><div style="font:700 32px/1.1 Instrument Sans;color:#17181c">' + NAME + '</div><div id="f11-cl" style="font:500 22px/1.4 Instrument Sans;color:#55565c">Berline blanche · 4,9 ★</div></div></div>' +
-        '<span class="plate" id="f11-pl">1234 AB 01</span><div class="micro" id="f11-mi" style="margin-top:18px">Arrive dans 3 min</div></div>';
+        '<span class="plate" id="f11-pl" data-layout-allow-overlap>1234 AB 01</span><div class="micro" id="f11-mi" style="margin-top:18px">Arrive dans 3 min</div></div>';
       var PHONE = '<div class="phone f11-bb" id="f11-phone" style="left:745px;top:-10px;transform:rotate(0deg) scale(0.82);transform-origin:50% 50%;" data-layout-allow-overlap>' +
         '<div class="phone-screen">' + MAP + SHEET_A + SHEET_D + '</div><div class="phone-island"></div></div>';
       var PCARD = '<div class="card f11-bb" id="f11-pcard" style="left:1250px;top:560px;width:330px;height:130px;padding:24px;display:flex;align-items:center;gap:16px" data-layout-allow-overlap>' +
